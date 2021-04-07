@@ -4,6 +4,7 @@ package com.bootcamp.finalProject.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name = "part_records")
 @AllArgsConstructor
+@NoArgsConstructor
 public class PartRecord {
 
     @Id
@@ -27,10 +29,12 @@ public class PartRecord {
     private Double salePrice;
     @Column(name = "urgent_price", length = 6)
     private Double urgentPrice;
+
     @JoinColumn(name = "id_part", nullable = false)
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Part part;
+
     @JoinColumn(name = "id_discount_rate", nullable = false)
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference

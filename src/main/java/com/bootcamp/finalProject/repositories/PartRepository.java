@@ -16,13 +16,13 @@ public interface PartRepository extends JpaRepository<Part, Long> {
     //INNER JOIN part_records pr ON p.id_part = pr.id_part
     //WHERE p.last_modification >= :date
     //ORDER BY pr.created_at DESC
-    @Query("FROM Parts p WHERE p.last_modification >= :date")
+    @Query("FROM Part p WHERE p.lastModification >= :date")
     List<Part> findParcialPartByLastModification(@Param("date") Date date);
 
     //SELECT * FROM parts p
     //INNER JOIN part_records pr ON p.id_part = pr.id_part
     //WHERE pr.created_at >= :date
     //ORDER BY pr.created_at DESC
-    @Query("FROM Movie m WHERE m.title LIKE %:title%")
-    List<Part> findVariationPartByPriceCreateAt(@Param("date") Date date);
+//    @Query("FROM Movie m WHERE m.title LIKE %:title%")
+//    List<Part> findVariationPartByPriceCreateAt(@Param("date") Date date);
 }
