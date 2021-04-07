@@ -1,5 +1,7 @@
 package com.bootcamp.finalProject.model;
 
+import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "parts")
+@AllArgsConstructor
 public class Part {
 
     @Id
@@ -29,7 +32,11 @@ public class Part {
     private Integer longDimension;
     @Column(length = 5)
     private Integer netWeight;
-    private String provider;
+    @JoinColumn(name = "id_provider", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonBackReference
+    private Provider provider;
+    private Integer quantity;
     @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords;
     private Date lastModification;
