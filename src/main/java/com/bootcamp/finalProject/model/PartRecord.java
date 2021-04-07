@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,23 +13,26 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "part_records")
+@AllArgsConstructor
 public class PartRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_part_record")
-    private Long id;
+    private Long idPartRecord;
     private Date createdAt;
     @Column(name = "normal_price", length = 6)
     private Double normalPrice;
-    //@Column(name = "sale_price")
-    //private Double salePrice;
+    @Column(name = "sale_price")
+    private Double salePrice;
     @Column(name = "urgent_price", length = 6)
     private Double urgentPrice;
     @JoinColumn(name = "id_part", nullable = false)
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Part part;
-    //@Column(name = "id_discount_rate")
-    //private DiscountRate discountRate;
+    @JoinColumn(name = "id_discount_rate", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonBackReference
+    private DiscountRate discountRate;
 }
