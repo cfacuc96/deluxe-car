@@ -18,7 +18,7 @@ public class PartRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_part_record")
     private Long id;
-    private Date lastModification;
+    private Date createdAt;
     @Column(name = "normal_price", length = 6)
     private Double normalPrice;
     //@Column(name = "sale_price")
