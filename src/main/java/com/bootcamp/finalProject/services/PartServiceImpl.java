@@ -4,6 +4,7 @@ import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.utils.PartResponseMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class PartServiceImpl implements PartService {
 
-//    @Autowired
-//    PartResponseMapper mapper;
-    @Autowired
-    ModelMapper mapper;
+    PartResponseMapper mapper = new PartResponseMapper();
 
     private final PartRepository repository;
 
@@ -56,9 +54,9 @@ public class PartServiceImpl implements PartService {
                 case "P":
                     parts = repository.findParcialPartByLastModification(partRequest.getDate());
                     break;
-                case "V":
-                    parts = repository.findVariationPartByPriceCreateAt(partRequest.getDate());
-                    break;
+//                case "V":
+//                    parts = repository.findVariationPartByPriceCreateAt(partRequest.getDate());
+//                    break;
                 default:
                     break;
             }
@@ -66,8 +64,7 @@ public class PartServiceImpl implements PartService {
 //        else{
 //            throw new TipoConsultaNotFoundException();
 //        }
-//        return mapper.toDTO(parts);
-        return parts.stream().map(part -> mapper.map(part, PartResponseDTO.class)).collect(Collectors.toList());
+        return mapper.toDTO(parts);
     }
 
     public boolean validarTipoConsulta(String tipoConsulta){

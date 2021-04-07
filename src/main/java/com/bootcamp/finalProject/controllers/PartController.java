@@ -30,14 +30,13 @@ public class PartController {
     PartService service;
 
     @GetMapping("list")
-    public List<Part> obtainList(@Nullable @RequestParam Map<String, String> params) throws Exception {
+    public List<PartResponseDTO> obtainList(@Nullable @RequestParam Map<String, String> params) throws Exception {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("querytype"));
         requestDTO.setDate(validateDates(params.get("date")));
         //requestDTO.setOrder(Integer.parseInt(params.get("order")));
         requestDTO.setOrder((params.get("order")==null)? 1: Integer.parseInt(params.get("order")));
-        //return service.metodo(requestDTO);
-        return null;
+        return service.findPart(requestDTO);
     }
 
     public Date validateDates(String date) throws Exception {

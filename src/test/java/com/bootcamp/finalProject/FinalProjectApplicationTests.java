@@ -29,13 +29,14 @@ class FinalProjectApplicationTests {
 		order.put("queryType", "V");
 		order.put("order", "23");
 		order.put("date", "2020-01-11");
-		Assertions.assertThrows(partController.obtainList);
+		Assertions.assertThrows(Exception.class, () -> partController.obtainList(order));
+
 	}
 	@Test
-	void shouldReturnExceptionSinceParamOfSearchDoesNotExist(){
+	void shouldReturnExceptionSinceParamOfSearchDoesNotExist() throws Exception {
 		Map<String, String> queryType = new HashMap<>();
 		queryType.put("queryType", "er");
-		Assertions.assertThrows(partController.obtainList);
+		Assertions.assertThrows(Exception.class, () -> partController.obtainList(queryType));
 	}
 	@Test
 	void shouldReturnExceptionSinceParamOfDateIsInABadFormat(){
@@ -43,7 +44,8 @@ class FinalProjectApplicationTests {
 		order.put("queryType", "V");
 		order.put("order", "2");
 		order.put("date", "11-12-2019");
-		Assertions.assertThrows(partController.obtainList);
+		Assertions.assertThrows(Exception.class, () -> partController.obtainList(order));
+
 	}
 
 }
