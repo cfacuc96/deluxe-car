@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "parts")
+@AllArgsConstructor
 public class Part {
 
     @Id

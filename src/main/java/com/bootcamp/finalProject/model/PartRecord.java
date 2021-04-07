@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "part_records")
+@AllArgsConstructor
 public class PartRecord {
 
     @Id
