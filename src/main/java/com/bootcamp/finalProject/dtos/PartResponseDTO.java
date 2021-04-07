@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.dtos;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-
+@EqualsAndHashCode
 public class PartResponseDTO {
     private Integer partCode;
     private String description;
