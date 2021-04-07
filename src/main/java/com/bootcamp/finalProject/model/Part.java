@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +30,11 @@ public class Part {
     private Integer longDimension;
     @Column(length = 5)
     private Integer netWeight;
-    private String provider;
+    @JoinColumn(name = "id_provider", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonBackReference
+    private Provider provider;
+    private Integer quantity;
     @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords;
     private Date lastModification;
