@@ -3,6 +3,7 @@ package com.bootcamp.finalProject.utils;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.model.Part;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class PartResponseMapper {
     }
 
     public PartResponseDTO toDTO(Part part){
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+
         PartResponseDTO ret = new PartResponseDTO();
 
         ret.setPartCode(part.getPartCode());
@@ -38,7 +41,7 @@ public class PartResponseMapper {
         ret.setLongDimension(part.getLongDimension());
         ret.setWidthDimension(part.getWidthDimension());
         ret.setTallDimension(part.getTallDimension());
-        ret.setLastModification(part.getLastModification());
+        ret.setLastModification(datePattern.format(part.getLastModification()));
 
 
         return ret;

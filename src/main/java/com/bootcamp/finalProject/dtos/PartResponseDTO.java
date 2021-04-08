@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 
 @Getter
 @Setter
@@ -21,5 +20,5 @@ public class PartResponseDTO {
     private Integer longDimension;
     private Integer widthDimension;
     private Integer tallDimension;
-    private Date lastModification;
+    private String lastModification;
 }
