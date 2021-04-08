@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
@@ -62,7 +63,7 @@ public class PartServiceImpl implements PartService {
             }
         }
 //        else{
-//            throw new TipoConsultaNotFoundException();
+//            throw new TypeOfQueryException();
 //        }
         return mapper.toDTO(parts);
     }
