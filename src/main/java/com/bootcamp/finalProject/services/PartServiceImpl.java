@@ -54,9 +54,9 @@ public class PartServiceImpl implements PartService {
                 case "P":
                     parts = repository.findParcialPartByLastModification(partRequest.getDate());
                     break;
-//                case "V":
-//                    parts = repository.findVariationPartByPriceCreateAt(partRequest.getDate());
-//                    break;
+                case "V":
+                    parts = repository.findVariationPartByPriceCreateAt(partRequest.getDate());
+                    break;
                 default:
                     break;
             }
