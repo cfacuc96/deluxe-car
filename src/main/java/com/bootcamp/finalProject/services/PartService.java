@@ -2,6 +2,8 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.exceptions.OrderTypeException;
+import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.model.Part;
 
 import java.util.List;
@@ -15,5 +17,5 @@ public interface PartService {
 
     List<Part> findAll();
 
-    List<PartResponseDTO> findPart(PartRequestDTO requestDTO);
+    List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
 }
