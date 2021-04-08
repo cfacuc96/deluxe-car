@@ -1,6 +1,8 @@
 package com.bootcamp.finalProject.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "providers")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Provider {
 
     @Id

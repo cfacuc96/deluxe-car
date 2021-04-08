@@ -1,7 +1,9 @@
 package com.bootcamp.finalProject.model;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "discount_rates")
+@NoArgsConstructor
+@AllArgsConstructor
 public class DiscountRate {
 
     @Id
