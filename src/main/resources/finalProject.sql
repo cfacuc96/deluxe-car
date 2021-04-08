@@ -1,6 +1,10 @@
 INSERT INTO `discount_rates` (`id_discount_rate`, `description`, `discount`) VALUES
 (0, 'Clarin 365', '%20');
 
+INSERT INTO `providers` (`id_provider`, `address`, `country`, `name`, `phone`) VALUES
+(0, 'Direccion1', 'Argentina', 'Jose', '1234567890'),
+(0, 'Mi direccion2', 'Brasil', 'Josesinho', '12345667890');
+
 INSERT INTO `parts` (`id_part`, `description`, `last_modification`, `long_dimension`, `net_weight`, `part_code`, `quantity`, `tall_dimension`, `width_dimension`, `id_provider`) VALUES
 (0, 'Amortiguador delantero derecho - BMW 220i', '2021-01-05 16:53:11', 45, 5000, 11111112, 140, 45, 16, 1),
 (0, 'Amortiguador delantero izquierdo - BMW 220i', '2021-01-05 16:54:11', 45, 3000, 11111113, 140, 45, 16, 1),
@@ -32,7 +36,3 @@ INSERT INTO `part_records` (`id_part_record`, `created_at`, `normal_price`, `sal
 (0, '2021-03-13 15:20:14', 52000, 51500, 55000, 1, 8),
 (0, '2021-02-25 15:24:14', 32000, 33500, 35000, 1, 9),
 (0, '2021-03-15 15:24:14', 35000, 36000, 37000, 1, 10);
-
-INSERT INTO `providers` (`id_provider`, `address`, `country`, `name`, `phone`) VALUES
-(0, 'Direccion1', 'Argentina', 'Jose', '1234567890'),
-(0, 'Mi direccion2', 'Brasil', 'Josesinho', '12345667890');
