@@ -37,7 +37,7 @@ public class PartController {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("querytype"));
         requestDTO.setDate(validateDateFormat(params.get("date")));
-        requestDTO.setOrder((params.get("order")==null)? 1: Integer.parseInt(params.get("order")));
+        requestDTO.setOrder((params.get("order")==null)? 0: Integer.parseInt(params.get("order")));
         return service.findPart(requestDTO);
     }
 
