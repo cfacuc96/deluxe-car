@@ -25,7 +25,7 @@ public class Part {
     private Long idPart;
     @Column(name = "part_code", nullable = false, length = 8)
     private Integer partCode;
-    @Column(length = 100)
+    @Column(length = 100,nullable = false)
     private String description;
     @Column(length = 4, nullable = false)
     private Integer widthDimension;
@@ -41,7 +41,7 @@ public class Part {
     private Date lastModification; //Se encarga de guardar la fecha de la ultima modificacion tanto de precio como un atributo
 
     @OrderBy("created_at DESC") //Trae la lista de partRecords ordenada por fecha de createAt (Primero trae la ultima modificacion agregada)
-    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords; //historial de precios que tuvo el producto
 
     @JoinColumn(name = "id_provider", nullable = false)

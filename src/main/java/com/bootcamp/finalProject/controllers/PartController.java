@@ -10,6 +10,7 @@ import com.bootcamp.finalProject.utils.ValidationController;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class PartController {
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
         requestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
+
         return service.findPart(requestDTO);
     }
 
