@@ -20,9 +20,13 @@ public class Provider {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_provider")
     private Long idProvider;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String address;
+    @Column(nullable = false)
     private String phone;
+    @Column(nullable = false)
     private String country;
     @OneToMany(mappedBy = "provider", cascade = CascadeType.PERSIST)
     private List<Part> parts;

@@ -45,7 +45,5 @@ class FinalProjectApplicationTests {
 		order.put("order", "2");
 		order.put("date", "11-12-2019");
 		Assertions.assertThrows(Exception.class, () -> partController.obtainList(order));
-
 	}
-
 }
