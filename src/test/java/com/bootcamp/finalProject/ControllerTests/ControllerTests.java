@@ -15,11 +15,8 @@ import java.util.Map;
 @SpringBootTest
 class ControllerTests {
 
-	PartController partController;
-	@BeforeEach
-	void setUp(){
-		PartController partController = new PartController();
-	}
+	PartController partController = new PartController();
+
 	@Test
 	void shouldReturnExceptionSinceTheParamOfOrderingDoesNotExist(){
 		Map<String, String> order = new HashMap<>();
