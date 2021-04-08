@@ -37,7 +37,7 @@ public class PartRecord {
     private Part part;
 
     @JoinColumn(name = "id_discount_rate", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private DiscountRate discountRate;
 }

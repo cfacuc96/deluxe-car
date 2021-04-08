@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -40,11 +41,16 @@ public class Part {
     private Date lastModification; //Se encarga de guardar la fecha de la ultima modificacion tanto de precio como un atributo
 
     @OrderBy("created_at DESC") //Trae la lista de partRecords ordenada por fecha de createAt (Primero trae la ultima modificacion agregada)
-    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords; //historial de precios que tuvo el producto
 
     @JoinColumn(name = "id_provider", nullable = false)
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JsonBackReference
     private Provider provider;
+
+    @OneToMany(mappedBy = "partOrder", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
+
+
 }

@@ -23,7 +23,6 @@ public interface PartRepository extends JpaRepository<Part, Long> {
     List<Part> findByLastModification(@Param("date") Date date, Sort sort);
 
     /**
-     *
      * @param date Not Null
      * @param sort ASC BY partCode, 1 ASC BY description, 2 DESC BY description, 3 DESC by lastModification
      * @return Finds all the parts that the price was modified from the date
