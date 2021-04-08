@@ -21,7 +21,9 @@ public class DiscountRate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_discount_rate")
     private Long idDiscountRate;
+    @Column(nullable=false)
     private String description;
+    @Column(nullable=false)
     private String discount;
     @OneToMany(mappedBy = "discountRate", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords;
