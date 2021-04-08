@@ -22,7 +22,7 @@ INSERT INTO `parts` (`id_part`, `description`, `last_modification`, `long_dimens
 (0, 'Amortiguador trasero derecho - Scania S620', '2021-02-07 10:55:25', 175, 8000, 11111125, 102, 170, 45, 2);
 
 INSERT INTO `part_records` (`id_part_record`, `created_at`, `normal_price`, `sale_price`, `urgent_price`, `id_discount_rate`, `id_part`) VALUES
-(0, '2021-02-08 12:48:33', 75000, 76500, 78000, 1, 1),
+(0, '2021-02-08 12:48:33', 75000, 76500, 78000, 1, null),
 (0, '2021-02-08 12:48:33', 75000, 76500, 78000, 1, 11),
 (0, '2021-02-08 14:48:55', 40000, 43000, 45000, 1, 2),
 (0, '2021-02-08 14:49:33', 75000, 76500, 78000, 1, 12),
