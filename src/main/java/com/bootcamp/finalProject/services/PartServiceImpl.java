@@ -68,7 +68,4 @@ public class PartServiceImpl implements PartService {
         return mapper.toDTO(parts);
     }
 
-    public boolean validarTipoConsulta(String tipoConsulta){
-        return true;
-    }
 }
