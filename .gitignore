@@ -34,3 +34,6 @@ build/
 
 ###App.properties###
 *.properties
+
+###DS_STORE###
+*.DS_Store
