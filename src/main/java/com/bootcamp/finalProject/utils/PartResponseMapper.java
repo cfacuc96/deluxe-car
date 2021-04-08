@@ -26,10 +26,11 @@ public class PartResponseMapper {
         ret.setDescription(part.getDescription());
         ret.setMaker(part.getProvider().getName());
         ret.setQuantity(part.getQuantity());
-        ret.setDiscountType(part.getPartRecords().iterator().next().getDiscountRate().getDiscount());
 
+        ret.setDiscountType(part.getPartRecords().iterator().next().getDiscountRate().getDiscount());
         ret.setNormalPrice(part.getPartRecords().iterator().next().getNormalPrice());
         ret.setUrgentPrice(part.getPartRecords().iterator().next().getUrgentPrice());
+
         ret.setNetWeight(part.getNetWeight());
         ret.setLongDimension(part.getLongDimension());
         ret.setWidthDimension(part.getWidthDimension());
