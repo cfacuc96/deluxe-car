@@ -36,15 +36,14 @@ public class PartController {
     public List<PartResponseDTO> obtainList(@Nullable @RequestParam Map<String, String> params) throws Exception {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
-        requestDTO.setDate(validateDateFormat(params.get("date")));
-        requestDTO.setOrder((params.get("order")==null)? 0: Integer.parseInt(params.get("order")));
+        requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
+        requestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
         return service.findPart(requestDTO);
     }
 
 
     @ExceptionHandler(InternalExceptionHandler.class)
-    public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e)
-    {
+    public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
         return new ResponseEntity<>(e.getError(), e.getReturnStatus());
     }
 }
