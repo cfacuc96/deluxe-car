@@ -24,7 +24,7 @@ public class Part {
     private Long idPart;
     @Column(name = "part_code", nullable = false, length = 8)
     private Integer partCode;
-    @Column(length = 100)
+    @Column(length = 100,nullable = false)
     private String description;
     @Column(length = 4, nullable = false)
     private Integer widthDimension;
