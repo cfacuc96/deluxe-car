@@ -19,6 +19,9 @@ target/
 *.iml
 *.ipr
 
+### mysql ###
+mysql_desafioFinal
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -34,3 +37,8 @@ build/
 
 ###App.properties###
 *.properties
+<<<<<<< HEAD
+
+###DS_STORE###
+.DS_Store
+
