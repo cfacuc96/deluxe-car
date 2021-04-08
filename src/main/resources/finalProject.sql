@@ -29,8 +29,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `discount_rates` (
   `id_discount_rate` bigint(20) NOT NULL,
-  `description` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `discount` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL
+  `description` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `discount` varchar(255) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
@@ -48,14 +48,14 @@ INSERT INTO `discount_rates` (`id_discount_rate`, `description`, `discount`) VAL
 
 CREATE TABLE `parts` (
   `id_part` bigint(20) NOT NULL,
-  `description` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `last_modification` datetime DEFAULT NULL,
-  `long_dimension` int(11) DEFAULT NULL,
-  `net_weight` int(11) DEFAULT NULL,
-  `part_code` int(11) DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `tall_dimension` int(11) DEFAULT NULL,
-  `width_dimension` int(11) DEFAULT NULL,
+  `description` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
+  `last_modification` datetime NOT NULL,
+  `long_dimension` int(11) NOT NULL,
+  `net_weight` int(11) NOT NULL,
+  `part_code` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `tall_dimension` int(11) NOT NULL,
+  `width_dimension` int(11) NOT NULL,
   `id_provider` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -87,10 +87,10 @@ INSERT INTO `parts` (`id_part`, `description`, `last_modification`, `long_dimens
 
 CREATE TABLE `part_records` (
   `id_part_record` bigint(20) NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `normal_price` double DEFAULT NULL,
-  `sale_price` double DEFAULT NULL,
-  `urgent_price` double DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `normal_price` double NOT NULL,
+  `sale_price` double NOT NULL,
+  `urgent_price` double NOT NULL,
   `id_discount_rate` bigint(20) NOT NULL,
   `id_part` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -122,10 +122,10 @@ INSERT INTO `part_records` (`id_part_record`, `created_at`, `normal_price`, `sal
 
 CREATE TABLE `providers` (
   `id_provider` bigint(20) NOT NULL,
-  `address` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `country` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `phone` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL
+  `address` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `country` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_spanish_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --

@@ -22,12 +22,13 @@ public class PartRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_part_record")
     private Long idPartRecord;
+    @Column(nullable = false)
     private Date createdAt;
-    @Column(name = "normal_price", length = 6)
+    @Column(name = "normal_price", length = 6, nullable = false)
     private Double normalPrice;
-    @Column(name = "sale_price")
+    @Column(name = "sale_price", nullable = false)
     private Double salePrice;
-    @Column(name = "urgent_price", length = 6)
+    @Column(name = "urgent_price", length = 6, nullable = false)
     private Double urgentPrice;
 
     @JoinColumn(name = "id_part", nullable = false)
