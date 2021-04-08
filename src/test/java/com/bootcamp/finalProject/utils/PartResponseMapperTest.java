@@ -8,16 +8,18 @@ import com.bootcamp.finalProject.model.Provider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class PartResponseMapperTest {
+class PartResponseMapperTest {
 
     PartResponseMapper mapper = new PartResponseMapper();
-
+    SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
 
     @Test
-    public void correctConvert(){
+    void correctConvert(){
         //arrange
         List<PartResponseDTO> expected = new ArrayList<>();
 
@@ -33,7 +35,7 @@ public class PartResponseMapperTest {
         expectedIn.setWidthDimension(2);
         expectedIn.setLongDimension(21);
         expectedIn.setTallDimension(32);
-        expectedIn.setLastModification(null);
+        expectedIn.setLastModification(datePattern.format(new Date()));
         expected.add(expectedIn);
 
         //act
@@ -46,7 +48,7 @@ public class PartResponseMapperTest {
 
     public List<Part> getParts(){
         List<Part> partList = new ArrayList<>();
-        Part part1 = new Part(99L,82,"parte1",2,32,21,22,32,null,null,null);
+        Part part1 = new Part(99L,82,"parte1",2,32,21,22,32,new Date(),null,null);
 
         PartRecord partRecord1 = new PartRecord(1L,null,99.99,null,200.99,null,null);
         Provider provider = new Provider();
