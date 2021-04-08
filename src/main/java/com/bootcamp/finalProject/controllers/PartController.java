@@ -9,6 +9,7 @@ import com.bootcamp.finalProject.services.PartService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,8 @@ public class PartController {
         requestDTO.setDate(validateDates(params.get("date")));
         //requestDTO.setOrder(Integer.parseInt(params.get("order")));
         requestDTO.setOrder((params.get("order")==null)? 1: Integer.parseInt(params.get("order")));
+
+
         return service.findPart(requestDTO);
     }
 

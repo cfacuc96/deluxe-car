@@ -44,7 +44,6 @@ public class PartResponseMapperTest {
         Assertions.assertIterableEquals(expected,actual);
     }
 
-
     public List<Part> getParts(){
         List<Part> partList = new ArrayList<>();
         Part part1 = new Part(99L,82,"parte1",2,32,21,22,32,null,null,null);
