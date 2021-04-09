@@ -29,8 +29,19 @@ public class PartController {
     @Autowired
     IPartService service;
 
+
     @Autowired
     IOrderService orderService;
+
+    /**
+     * GET method to search list of parts, it receives a map with the following data
+     * queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION
+     * date:  date for de query consultation
+     * order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange
+     * @param params map of parameters given by user
+     * @return List<PartResponseDTO> that contains the list of parts that have had a change according to the query
+     */
+
 
     @GetMapping("list")
     public List<PartResponseDTO> findPart(@Nullable @RequestParam Map<String, String> params) throws Exception {
