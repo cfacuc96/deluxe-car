@@ -24,6 +24,8 @@ public class OrderDetail {
     private String accountType;
     @Column(nullable = false)
     private Integer quantity;
+    @Column(length = 100)
+    private String reason;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_part", nullable = false)

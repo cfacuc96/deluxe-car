@@ -12,5 +12,5 @@ public class OrderDetailDTO
     private String partCode;
     private String description;
     private Integer quantity;
-    //private String reason;
+    private String reason;
 }
