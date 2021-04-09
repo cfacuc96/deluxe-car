@@ -5,6 +5,7 @@ import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.InvalidDateException;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
+import com.bootcamp.finalProject.mnemonics.QueryType;
 import org.assertj.core.util.DateUtil;
 
 import java.text.DateFormat;
@@ -42,6 +43,28 @@ public class ValidationController {
             e.getStackTrace();
         }
         return newDate;
+    }
+
+    /**
+     * checks if params received in list endpoint are correct
+     * It concentrates on verifying whether or not the date parameter
+     * was included or not for COMPLETE type queries
+     * @param params
+     * @throws IncorrectParamsGivenException
+     */
+    public static void isListEndpointMapValid(Map<String,String> params) throws InternalExceptionHandler{
+
+        if (params.get("queryType")==null && params.get("date")==null && params.get("order")==null)
+            throw new IncorrectParamsGivenException("Empty Parameters");
+
+        if (params.get("date")!=null &&
+                params.get("queryType")!=null &&
+                params.get("queryType").equals(QueryType.COMPLETE))
+            throw new IncorrectParamsGivenException("for a complete search the date is not necessary");
+
+        if (params.get("date")!=null && !params.containsKey("queryType"))
+            throw new IncorrectParamsGivenException("for a date it is necessary to " +
+                    "specify if the query will be of partial type or of variation type");
     }
 
     /**
