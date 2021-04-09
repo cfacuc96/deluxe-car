@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.ErrorDTO;
+import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
@@ -41,6 +42,22 @@ public class PartController {
         requestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
 
         return service.findPart(requestDTO);
+    }
+
+    /**
+     * GET method to search orders, it receives a map with the following data
+     * dealerNumber:  identification of dealer whose orders are to be looked for
+     * deliveryStatus:  ["P","D","F","C"] -> Pending, Delayed, Finished, Cancelled
+     * order: ["1","2"] -> orderDate ASC, orderDate DESC
+     * @param params map of parameters given by user
+     * @return OrderResponseDTO that contains the list of found orders
+     */
+    @GetMapping("orders")
+    public OrderResponseDTO ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
+        //Validations
+        ValidationController.isOrdersEndpointMapValid(params);
+        //TODO return service
+        return null;
     }
 
 
