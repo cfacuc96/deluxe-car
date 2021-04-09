@@ -1,35 +1,91 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.OrderRequestDTO;
+import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
+import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
+import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Part;
+import com.bootcamp.finalProject.mnemonics.QueryType;
+import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.utils.PartResponseMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface PartService {
-    void save(Part part);
+import static com.bootcamp.finalProject.utils.ValidationPartUtils.*;
 
-    void delete(Long id);
+@Service
+public class PartService implements IPartService {
 
-    Part findById(Long id);
+    PartResponseMapper mapper = new PartResponseMapper();
 
-    List<Part> findAll();
-    /**
-     * Find parts depending on the type of query passed as a parameter.
-     * If queryType is "C", finds all parts
-     * If queryType is "P" - date Not Null, finds all parts that have been modified since the date
-     * If queryType is "V" - date Not Null, finds all the parts that the price was modified from the date
-     * All parts are ordered by default by their part code when no ordering is passed as a parameter
-     * otherwise the ordering passed by parameter is taken.
-     * @param requestDTO Not Nulleable
-     *      partRequest.queryType Not Null or Empty
-     *      partRequest.order Not Null
-     *      partRequest.date Null if partRequest.queryType different than "C"
-     * @return List of PartResponseDTO mapped from List of Part.
-     * @throws TypeOfQueryException If typeOfQuery is null or is different than "C", "P", "V"
-     * @throws OrderTypeException If order is differete than 0, 1, 2, 3
-     */
-    List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
+    @Autowired
+    private PartRepository partRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Override
+    public void save(Part part) {
+        partRepository.save(part);
+    }
+
+    @Override
+    public void delete(Long id) {
+        partRepository.deleteById(id);
+    }
+
+    @Override
+    public Part findById(Long id) {
+        return partRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Part> findAll() {
+        return partRepository.findAll();
+    }
+
+    public List<PartResponseDTO> findPart(PartRequestDTO partRequest) throws TypeOfQueryException, OrderTypeException {
+        List<Part> parts = new ArrayList<>();
+        if (typeOfQueryValidation(partRequest.getQueryType())) {
+            Sort sort = POrderTypeValidation(partRequest.getOrder());
+            switch (partRequest.getQueryType()) {
+                case QueryType.COMPLETE:
+                    parts = partRepository.findAll(sort);
+                    break;
+                case QueryType.PARTIAL:
+                    parts = partRepository.findByLastModification(partRequest.getDate(), sort);
+                    break;
+                case QueryType.VARIATION:
+                    parts = partRepository.findByPriceCreateAt(partRequest.getDate(), sort);
+                    break;
+                default:
+                    throw new TypeOfQueryException();
+            }
+        }
+        return mapper.toDTO(parts);
+    }
+
+    public List<OrderResponseDTO> findOrder(OrderRequestDTO orderRequest) throws OrderTypeException {
+        List<Order> orders = new ArrayList<>();
+        if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
+            Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
+            if (orderRequest.getDeliveryStatus() == null) {
+                orders = orderRepository.findAll(sort);
+            } else {
+                orders = orderRepository.findByDeliveryStatus(orderRequest.getDeliveryStatus(), sort);
+            }
+
+        }
+        //TODO: AGREGAR LO DEL MAPER.
+        //return mapper.toDTO(orders);
+        return null;
+    }
 }
