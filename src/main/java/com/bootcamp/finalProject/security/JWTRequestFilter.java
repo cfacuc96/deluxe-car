@@ -1,8 +1,11 @@
 package com.bootcamp.finalProject.security;
 
 import com.bootcamp.finalProject.utils.JwtUtil;
+import io.jsonwebtoken.JwtException;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -23,16 +26,32 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
         String username = null;
         String jwt = null;
 
+        try {
+            jwt = jwtUtil.resolveToken(httpServletRequest);
+            if (jwt != null && jwtUtil.validateToken(jwt)) {
+                Authentication auth = jwtUtil.getAuthentication(jwt);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }catch (Exception e){
+
+        }
+
+        /*
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
         }
+
+
+
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailService.loadUserByUsername(username);
@@ -46,6 +65,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+         */
+
         filterChain.doFilter(httpServletRequest,httpServletResponse);
+
+
     }
 }

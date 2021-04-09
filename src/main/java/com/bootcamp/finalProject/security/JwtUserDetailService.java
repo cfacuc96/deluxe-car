@@ -27,10 +27,18 @@ public class JwtUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userRep.findByUsername(userName);
-        //User user = new User("foo",bcryptEncoder.encode("foo"),true,null);
+        //User user = new User("foo",bcryptEncoder.encode("foo"),true,new ArrayList<>());
         if(user == null){
             throw new Exception("invalid user");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return  org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getRoles())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
     }
 }
