@@ -5,13 +5,10 @@ import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
-import com.bootcamp.finalProject.model.Part;
-import com.bootcamp.finalProject.services.PartService;
+import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.utils.ValidationController;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +26,7 @@ import static com.bootcamp.finalProject.utils.ValidationController.validateDateF
 public class PartController {
 
     @Autowired
-    PartService service;
+    IPartService service;
 
     @GetMapping("list")
     public List<PartResponseDTO> obtainList(@Nullable @RequestParam Map<String, String> params) throws Exception {
