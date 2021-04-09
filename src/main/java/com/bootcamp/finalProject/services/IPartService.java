@@ -1,9 +1,9 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
@@ -37,5 +37,5 @@ public interface IPartService {
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
 
-    List<OrderResponseDTO> findOrder(OrderRequestDTO requestDTO) throws OrderTypeException, SubsidiaryNotFoundException, DeliveryStatusException;
+    List<SubsidiaryResponseDTO> findOrder(OrderRequestDTO requestDTO) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException ;
 }
