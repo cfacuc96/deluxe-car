@@ -37,13 +37,13 @@ public class MapperUtils
         if(deliveredDate != null)
         {
             long diffInMillies = Math.abs(deliveryDate.getTime() - deliveredDate.getTime());
-            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) + 1));
+            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
         }
         else
         {
             Date current = new Date();
             long diffInMillies = Math.abs(deliveryDate.getTime() - current.getTime());
-            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) + 1));
+            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
         }
 
 

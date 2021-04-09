@@ -4,7 +4,7 @@ import com.bootcamp.finalProject.dtos.ErrorDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.services.IOrderService;
+import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.utils.ValidationController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class PartController {
 
 
     @Autowired
-    IOrderService orderService;
+    IWarehouseService warehouseService;
 
     /**
      * GET method to search list of parts, it receives a map with the following data
@@ -74,7 +74,7 @@ public class PartController {
         orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") ==null ? null : params.get("deliveryStatus"));
         orderRequestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
         //
-        return orderService.findSubsidiaryOrders(orderRequestDTO);
+        return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
 
 
