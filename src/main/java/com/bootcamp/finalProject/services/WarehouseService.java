@@ -10,6 +10,7 @@ import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
+import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import static com.bootcamp.finalProject.utils.ValidationPartUtils.deliveryStatus
 @Service
 public class WarehouseService implements IWarehouseService {
 
-    OrderResponseMapper mapperOrder = new OrderResponseMapper();
+    SubsidiaryResponseMapper subsidiaryMapper = new SubsidiaryResponseMapper();
 
     @Autowired
     private OrderRepository orderRepository;
@@ -50,6 +51,6 @@ public class WarehouseService implements IWarehouseService {
         }else{
             throw new DeliveryStatusException();
         }
-        return mapperOrder.toDTO(subsidiary);
+        return subsidiaryMapper.toDTO(subsidiary);
     }
 }
