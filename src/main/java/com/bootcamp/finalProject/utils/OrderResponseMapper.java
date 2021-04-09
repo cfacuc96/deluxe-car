@@ -27,7 +27,7 @@ public class OrderResponseMapper
                         getDifferencesInDays(f.getDeliveryDate(),f.getDeliveredDate()),
                         f.getDeliveryStatus(),
                         f.getOrderDetails().stream().map(g ->
-                new OrderDetailDTO(completeNumberByLength(String.valueOf(g.getPartOrder().getPartCode()),8),
+                new OrderDetailDTO(String.valueOf(g.getPartOrder().getPartCode()),
                         g.getPartOrder().getDescription(),
                         g.getQuantity()
                 )).collect(Collectors.toList()))
@@ -65,7 +65,11 @@ public class OrderResponseMapper
 
     private Integer getDifferencesInDays(Date deliveryDate, Date deliveredDate)
     {
-        long diffInMillies = Math.abs(deliveredDate.getTime() - deliveredDate.getTime());
-        return Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) + 1));
+        Integer result = 0;
+        if(deliveredDate != null){
+            long diffInMillies = Math.abs(deliveryDate.getTime() - deliveredDate.getTime());
+            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS) + 1));
+        }
+        return result;
     }
 }

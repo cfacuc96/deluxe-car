@@ -32,5 +32,4 @@ public class Subsidiary {
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Order> orders;
 
-
 }
