@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
 
 @RestController
@@ -30,11 +31,14 @@ public class PartController {
 
     @GetMapping("list")
     public List<PartResponseDTO> obtainList(@Nullable @RequestParam Map<String, String> params) throws Exception {
+        //Validations
+        isListEndpointMapValid(params);
+        //Set parameters for PartRequestDto
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
         requestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
-
+        //Call to service service
         return service.findPart(requestDTO);
     }
 
