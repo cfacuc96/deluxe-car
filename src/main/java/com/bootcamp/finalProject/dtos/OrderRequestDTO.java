@@ -8,7 +8,7 @@ import lombok.Setter;
 
 public class OrderRequestDTO {
 
-    private Integer dealerNumber;
+    private Long dealerNumber;
     private String deliveryStatus;
     private Integer order;
 }
