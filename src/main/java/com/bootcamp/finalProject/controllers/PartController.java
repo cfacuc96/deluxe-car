@@ -53,7 +53,12 @@ public class PartController {
     public SubsidiaryResponseDTO ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
         //Validations
         ValidationController.isOrdersEndpointMapValid(params);
-        //TODO return service
+        //Setting values to OrderRequestDTO
+        OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
+        orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
+        orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") ==null ? null : params.get("deliveryStatus"));
+        orderRequestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
+        //
         return null;
     }
 
