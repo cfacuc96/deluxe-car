@@ -28,6 +28,7 @@ public class Subsidiary {
     @Column(nullable = false)
     private String country;
 
+    @OrderBy("orderDate DESC")
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Order> orders;
 

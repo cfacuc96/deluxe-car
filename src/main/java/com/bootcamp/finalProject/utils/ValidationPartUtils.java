@@ -55,7 +55,6 @@ public class ValidationPartUtils {
             return true;
         } else return deliveryStatus.equals("P") | deliveryStatus.equals("D")
                 | deliveryStatus.equals("F") | deliveryStatus.equals("C");
-        //TODO: CAMBIAR EL TIPO DE EXCEPTION.
     }
 
     public static Sort DSOrderTypeValidation(Integer order) throws OrderTypeException {
