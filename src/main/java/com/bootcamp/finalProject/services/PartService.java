@@ -30,16 +30,9 @@ import static com.bootcamp.finalProject.utils.ValidationPartUtils.*;
 public class PartService implements IPartService {
 
     PartResponseMapper mapper = new PartResponseMapper();
-    OrderResponseMapper mapperOrder = new OrderResponseMapper();
 
     @Autowired
     private PartRepository partRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private ISubsidiaryRepository subsidiaryRepository;
 
     @Override
     public void save(Part part) {
@@ -82,23 +75,4 @@ public class PartService implements IPartService {
         return mapper.toDTO(parts);
     }
 
-    public SubsidiaryResponseDTO findOrder(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
-        List<Order> orders = new ArrayList<>();
-        Subsidiary subsidiary = null;
-        if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
-            Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
-            Long idSubsidiary = orderRequest.getDealerNumber();
-            if (orderRequest.getDeliveryStatus() == null) {
-                subsidiary = subsidiaryRepository.findById(idSubsidiary).orElse(null);
-            } else {
-                subsidiary = subsidiaryRepository.findByDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus());
-            }
-            if(subsidiary == null){
-                throw new SubsidiaryNotFoundException();
-            }
-        }else{
-            throw new DeliveryStatusException();
-        }
-        return mapperOrder.toDTO(subsidiary);
-    }
 }
