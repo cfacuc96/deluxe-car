@@ -14,4 +14,7 @@ public interface ISubsidiaryRepository extends JpaRepository<Subsidiary, Long> {
 
     @Query("FROM Subsidiary s WHERE s.id >= :date")
     Subsidiary findByDeliveryStatus(@Param("idSubsidiary") Long idSubsidiary, @Param("deliveryStatus") String deliveryStatus);
+
+    @Query("FROM Subsidiary s JOIN s.orders o WHERE s.idSubsidiary = :idSubsidiary ORDER BY o.orderDate :sort")
+    Subsidiary findByIdOrder(@Param("idSubsidiary") Long idSubsidiary, @Param("sort") String sort);
 }
