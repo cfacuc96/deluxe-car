@@ -51,3 +51,28 @@ UPDATE `parts` SET
 	`last_modification` = '2021-04-07 10:53:11'
 WHERE
     `id_part` = 10;
+
+INSERT INTO `subsidiaries` (`id_subsidiary`, `address`, `country`, `name`, `phone`) VALUES
+(NULL, 'Mi casa', 'Uruguay', 'Mercedez Uruguay', '123456'),
+(NULL, 'Mi direccion', 'Argentina', 'Mercedez Argentina', '789123'),
+(NULL, 'My home', 'Colombia', 'Mercedez Colombia', '3456789');
+
+INSERT INTO `orders` (`id_order`, `delivered_date`, `delivery_date`, `delivery_status`, `order_date`, `id_subsidiary`) VALUES
+(NULL, NULL, '2021-04-09 14:17:58.000000', 'P', '2021-04-01 09:17:58.000000', '1'),
+(NULL, '2021-04-04 14:17:58.000000', '2021-04-04 14:17:58.000000', 'F', '2021-04-01 14:17:58.000000', '2'),
+(NULL, NULL, '2021-04-09 14:21:46', 'C', '2021-04-03 14:21:46', 1)
+(NULL, NULL, '2021-04-05 14:23:20.000000', 'D', '2021-04-01 14:23:20.000000', '2'),
+(NULL, '2021-04-07 14:17:58.000000', '2021-04-04 14:17:58.000000', 'F', '2021-04-01 14:17:58.000000', '3');
+
+INSERT INTO `order_details` (`id_order_detail`, `account_type`, `quantity`, `id_order`, `id_part`) VALUES
+(NULL, 'R', '999', '3', '1'),
+(NULL, 'R', '5', '1', '5'),
+(NULL, 'R', '5', '1', '6'),
+(NULL, 'R', '5', '1', '7'),
+(NULL, 'G', '1', '1', '8'),
+(NULL, 'R', '140', '2', '1'),
+(NULL, 'R', '10', '4', '10'),
+(NULL, 'R', '10', '4', '3'),
+(NULL, 'R', '10', '4', '13'),
+(NULL, 'G', '1', '5', '3'),
+(NULL, 'G', '1', '5', '4');
