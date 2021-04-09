@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,12 +18,15 @@ public class User {
     private String username;
     private String password;
     private boolean active;
-    private String rol;
 
-    public User(String username, String password, boolean active, String rol) {
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    List<Role> roles;
+
+    public User(String username, String password, boolean active, List<Role> roles) {
         this.username = username;
         this.password = password;
         this.active = active;
-        this.rol = rol;
+        this.roles = roles;
     }
 }
