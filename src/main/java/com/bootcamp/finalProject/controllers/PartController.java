@@ -1,10 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
-import com.bootcamp.finalProject.dtos.ErrorDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.dtos.PartRequestDTO;
-import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.utils.ValidationController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +48,16 @@ public class PartController {
      * @return OrderResponseDTO that contains the list of found orders
      */
     @GetMapping("orders")
-    public OrderResponseDTO ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
+    public List<OrderResponseDTO> ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
         //Validations
         ValidationController.isOrdersEndpointMapValid(params);
-        //TODO return service
-        return null;
+        //Setting values to OrderRequestDTO
+        OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
+        orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
+        orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") ==null ? null : params.get("deliveryStatus"));
+        orderRequestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
+        //
+        return service.findOrder(orderRequestDTO);
     }
 
 
