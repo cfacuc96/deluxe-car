@@ -21,7 +21,7 @@ import static com.bootcamp.finalProject.utils.ValidationPartUtils.DSOrderTypeVal
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.deliveryStatusValidation;
 
 @Service
-public class OrderService implements IOrderService{
+public class WarehouseService implements IWarehouseService {
 
     OrderResponseMapper mapperOrder = new OrderResponseMapper();
 
@@ -40,6 +40,7 @@ public class OrderService implements IOrderService{
             Long idSubsidiary = orderRequest.getDealerNumber();
             if (orderRequest.getDeliveryStatus() == null) {
                 subsidiary = subsidiaryRepository.findByIdOrder(idSubsidiary);
+//                List<Order> = orderRepository.findByOrderByIdSubsidiary(idSubsidiary);
             } else {
                 subsidiary = subsidiaryRepository.findByDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus());
             }

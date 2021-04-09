@@ -6,6 +6,6 @@ import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 
-public interface IOrderService {
+public interface IWarehouseService {
     SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO requestDTO) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException;
 }
