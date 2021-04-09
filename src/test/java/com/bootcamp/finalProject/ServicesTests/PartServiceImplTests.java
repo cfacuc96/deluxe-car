@@ -15,7 +15,7 @@ public class PartServiceImplTests {
     @Mock
     PartRepository partRepository;
 
-    PartServiceImpl partService = new PartServiceImpl(partRepository);
+    //PartServiceImpl partService = new PartServiceImpl(partRepository);
 
 
 }
