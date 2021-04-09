@@ -1,14 +1,13 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
-import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.mnemonics.QueryType;
@@ -81,7 +80,8 @@ public class PartService implements IPartService {
         return mapper.toDTO(parts);
     }
 
-    public List<OrderResponseDTO> findOrder(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
+    public List<SubsidiaryResponseDTO> findOrder(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
+        List<Order> orders = new ArrayList<>();
         if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();

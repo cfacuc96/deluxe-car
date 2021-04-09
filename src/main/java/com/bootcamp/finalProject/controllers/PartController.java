@@ -1,5 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
+import com.bootcamp.finalProject.dtos.ErrorDTO;
+import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.services.IPartService;
@@ -56,7 +58,7 @@ public class PartController {
      * @return OrderResponseDTO that contains the list of found orders
      */
     @GetMapping("orders")
-    public OrderResponseDTO ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
+    public SubsidiaryResponseDTO ordersEndpoint(@RequestParam Map<String, String> params) throws InternalExceptionHandler{
         //Validations
         ValidationController.isOrdersEndpointMapValid(params);
         //TODO return service
