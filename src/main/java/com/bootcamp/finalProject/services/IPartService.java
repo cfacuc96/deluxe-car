@@ -37,5 +37,5 @@ public interface IPartService {
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
 
-    List<SubsidiaryResponseDTO> findOrder(OrderRequestDTO requestDTO) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException ;
+    SubsidiaryResponseDTO findOrder(OrderRequestDTO requestDTO) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException ;
 }

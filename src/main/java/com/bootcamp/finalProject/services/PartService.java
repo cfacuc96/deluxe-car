@@ -15,6 +15,7 @@ import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,6 +30,7 @@ import static com.bootcamp.finalProject.utils.ValidationPartUtils.*;
 public class PartService implements IPartService {
 
     PartResponseMapper mapper = new PartResponseMapper();
+    OrderResponseMapper mapperOrder = new OrderResponseMapper();
 
     @Autowired
     private PartRepository partRepository;
@@ -80,12 +82,12 @@ public class PartService implements IPartService {
         return mapper.toDTO(parts);
     }
 
-    public List<SubsidiaryResponseDTO> findOrder(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
+    public SubsidiaryResponseDTO findOrder(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
         List<Order> orders = new ArrayList<>();
+        Subsidiary subsidiary = null;
         if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();
-            Subsidiary subsidiary = null;
             if (orderRequest.getDeliveryStatus() == null) {
                 subsidiary = subsidiaryRepository.findById(idSubsidiary).orElse(null);
             } else {
@@ -97,6 +99,6 @@ public class PartService implements IPartService {
         }else{
             throw new DeliveryStatusException();
         }
-        return null;
+        return mapperOrder.toDTO(subsidiary);
     }
 }
