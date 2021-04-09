@@ -1,17 +1,21 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
+import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
+import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
-import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.mnemonics.QueryType;
+import com.bootcamp.finalProject.model.Subsidiary;
+import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,8 +33,6 @@ public class PartService implements IPartService {
 
     @Autowired
     private PartRepository partRepository;
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Override
     public void save(Part part) {
@@ -73,19 +75,4 @@ public class PartService implements IPartService {
         return mapper.toDTO(parts);
     }
 
-    public List<OrderResponseDTO> findOrder(OrderRequestDTO orderRequest) throws OrderTypeException {
-        List<Order> orders = new ArrayList<>();
-        if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
-            Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
-            if (orderRequest.getDeliveryStatus() == null) {
-                orders = orderRepository.findAll(sort);
-            } else {
-                orders = orderRepository.findByDeliveryStatus(orderRequest.getDeliveryStatus(), sort);
-            }
-
-        }
-        //TODO: AGREGAR LO DEL MAPER.
-        //return mapper.toDTO(orders);
-        return null;
-    }
 }
