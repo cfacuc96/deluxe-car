@@ -78,6 +78,9 @@ public class PartController {
     }
 
 
+    //@GetMapping()
+
+
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
         return new ResponseEntity<>(e.getError(), e.getReturnStatus());
