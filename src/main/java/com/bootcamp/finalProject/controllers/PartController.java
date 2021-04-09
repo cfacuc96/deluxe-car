@@ -1,10 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
-import com.bootcamp.finalProject.dtos.ErrorDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.dtos.PartRequestDTO;
-import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.utils.ValidationController;
 import org.springframework.beans.factory.annotation.Autowired;
