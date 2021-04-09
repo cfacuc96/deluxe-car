@@ -20,7 +20,7 @@ public interface PartService {
      * Find parts depending on the type of query passed as a parameter.
      * If queryType is "C", finds all parts
      * If queryType is "P" - date Not Null, finds all parts that have been modified since the date
-     * If quertType is "V" - date Not Null, finds all the parts that the price was modified from the date
+     * If queryType is "V" - date Not Null, finds all the parts that the price was modified from the date
      * All parts are ordered by default by their part code when no ordering is passed as a parameter
      * otherwise the ordering passed by parameter is taken.
      * @param requestDTO Not Nulleable
