@@ -4,26 +4,29 @@ import com.bootcamp.finalProject.dtos.ErrorDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.utils.ValidationController;
+import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
 
 import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
 
+
 @RestController
 @RequestMapping("/api/v1/parts")
+@Validated
 public class PartController {
 
     @Autowired
@@ -75,6 +78,19 @@ public class PartController {
         orderRequestDTO.setOrder((params.get("order") == null) ? 0 : Integer.parseInt(params.get("order")));
         //
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
+    }
+
+
+    @GetMapping("orders/{orderNumberCM}")
+    ///Por algun motivo no se esta haciendo la validacion, esta el tag @validate en el controller tal como la documentacion
+    public OrderDTO findByOrderNumberCM( @PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{3}$")  String orderNumberCM) throws InternalExceptionHandler {
+
+
+        if(!orderNumberCM.matches("^\\d{4}-\\d{3}$")){
+            throw new QueryException("pattern error");
+        }
+
+        return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
 

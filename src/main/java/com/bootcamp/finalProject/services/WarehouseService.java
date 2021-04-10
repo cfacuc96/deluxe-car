@@ -1,18 +1,24 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.OrderDTO;
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
+import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
+import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,5 +59,16 @@ public class WarehouseService implements IWarehouseService {
             throw new DeliveryStatusException();
         }
         return subsidiaryMapper.toDTO(subsidiary);
+    }
+
+    @Override
+    public OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
+        Long id =  Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
+
+        Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
+
+        Subsidiary s = subsidiaryRepository.findById(idSubsidiary).orElseThrow(() -> new SubsidiaryNotFoundException());
+        Order o = orderRepository.findByIdOrderAndSubsidiary(id, s).orElseThrow(() -> new OrderIdNotFoundException());
+        return new OrderResponseMapper().toDTO(o,s.getIdSubsidiary());
     }
 }
