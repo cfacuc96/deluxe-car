@@ -12,5 +12,6 @@ public class OrderDetailDTO
     private String partCode;
     private String description;
     private Integer quantity;
+    private String accountType;
     private String reason;
 }

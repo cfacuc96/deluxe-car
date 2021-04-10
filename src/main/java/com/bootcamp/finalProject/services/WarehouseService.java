@@ -9,7 +9,6 @@ import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
-import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -39,13 +38,15 @@ public class WarehouseService implements IWarehouseService {
         if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();
-            if (orderRequest.getDeliveryStatus() == null) {
-                subsidiary = subsidiaryRepository.findByIdOrder(idSubsidiary);
-//                List<Order> = orderRepository.findByOrderByIdSubsidiary(idSubsidiary);
-            } else {
-                subsidiary = subsidiaryRepository.findByDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus());
-            }
-            if(subsidiary == null){
+            subsidiary = subsidiaryRepository.findById(idSubsidiary).orElse(null);
+            if(subsidiary != null){
+                if (orderRequest.getDeliveryStatus() == null) {
+                  orders = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
+                } else {
+                  orders = orderRepository.findByIdSubsidiaryAndDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus(), sort);
+                }
+                subsidiary.setOrders(orders);
+            }else{
                 throw new SubsidiaryNotFoundException();
             }
         }else{
