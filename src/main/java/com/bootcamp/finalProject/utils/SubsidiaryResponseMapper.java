@@ -17,7 +17,7 @@ public class SubsidiaryResponseMapper
         String idSubsidiaryString = String.valueOf(subsidiary.getIdSubsidiary());
         ret.setDealerNumber(completeNumberByLength(idSubsidiaryString,4));
 
-        var orders = subsidiary.getOrders().stream().map(f -> mapper.toDTO(f)).collect(Collectors.toList());
+        var orders = subsidiary.getOrders().stream().map(f -> mapper.toDTO(f, subsidiary.getIdSubsidiary())).collect(Collectors.toList());
 
         ret.setOrders(orders);
 

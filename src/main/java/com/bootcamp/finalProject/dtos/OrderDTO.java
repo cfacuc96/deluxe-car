@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDTO
 {
-    private String orderNumber;
+    private String orderNumberCM;
     private String orderDate;
     private String deliveryDate;
     private Integer daysDelayed;

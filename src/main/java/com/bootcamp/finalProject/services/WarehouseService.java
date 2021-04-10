@@ -44,13 +44,15 @@ public class WarehouseService implements IWarehouseService {
         if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();
-            if (orderRequest.getDeliveryStatus() == null) {
-                subsidiary = subsidiaryRepository.findByIdOrder(idSubsidiary);
-//                List<Order> = orderRepository.findByOrderByIdSubsidiary(idSubsidiary);
-            } else {
-                subsidiary = subsidiaryRepository.findByDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus());
-            }
-            if(subsidiary == null){
+            subsidiary = subsidiaryRepository.findById(idSubsidiary).orElse(null);
+            if(subsidiary != null){
+                if (orderRequest.getDeliveryStatus() == null) {
+                  orders = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
+                } else {
+                  orders = orderRepository.findByIdSubsidiaryAndDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus(), sort);
+                }
+                subsidiary.setOrders(orders);
+            }else{
                 throw new SubsidiaryNotFoundException();
             }
         }else{
@@ -67,6 +69,6 @@ public class WarehouseService implements IWarehouseService {
 
         Subsidiary s = subsidiaryRepository.findById(idSubsidiary).orElseThrow(() -> new SubsidiaryNotFoundException());
         Order o = orderRepository.findByIdOrderAndSubsidiary(id, s).orElseThrow(() -> new OrderIdNotFoundException());
-        return new OrderResponseMapper().toDTO(o);
+        return new OrderResponseMapper().toDTO(o,s.getIdSubsidiary());
     }
 }
