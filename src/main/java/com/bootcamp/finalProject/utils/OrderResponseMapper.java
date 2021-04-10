@@ -14,11 +14,11 @@ public class OrderResponseMapper
     OrderDetailResponseMapper mapper = new OrderDetailResponseMapper();
     SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
     
-    public OrderDTO toDTO(Order order)
+    public OrderDTO toDTO(Order order, Long idSubsidiary)
     {
         OrderDTO ret = new OrderDTO();
 
-        ret.setOrderNumber(completeNumberByLength(String.valueOf(order.getIdOrder()),8));
+        ret.setOrderNumberCM(completeNumberByLength(String.valueOf(idSubsidiary),4) + "-" + completeNumberByLength(String.valueOf(order.getIdOrder()),8));
         ret.setOrderDate(datePattern.format(order.getOrderDate()));
         ret.setDeliveryDate(datePattern.format(order.getDeliveryDate()));
         ret.setDaysDelayed(getDifferencesInDays(order.getDeliveryDate(),order.getDeliveredDate()));

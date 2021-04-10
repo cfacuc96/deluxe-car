@@ -11,6 +11,7 @@ public class OrderDetailResponseMapper
 
         ret.setPartCode(String.valueOf(orderDetail.getPartOrder().getPartCode()));
         ret.setDescription(String.valueOf(orderDetail.getPartOrder().getDescription()));
+        ret.setAccountType(orderDetail.getAccountType());
         ret.setQuantity(orderDetail.getQuantity());
         ret.setReason(orderDetail.getReason());
 

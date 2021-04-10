@@ -1,17 +1,12 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.AuthenticateDTO;
-import com.bootcamp.finalProject.dtos.AutenticateResponseDTO;
-import com.bootcamp.finalProject.dtos.UserDTO;
 import com.bootcamp.finalProject.security.JwtUserDetailService;
 import com.bootcamp.finalProject.services.IAuthenticationService;
 import com.bootcamp.finalProject.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
