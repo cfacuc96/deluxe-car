@@ -17,6 +17,8 @@ import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +60,13 @@ public class WarehouseService implements IWarehouseService {
     }
 
     @Override
-    public OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException {
+    public OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
+        Long id =  Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
-        Order o = orderRepository.findById(Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM))).orElseThrow(() -> new OrderIdNotFoundException());
+        Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
+
+        Subsidiary s = subsidiaryRepository.findById(idSubsidiary).orElseThrow(() -> new SubsidiaryNotFoundException());
+        Order o = orderRepository.findByIdOrderAndSubsidiary(id, s).orElseThrow(() -> new OrderIdNotFoundException());
         return new OrderResponseMapper().toDTO(o);
     }
 }

@@ -1,16 +1,16 @@
-package com.bootcamp.finalProject.ControllerTests;
+package com.bootcamp.finalProject.controllers;
 
-import com.bootcamp.finalProject.controllers.PartController;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootTest
-class ControllerTests {
+class PartControllerTest {
 
 	PartController partController = new PartController();
 
@@ -60,5 +60,15 @@ class ControllerTests {
 		order.put("order", "2");
 		order.put("date", "2020-12-12");
 		Assertions.assertDoesNotThrow(() -> partController.findPart(order));
+	}
+
+	@Test
+
+	void getOrderByOrderNumberCMShouldThrowException(){
+		//Arrange
+		String s  = "000-478";
+		///Act and Assert
+		Assertions.assertThrows(Exception.class,()->{partController.findByOrderNumberCM(s);});
+
 	}
 }

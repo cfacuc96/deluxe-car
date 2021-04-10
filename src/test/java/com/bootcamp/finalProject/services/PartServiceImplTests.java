@@ -1,4 +1,4 @@
-package com.bootcamp.finalProject.ServicesTests;
+package com.bootcamp.finalProject.services;
 
 
 import com.bootcamp.finalProject.repositories.PartRepository;
