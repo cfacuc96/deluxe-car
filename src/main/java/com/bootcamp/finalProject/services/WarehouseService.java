@@ -14,7 +14,6 @@ import com.bootcamp.finalProject.repositories.OrderRepository;
 import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

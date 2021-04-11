@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -34,38 +35,48 @@ public class PartServiceTests {
 
     @Test
     public void findPartThrowsExceptionTypeOfQueryNull() {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(1);
 
+        //Act and Assert
         Assertions.assertThrows(TypeOfQueryException.class, () -> partService.findPart(requestDTO));
     }
 
     @Test
     public void findPartThrowsExceptionTypeOfQueryDiff() {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(1);
         requestDTO.setQueryType("A");
 
+        //Act and Assert
         Assertions.assertThrows(TypeOfQueryException.class, () -> partService.findPart(requestDTO));
     }
 
     @Test
     public void findPartTypeOfQueryC() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setOrder(1);
         requestDTO.setQueryType("C");
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findAll(Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartTypeOfQueryP() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(1);
@@ -73,13 +84,18 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartTypeOfQueryV() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(1);
@@ -87,22 +103,29 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByPriceCreateAt(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartThrowsExceptionOrderTypeDiff() {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setOrder(4);
         requestDTO.setQueryType("C");
 
+        //Act and Assert
         Assertions.assertThrows(OrderTypeException.class, () -> partService.findPart(requestDTO));
     }
 
     @Test
     public void findPartOrderType0() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(0);
@@ -110,13 +133,18 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartOrderType1() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(1);
@@ -124,13 +152,18 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "description"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartOrderType2() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(2);
@@ -138,13 +171,18 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.DESC, "description"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void findPartOrderType3() throws OrderTypeException, TypeOfQueryException {
+        //Arrange
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setDate(new Date());
         requestDTO.setOrder(3);
@@ -152,8 +190,12 @@ public class PartServiceTests {
 
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
+        //Act
         when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.DESC, "lastModification"))).thenReturn(new ArrayList<>());
 
-        Assertions.assertEquals(expected, partService.findPart(requestDTO));
+        List<PartResponseDTO> actual = partService.findPart(requestDTO);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
     }
 }
