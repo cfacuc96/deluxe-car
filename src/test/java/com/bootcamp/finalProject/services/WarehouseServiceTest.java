@@ -15,6 +15,7 @@ import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
@@ -31,17 +32,17 @@ import static org.mockito.MockitoAnnotations.openMocks;
 @SpringBootTest
 public class WarehouseServiceTest {
 
+    @InjectMocks
+    WarehouseService warehouseService;
+
     @Mock
     OrderRepository orderRepository;
     @Mock
     ISubsidiaryRepository subsidiaryRepository;
 
-    IWarehouseService warehouseService;
-
     @BeforeEach
     void initSetUp() {
         openMocks(this);
-        this.warehouseService = new WarehouseService(orderRepository, subsidiaryRepository);
     }
 
     @Test

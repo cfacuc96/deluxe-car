@@ -8,6 +8,7 @@ import com.bootcamp.finalProject.mnemonics.QueryType;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,8 @@ public class PartService implements IPartService {
 
     PartResponseMapper mapper = new PartResponseMapper();
 
+    @Autowired
     private PartRepository partRepository;
-
-    public PartService(PartRepository partRepository){
-        this.partRepository = partRepository;
-    }
 
     public List<PartResponseDTO> findPart(PartRequestDTO partRequest) throws TypeOfQueryException, OrderTypeException {
         List<Part> parts = new ArrayList<>();

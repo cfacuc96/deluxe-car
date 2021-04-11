@@ -8,6 +8,7 @@ import com.bootcamp.finalProject.repositories.PartRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
@@ -22,15 +23,15 @@ import static org.mockito.MockitoAnnotations.openMocks;
 @SpringBootTest
 public class PartServiceTests {
 
+    @InjectMocks
+    PartService partService;
+
     @Mock
     PartRepository partRepository;
-
-    IPartService partService;
 
     @BeforeEach
     void initSetUp() {
         openMocks(this);
-        partService = new PartService(partRepository);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class PartServiceTests {
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
         //Act
-        when(partRepository.findAll(Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
+        when(partRepository.findAll(Sort.by(Sort.Direction.ASC, "description"))).thenReturn(new ArrayList<>());
 
         List<PartResponseDTO> actual = partService.findPart(requestDTO);
 
@@ -85,7 +86,7 @@ public class PartServiceTests {
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
         //Act
-        when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
+        when(partRepository.findByLastModification(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "description"))).thenReturn(new ArrayList<>());
 
         List<PartResponseDTO> actual = partService.findPart(requestDTO);
 
@@ -104,7 +105,7 @@ public class PartServiceTests {
         ArrayList<PartResponseDTO> expected = new ArrayList<>();
 
         //Act
-        when(partRepository.findByPriceCreateAt(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "partCode"))).thenReturn(new ArrayList<>());
+        when(partRepository.findByPriceCreateAt(requestDTO.getDate(), Sort.by(Sort.Direction.ASC, "description"))).thenReturn(new ArrayList<>());
 
         List<PartResponseDTO> actual = partService.findPart(requestDTO);
 
