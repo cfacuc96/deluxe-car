@@ -25,7 +25,7 @@ public class ValidationPartUtils {
      * @throws OrderTypeException If order is differete than 0, 1, 2, 3
      */
     public static Sort POrderTypeValidation(Integer order) throws OrderTypeException {
-        Sort sort = null;
+        Sort sort;
         switch (order) {
             case OrderType.DEFAULT:
                 sort = Sort.by(Sort.Direction.ASC, "partCode");
