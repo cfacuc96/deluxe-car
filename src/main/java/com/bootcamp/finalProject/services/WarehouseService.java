@@ -3,10 +3,7 @@ package com.bootcamp.finalProject.services;
 import com.bootcamp.finalProject.dtos.OrderDTO;
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
-import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
-import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
-import com.bootcamp.finalProject.exceptions.OrderTypeException;
-import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
+import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
@@ -41,17 +38,13 @@ public class WarehouseService implements IWarehouseService {
         if (deliveryStatusValidation(orderRequest.getDeliveryStatus())) {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();
-            subsidiary = subsidiaryRepository.findById(idSubsidiary).orElse(null);
-            if (subsidiary != null) {
+            subsidiary = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
                 if (orderRequest.getDeliveryStatus() == null) {
                     orders = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
                 } else {
                     orders = orderRepository.findByIdSubsidiaryAndDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus(), sort);
                 }
                 subsidiary.setOrders(orders);
-            } else {
-                throw new SubsidiaryNotFoundException();
-            }
         } else {
             throw new DeliveryStatusException();
         }

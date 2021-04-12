@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class PartRecord {
     @Column(name = "id_part_record")
     private Long idPartRecord;
     @Column(nullable = false)
+    @CreationTimestamp
     private Date createdAt;
     @Column(name = "normal_price", length = 6, nullable = false)
     private Double normalPrice;
@@ -32,12 +34,24 @@ public class PartRecord {
     private Double urgentPrice;
 
     @JoinColumn(name = "id_part", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private Part part;
 
     @JoinColumn(name = "id_discount_rate", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private DiscountRate discountRate;
+
+    public PartRecord(Double normalPrice,
+                      Double salePrice,
+                      Double urgentPrice,
+                      Part part,
+                      DiscountRate discountRate) {
+        this.normalPrice = normalPrice;
+        this.salePrice = salePrice;
+        this.urgentPrice = urgentPrice;
+        this.part = part;
+        this.discountRate = discountRate;
+    }
 }
