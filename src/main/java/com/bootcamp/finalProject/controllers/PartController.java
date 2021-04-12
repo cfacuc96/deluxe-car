@@ -4,6 +4,7 @@ import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
+import com.bootcamp.finalProject.mnemonics.OrderType;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.services.IPartService;
@@ -51,7 +52,7 @@ public class PartController {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
-        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? 0 : Integer.parseInt(params.get("order")));
+        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? OrderType.DEFAULT : Integer.parseInt(params.get("order")));
         //Call to service
         return service.findPart(requestDTO);
     }
@@ -73,7 +74,7 @@ public class PartController {
         OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
         orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
         orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") == null ? null : params.get("deliveryStatus"));
-        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? 0 : Integer.parseInt(params.get("order")));
+        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? OrderType.DEFAULT : Integer.parseInt(params.get("order")));
 
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
