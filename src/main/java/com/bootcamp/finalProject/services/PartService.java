@@ -136,7 +136,9 @@ public class PartService implements IPartService {
                 partRecord.setDiscountRate(discountRate);
             }
             partRecord.setCreatedAt(now);
+            partRecord.setPart(part);
             part.getPartRecords().add(partRecord);
+            update = true;
         }
         if (partDTO.getMakerId() != null) {
             Provider provider = findProviderById(partDTO.getMakerId());

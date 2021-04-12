@@ -10,6 +10,7 @@ import org.hibernate.annotations.Fetch;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -41,16 +42,27 @@ public class Part {
     private Date lastModification; //Se encarga de guardar la fecha de la ultima modificacion tanto de precio como un atributo
 
     @OrderBy("created_at DESC") //Trae la lista de partRecords ordenada por fecha de createAt (Primero trae la ultima modificacion agregada)
-    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "part", cascade = CascadeType.ALL)
     private List<PartRecord> partRecords; //historial de precios que tuvo el producto
 
     @JoinColumn(name = "id_provider", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonBackReference
     private Provider provider;
 
-    @OneToMany(mappedBy = "partOrder", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "partOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Part part = (Part) o;
+        return Objects.equals(idPart, part.idPart) && Objects.equals(partCode, part.partCode);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPart, partCode);
+    }
 }
