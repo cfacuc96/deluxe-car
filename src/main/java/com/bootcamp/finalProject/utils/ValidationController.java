@@ -60,8 +60,7 @@ public class ValidationController {
             try {
                 Integer.parseInt(params.get("order"));
             } catch (Exception e) {
-                throw new IncorrectParamsGivenException("the order parameter must " +
-                        "correspond to an integer numeric value");
+                throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
             }
         }
 
@@ -71,11 +70,10 @@ public class ValidationController {
         if (params.get("date") != null &&
                 params.get("queryType") != null &&
                 params.get("queryType").equals(QueryType.COMPLETE))
-            throw new IncorrectParamsGivenException("for a complete search the date is not necessary");
+            throw new IncorrectParamsGivenException(ExceptionMessage.DATE_NOT_NECESSARY);
 
         if (params.get("date") != null && !params.containsKey("queryType"))
-            throw new IncorrectParamsGivenException("for a date it is necessary to " +
-                    "specify if the query will be of partial type or of variation type");
+            throw new IncorrectParamsGivenException(ExceptionMessage.DATE_IS_NECESSARY);
     }
 
     /**
@@ -91,8 +89,7 @@ public class ValidationController {
             try {
                 Integer.parseInt(params.get("order"));
             } catch (Exception e) {
-                throw new IncorrectParamsGivenException("the order parameter must " +
-                        "correspond to an integer numeric value");
+                throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
             }
         }
 
@@ -100,11 +97,11 @@ public class ValidationController {
             throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
         if (!params.containsKey("dealerNumber"))
-            throw new IncorrectParamsGivenException("dealerNumber is missing from request");
+            throw new IncorrectParamsGivenException(ExceptionMessage.MISSING_DEALER_NUMBER);
 
         if (params.containsKey("deliveryStatus")) {
             if (!DeliveryStatus.DELIVERY_STATUS_VALUES.contains(params.get("deliveryStatus"))) {
-                throw new IncorrectParamsGivenException("deliveryStatus not in " + DeliveryStatus.DELIVERY_STATUS_VALUES);
+                throw new IncorrectParamsGivenException(ExceptionMessage.NOT_CONTAINS_DELIVERY_STATUS + DeliveryStatus.DELIVERY_STATUS_VALUES);
             }
         }
     }
