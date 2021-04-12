@@ -32,7 +32,9 @@ public interface PartRepository extends JpaRepository<Part, Long> {
     @Query("FROM Part p JOIN p.partRecords pr WHERE pr.createdAt >= :date")
     List<Part> findByPriceCreateAt(@Param("date") Date date, Sort sort);
 
-    Optional<Part> findByPartCode(Integer partCode);
     @Query("FROM Part p WHERE p.partCode = :partCode")
     Part findByPartCode(@Param("partCode") Integer partCode);
+
+
+    boolean existByPartCode(Integer partCode);
 }
