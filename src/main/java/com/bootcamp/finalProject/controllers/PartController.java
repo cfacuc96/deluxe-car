@@ -49,7 +49,7 @@ public class PartController {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
-        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
+        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? 0 : Integer.parseInt(params.get("order")));
         //Call to service
         return service.findPart(requestDTO);
     }
@@ -71,7 +71,7 @@ public class PartController {
         OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
         orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
         orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") == null ? null : params.get("deliveryStatus"));
-        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
+        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? 0 : Integer.parseInt(params.get("order")));
 
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
