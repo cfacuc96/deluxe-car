@@ -50,6 +50,7 @@ public class Part {
     @JsonBackReference
     private Provider provider;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "partOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 

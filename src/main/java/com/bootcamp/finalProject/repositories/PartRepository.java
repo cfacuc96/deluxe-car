@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PartRepository extends JpaRepository<Part, Long> {
@@ -33,4 +34,7 @@ public interface PartRepository extends JpaRepository<Part, Long> {
 
     @Query("FROM Part p WHERE p.partCode = :partCode")
     Part findByPartCode(@Param("partCode") Integer partCode);
+
+
+    boolean existByPartCode(Integer partCode);
 }

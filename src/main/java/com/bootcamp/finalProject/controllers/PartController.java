@@ -17,6 +17,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +126,17 @@ public class PartController {
     @GetMapping("discountRates/{id}")
     public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
         return service.findDiscountRateById(id);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
+
+        if(part != null) {
+            service.newPart(part);
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                //.body("The part was crated successfully ");
+                .body(part);
     }
 
     @ExceptionHandler(InternalExceptionHandler.class)

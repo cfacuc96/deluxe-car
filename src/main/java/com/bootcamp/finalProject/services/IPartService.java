@@ -9,6 +9,7 @@ import com.bootcamp.finalProject.dtos.ProviderDTO;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
 
@@ -32,6 +33,7 @@ public interface IPartService {
      * @throws OrderTypeException If order is differete than 0, 1, 2, 3
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
+    Part newPart(PartDTO part) throws Exception;
     void updatePart(PartDTO part) throws InternalExceptionHandler;
 
     List<ProviderDTO> findAllProviders();

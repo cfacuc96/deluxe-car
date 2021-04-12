@@ -3,14 +3,9 @@ package com.bootcamp.finalProject.services;
 import com.bootcamp.finalProject.dtos.PartDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
-import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
+import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.ProviderDTO;
-import com.bootcamp.finalProject.exceptions.DiscountRateIDNotFoundException;
-import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.exceptions.OrderTypeException;
-import com.bootcamp.finalProject.exceptions.ProviderIdNotFoundException;
-import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.mnemonics.QueryType;
 import com.bootcamp.finalProject.model.DiscountRate;
@@ -28,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +40,7 @@ public class PartService implements IPartService {
 
     @Autowired
     private PartRepository partRepository;
+
 
     @Autowired
     IProviderRepository providerRepository;
@@ -72,6 +70,45 @@ public class PartService implements IPartService {
     }
 
     @Override
+    public Part newPart(PartDTO part) throws Exception {
+
+
+        //DiscountRate discountRate = new DiscountRate("a10","descuentico");
+        //Provider provider = new Provider("pepito","la villa","0992326", "123");
+        if(partRepository.existByPartCode(part.getPartCode())){
+            throw new PartAlreadyExistException(part.getPartCode());
+        }
+
+        DiscountRate discountRate = findDiscountRateById(part.getDiscountId());
+        Provider provider = findProviderById(part.getMakerId());
+
+
+        PartRecord partRecord = new PartRecord(null, new Date(), part.getNormalPrice(), part.getSalePrice() , part.getUrgentPrice(),null,discountRate);
+        List<PartRecord> listPartRecord = new ArrayList<>();
+        listPartRecord.add(partRecord);
+
+        Part r = new Part(
+                null,
+                part.getPartCode(),
+                part.getDescription(),
+                part.getWidthDimension(),
+                part.getTallDimension(),
+                part.getLongDimension(),
+                part.getNetWeight(),
+                part.getQuantity(),
+                new Date(),
+                listPartRecord,
+                provider,
+                null);
+
+        partRecord.setPart(r);
+        discountRate.setPartRecords(listPartRecord);
+
+        r = partRepository.save(r);
+
+        return r ;
+    }
+    
     public void updatePart(PartDTO partDTO) throws InternalExceptionHandler {
         if(partDTO.getPartCode() != null){
             Part part = partRepository.findByPartCode(partDTO.getPartCode());
