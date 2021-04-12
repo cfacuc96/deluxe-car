@@ -40,4 +40,16 @@ public class PartRecord {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private DiscountRate discountRate;
+
+    public PartRecord(Double normalPrice,
+                      Double salePrice,
+                      Double urgentPrice,
+                      Part part,
+                      DiscountRate discountRate) {
+        this.normalPrice = normalPrice;
+        this.salePrice = salePrice;
+        this.urgentPrice = urgentPrice;
+        this.part = part;
+        this.discountRate = discountRate;
+    }
 }

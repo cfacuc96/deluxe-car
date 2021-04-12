@@ -3,17 +3,19 @@ package com.bootcamp.finalProject.controllers;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,6 @@ import static com.bootcamp.finalProject.utils.ValidationController.validateDateF
 
 @RestController
 @RequestMapping("/api/v1/parts")
-@Validated
 public class PartController {
 
     @Autowired
@@ -52,6 +53,13 @@ public class PartController {
         requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
         //Call to service
         return service.findPart(requestDTO);
+    }
+
+    @PutMapping()
+    public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws IncorrectParamsGivenException {
+        service.updatePart(part);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("The part with partCode: " + part.getPartCode() + ", has been updated correctly.");
     }
 
     /**
@@ -90,5 +98,21 @@ public class PartController {
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
         return new ResponseEntity<>(e.getError(), e.getReturnStatus());
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException){
+        ErrorDTO error = new ErrorDTO();
+        error.setName("Invalid Format Exception !");
+        error.setDescription(errorException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException){
+        ErrorDTO error = new ErrorDTO();
+        error.setName("Method Argument Not Valid Exception !");
+        error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

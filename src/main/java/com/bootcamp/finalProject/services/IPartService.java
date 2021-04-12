@@ -1,7 +1,9 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.PartDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 
@@ -26,4 +28,5 @@ public interface IPartService {
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
 
+    void updatePart(PartDTO part) throws IncorrectParamsGivenException;
 }

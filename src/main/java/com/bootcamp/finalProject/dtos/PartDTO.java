@@ -1,5 +1,13 @@
 package com.bootcamp.finalProject.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
+
+@Getter
+@Setter
 public class PartDTO {
 
     private Integer partCode;
