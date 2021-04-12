@@ -32,6 +32,9 @@ public class Subsidiary {
    // @OrderColumn(name = "order_index")
     private List<Order> orders;
 
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<SubsidiaryStock> subsidiaryStocks;
+
 
 
 }

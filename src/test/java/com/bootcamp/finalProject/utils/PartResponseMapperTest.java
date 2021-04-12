@@ -48,7 +48,7 @@ class PartResponseMapperTest {
 
     public List<Part> getParts(){
         List<Part> partList = new ArrayList<>();
-        Part part1 = new Part(99L,82,"parte1",2,32,21,22,32,new Date(),null,null,null);
+        Part part1 = new Part(99L,82,"parte1",2,32,21,22,32,new Date(),null,null,null, null);
 
         PartRecord partRecord1 = new PartRecord(1L,null,99.99,null,200.99,null,null);
         Provider provider = new Provider();
