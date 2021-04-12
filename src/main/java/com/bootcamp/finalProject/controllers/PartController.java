@@ -3,6 +3,7 @@ package com.bootcamp.finalProject.controllers;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -48,16 +49,7 @@ public class PartController {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
-        //TODO:Revisar con el grupo si existe una forma mejor de hacer esto o si esta correcto.
-        if (params.get("order") == null || params.get("order").equals("")) {
-            requestDTO.setOrder(0);
-        } else {
-            try {
-                requestDTO.setOrder(Integer.parseInt(params.get("order")));
-            } catch (NumberFormatException e) {
-                throw new IncorrectParamsGivenException("the order might be a number.");
-            }
-        }
+        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
         //Call to service
         return service.findPart(requestDTO);
     }
@@ -79,23 +71,14 @@ public class PartController {
         OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
         orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
         orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") == null ? null : params.get("deliveryStatus"));
-        if (params.get("order") == null || params.get("order").equals("")) {
-            orderRequestDTO.setOrder(0);
-        } else {
-            try {
-                orderRequestDTO.setOrder(Integer.parseInt(params.get("order")));
-            } catch (NumberFormatException e) {
-                throw new IncorrectParamsGivenException("the order might be a number.");
-            }
-        }
+        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
+
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
 
-
     @GetMapping("orders/{orderNumberCM}")
     //Por algun motivo no se esta haciendo la validacion, esta el tag @validate en el controller tal como la documentacion
-    //Había que cambiar el 3 por un 8.
-    public OrderDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{3}$") String orderNumberCM) throws InternalExceptionHandler {
+    public OrderDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
 
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");

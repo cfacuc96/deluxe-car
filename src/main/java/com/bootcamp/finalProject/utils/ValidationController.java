@@ -5,6 +5,7 @@ import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.InvalidDateException;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
+import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.mnemonics.QueryType;
 import org.assertj.core.util.DateUtil;
 
@@ -55,8 +56,17 @@ public class ValidationController {
      */
     public static void isListEndpointMapValid(Map<String, String> params) throws InternalExceptionHandler {
 
+        if (params.get("order") != null) {
+            try {
+                Integer.parseInt(params.get("order"));
+            } catch (Exception e) {
+                throw new IncorrectParamsGivenException("the order parameter must " +
+                        "correspond to an integer numeric value");
+            }
+        }
+
         if (params.isEmpty())
-            throw new IncorrectParamsGivenException("Empty Parameters");
+            throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
         if (params.get("date") != null &&
                 params.get("queryType") != null &&
@@ -77,8 +87,17 @@ public class ValidationController {
      */
     public static void isOrdersEndpointMapValid(Map<String, String> params) throws IncorrectParamsGivenException {
 
+        if (params.get("order") != null) {
+            try {
+                Integer.parseInt(params.get("order"));
+            } catch (Exception e) {
+                throw new IncorrectParamsGivenException("the order parameter must " +
+                        "correspond to an integer numeric value");
+            }
+        }
+
         if (params.isEmpty())
-            throw new IncorrectParamsGivenException("Empty Parameters");
+            throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
         if (!params.containsKey("dealerNumber"))
             throw new IncorrectParamsGivenException("dealerNumber is missing from request");
