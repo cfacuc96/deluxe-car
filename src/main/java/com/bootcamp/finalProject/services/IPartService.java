@@ -1,9 +1,13 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.exceptions.DiscountRateIDNotFoundException;
+import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
+import com.bootcamp.finalProject.model.DiscountRate;
 
 import java.util.List;
 
@@ -25,5 +29,11 @@ public interface IPartService {
      * @throws OrderTypeException If order is differete than 0, 1, 2, 3
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
+
+    List<DiscountRateDTO> findALLDiscountRate();
+
+    DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler;
+
+    void saveDiscountRate(DiscountRateDTO discountRateDTO);
 
 }
