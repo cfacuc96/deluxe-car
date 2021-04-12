@@ -3,6 +3,8 @@ package com.bootcamp.finalProject.controllers;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.model.Provider;
+import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -56,7 +58,7 @@ public class PartController {
     }
 
     @PutMapping()
-    public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws IncorrectParamsGivenException {
+    public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws InternalExceptionHandler {
         service.updatePart(part);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("The part with partCode: " + part.getPartCode() + ", has been updated correctly.");
@@ -94,6 +96,37 @@ public class PartController {
         return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
+    @PostMapping("providers/add")
+    public void addProvider(@RequestBody ProviderDTO providerDTO){
+        service.saveProvider(providerDTO);
+    }
+
+    @GetMapping("providers/all")
+    public List<ProviderDTO> findAllProviders(){
+        return service.findAllProviders();
+    }
+
+    @GetMapping("providers/{id}")
+    public Provider findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findProviderById(id);
+    }
+
+
+    @PostMapping("discountRates/add")
+    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO){
+        service.saveDiscountRate(discountRateDTO);
+    }
+
+    @GetMapping("discountRates/all")
+    public List<DiscountRateDTO> getALLDiscountRate(){
+        return service.findALLDiscountRate();
+    }
+
+    //EndPoint de prueba para verificar la busqueda por id
+    @GetMapping("discountRates/{id}")
+    public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findDiscountRateById(id);
+    }
 
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
