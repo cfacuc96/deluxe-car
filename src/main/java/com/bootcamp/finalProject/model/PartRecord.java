@@ -34,12 +34,24 @@ public class PartRecord {
     private Double urgentPrice;
 
     @JoinColumn(name = "id_part", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private Part part;
 
     @JoinColumn(name = "id_discount_rate", nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private DiscountRate discountRate;
+
+    public PartRecord(Double normalPrice,
+                      Double salePrice,
+                      Double urgentPrice,
+                      Part part,
+                      DiscountRate discountRate) {
+        this.normalPrice = normalPrice;
+        this.salePrice = salePrice;
+        this.urgentPrice = urgentPrice;
+        this.part = part;
+        this.discountRate = discountRate;
+    }
 }

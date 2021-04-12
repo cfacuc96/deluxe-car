@@ -3,9 +3,15 @@ package com.bootcamp.finalProject.services;
 import com.bootcamp.finalProject.dtos.PartDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
+import com.bootcamp.finalProject.dtos.DiscountRateDTO;
+import com.bootcamp.finalProject.dtos.ProviderDTO;
+import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.model.Part;
+import com.bootcamp.finalProject.model.Provider;
+import com.bootcamp.finalProject.model.DiscountRate;
 
 import java.util.List;
 
@@ -28,4 +34,14 @@ public interface IPartService {
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
     Part newPart(PartDTO part) throws Exception;
+    void updatePart(PartDTO part) throws InternalExceptionHandler;
+
+    List<ProviderDTO> findAllProviders();
+    Provider findProviderById(Long id) throws InternalExceptionHandler;
+    void saveProvider(ProviderDTO providerDTO);
+
+    List<DiscountRateDTO> findALLDiscountRate();
+    DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler;
+    void saveDiscountRate(DiscountRateDTO discountRateDTO);
+
 }

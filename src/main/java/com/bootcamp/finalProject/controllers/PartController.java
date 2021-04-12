@@ -1,18 +1,20 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
-import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
+import com.bootcamp.finalProject.mnemonics.OrderType;
+import com.bootcamp.finalProject.model.Provider;
+import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +27,6 @@ import static com.bootcamp.finalProject.utils.ValidationController.validateDateF
 
 @RestController
 @RequestMapping("/api/v1/parts")
-@Validated
 public class PartController {
 
     @Autowired
@@ -51,9 +52,16 @@ public class PartController {
         PartRequestDTO requestDTO = new PartRequestDTO();
         requestDTO.setQueryType(params.get("queryType"));
         requestDTO.setDate((params.get("date") == null) ? null : validateDateFormat(params.get("date")));
-        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
+        requestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? OrderType.DEFAULT : Integer.parseInt(params.get("order")));
         //Call to service
         return service.findPart(requestDTO);
+    }
+
+    @PutMapping()
+    public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws InternalExceptionHandler {
+        service.updatePart(part);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("The part with partCode: " + part.getPartCode() + ", has been updated correctly.");
     }
 
     /**
@@ -73,7 +81,7 @@ public class PartController {
         OrderRequestDTO orderRequestDTO = new OrderRequestDTO();
         orderRequestDTO.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
         orderRequestDTO.setDeliveryStatus(params.get("deliveryStatus") == null ? null : params.get("deliveryStatus"));
-        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? null : Integer.parseInt(params.get("order")));
+        orderRequestDTO.setOrder(params.get("order") == null || params.get("order").equals("") ? OrderType.DEFAULT : Integer.parseInt(params.get("order")));
 
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
@@ -88,6 +96,37 @@ public class PartController {
         return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
+    @PostMapping("providers/add")
+    public void addProvider(@RequestBody ProviderDTO providerDTO){
+        service.saveProvider(providerDTO);
+    }
+
+    @GetMapping("providers/all")
+    public List<ProviderDTO> findAllProviders(){
+        return service.findAllProviders();
+    }
+
+    @GetMapping("providers/{id}")
+    public Provider findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findProviderById(id);
+    }
+
+
+    @PostMapping("discountRates/add")
+    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO){
+        service.saveDiscountRate(discountRateDTO);
+    }
+
+    @GetMapping("discountRates/all")
+    public List<DiscountRateDTO> getALLDiscountRate(){
+        return service.findALLDiscountRate();
+    }
+
+    //EndPoint de prueba para verificar la busqueda por id
+    @GetMapping("discountRates/{id}")
+    public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findDiscountRateById(id);
+    }
 
     @PostMapping("")
     public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
@@ -103,5 +142,21 @@ public class PartController {
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
         return new ResponseEntity<>(e.getError(), e.getReturnStatus());
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException){
+        ErrorDTO error = new ErrorDTO();
+        error.setName("Invalid Format Exception !");
+        error.setDescription(errorException.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException){
+        ErrorDTO error = new ErrorDTO();
+        error.setName("Method Argument Not Valid Exception !");
+        error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

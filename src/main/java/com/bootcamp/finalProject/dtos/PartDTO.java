@@ -5,7 +5,12 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
-@Getter@Setter
+import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
+
+@Getter
+@Setter
 public class PartDTO {
 
     private Integer partCode;

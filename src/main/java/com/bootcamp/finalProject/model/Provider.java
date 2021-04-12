@@ -28,7 +28,7 @@ public class Provider {
     private String phone;
     @Column(nullable = false)
     private String country;
-    @OneToMany(mappedBy = "provider", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     private List<Part> parts;
 
     public Provider(String name, String address, String phone, String country) {
