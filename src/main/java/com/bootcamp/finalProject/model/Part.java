@@ -10,6 +10,7 @@ import org.hibernate.annotations.Fetch;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -52,5 +53,16 @@ public class Part {
     @OneToMany(mappedBy = "partOrder", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Part part = (Part) o;
+        return Objects.equals(idPart, part.idPart) && Objects.equals(partCode, part.partCode);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPart, partCode);
+    }
 }
