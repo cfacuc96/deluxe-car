@@ -27,4 +27,9 @@ public class DiscountRate {
     private String discount;
     @OneToMany(mappedBy = "discountRate", cascade = CascadeType.PERSIST)
     private List<PartRecord> partRecords;
+
+    public DiscountRate(String description, String discount) {
+        this.description = description;
+        this.discount = discount;
+    }
 }

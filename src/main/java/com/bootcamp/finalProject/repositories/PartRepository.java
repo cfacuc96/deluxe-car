@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PartRepository extends JpaRepository<Part, Long> {
@@ -29,4 +30,6 @@ public interface PartRepository extends JpaRepository<Part, Long> {
      */
     @Query("FROM Part p JOIN p.partRecords pr WHERE pr.createdAt >= :date")
     List<Part> findByPriceCreateAt(@Param("date") Date date, Sort sort);
+
+    Optional<Part> findByPartCode(Integer partCode);
 }

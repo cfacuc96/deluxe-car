@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class PartRecord {
     @Column(name = "id_part_record")
     private Long idPartRecord;
     @Column(nullable = false)
+    @CreationTimestamp
     private Date createdAt;
     @Column(name = "normal_price", length = 6, nullable = false)
     private Double normalPrice;

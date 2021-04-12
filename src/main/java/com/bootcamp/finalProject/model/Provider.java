@@ -30,4 +30,11 @@ public class Provider {
     private String country;
     @OneToMany(mappedBy = "provider", cascade = CascadeType.PERSIST)
     private List<Part> parts;
+
+    public Provider(String name, String address, String phone, String country) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.country = country;
+    }
 }

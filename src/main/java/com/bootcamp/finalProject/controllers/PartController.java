@@ -9,11 +9,13 @@ import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
 import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,17 @@ public class PartController {
         return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
+
+    @PostMapping("")
+    public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
+
+        if(part != null) {
+            service.newPart(part);
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                //.body("The part was crated successfully ");
+                .body(part);
+    }
 
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {

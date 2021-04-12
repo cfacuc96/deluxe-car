@@ -1,9 +1,11 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.PartDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
+import com.bootcamp.finalProject.model.Part;
 
 import java.util.List;
 
@@ -25,5 +27,5 @@ public interface IPartService {
      * @throws OrderTypeException If order is differete than 0, 1, 2, 3
      */
     List<PartResponseDTO> findPart(PartRequestDTO requestDTO) throws TypeOfQueryException, OrderTypeException;
-
+    Part newPart(PartDTO part) throws Exception;
 }
