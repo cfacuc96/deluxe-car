@@ -6,6 +6,6 @@ public class IncorrectParamsGivenException extends InternalExceptionHandler
 {
     public IncorrectParamsGivenException(String error)
     {
-        super("Params given in the GET request are wrong, " + error, HttpStatus.BAD_REQUEST);
+        super("Params given in the request are wrong, " + error, HttpStatus.BAD_REQUEST);
     }
 }

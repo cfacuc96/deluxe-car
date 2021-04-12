@@ -15,5 +15,6 @@ public class ExceptionMessage {
 
     public static final String NOT_CONTAINS_DELIVERY_STATUS = "deliveryStatus not in ";
 
+    public static final String PART_CODE_REQUIRED = "partCode is a required field";
 
 }

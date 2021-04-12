@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.repositories;
 
 import com.bootcamp.finalProject.model.Part;
+import com.bootcamp.finalProject.model.PartRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +30,7 @@ public interface PartRepository extends JpaRepository<Part, Long> {
      */
     @Query("FROM Part p JOIN p.partRecords pr WHERE pr.createdAt >= :date")
     List<Part> findByPriceCreateAt(@Param("date") Date date, Sort sort);
+
+    @Query("FROM Part p WHERE p.partCode = :partCode")
+    Part findByPartCode(@Param("partCode") Integer partCode);
 }
