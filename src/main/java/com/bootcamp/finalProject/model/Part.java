@@ -53,6 +53,9 @@ public class Part {
     @OneToMany(mappedBy = "partOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails;
 
+    @OneToMany(mappedBy = "part", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<SubsidiaryStock> subsidiaryStocks;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,4 +68,6 @@ public class Part {
     public int hashCode() {
         return Objects.hash(idPart, partCode);
     }
+
+
 }
