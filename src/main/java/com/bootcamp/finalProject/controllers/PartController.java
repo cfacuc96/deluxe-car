@@ -4,6 +4,7 @@ import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
+import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -84,6 +85,21 @@ public class PartController {
             throw new QueryException("pattern error");
         }
         return warehouseService.findByOrderNumberCM(orderNumberCM);
+    }
+
+    @PostMapping("providers/add")
+    public void addProvider(@RequestBody ProviderDTO providerDTO){
+        service.saveProvider(providerDTO);
+    }
+
+    @GetMapping("providers/all")
+    public List<ProviderDTO> findAllProviders(){
+        return service.findAllProviders();
+    }
+
+    @GetMapping("providers/{id}")
+    public Provider findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findProviderById(id);
     }
 
 
