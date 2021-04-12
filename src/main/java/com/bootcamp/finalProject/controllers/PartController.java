@@ -5,6 +5,7 @@ import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.model.Provider;
+import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -102,6 +103,22 @@ public class PartController {
         return service.findProviderById(id);
     }
 
+
+    @PostMapping("discountRates/add")
+    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO){
+        service.saveDiscountRate(discountRateDTO);
+    }
+
+    @GetMapping("discountRates/all")
+    public List<DiscountRateDTO> getALLDiscountRate(){
+        return service.findALLDiscountRate();
+    }
+
+    //EndPoint de prueba para verificar la busqueda por id
+    @GetMapping("discountRates/{id}")
+    public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
+        return service.findDiscountRateById(id);
+    }
 
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {

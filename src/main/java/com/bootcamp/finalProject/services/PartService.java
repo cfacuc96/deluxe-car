@@ -1,19 +1,25 @@
 package com.bootcamp.finalProject.services;
 
+import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.PartRequestDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.dtos.ProviderDTO;
+import com.bootcamp.finalProject.exceptions.DiscountRateIDNotFoundException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.ProviderIdNotFoundException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.mnemonics.QueryType;
+import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.IProviderRepository;
+import com.bootcamp.finalProject.repositories.DiscountRateRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.utils.DiscountRateMapper;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
 import com.bootcamp.finalProject.utils.ProviderMapper;
+import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -37,6 +43,9 @@ public class PartService implements IPartService {
 
     @Autowired
     IProviderRepository providerRepository;
+
+    @Autowired
+    private DiscountRateRepository discountRateRepository;
 
     public List<PartResponseDTO> findPart(PartRequestDTO partRequest) throws TypeOfQueryException, OrderTypeException {
         List<Part> parts = new ArrayList<>();
@@ -71,6 +80,23 @@ public class PartService implements IPartService {
 
     public void saveProvider(ProviderDTO providerDTO) {
         providerRepository.save(new ModelMapper().map(providerDTO, Provider.class));
+    }
+    
+    @Override
+    public List<DiscountRateDTO> findALLDiscountRate() {
+        List<DiscountRate> discountRates = discountRateRepository.findAll();
+        List<DiscountRateDTO> discountRateDTOS = discountRates.stream().map(DiscountRateMapper::toDTO).collect(Collectors.toList());
+        return discountRateDTOS;
+    }
+
+    @Override
+    public DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler {
+        return discountRateRepository.findById(id).orElseThrow(DiscountRateIDNotFoundException::new);
+    }
+
+    @Override
+    public void saveDiscountRate(DiscountRateDTO discountRateDTO) {
+        discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
     }
 
 }
