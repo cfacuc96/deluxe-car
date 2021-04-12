@@ -34,16 +34,13 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticateDTO authenticate) throws LoginException {
 
-
         return ResponseEntity.ok(authService.login(authenticate));
     }
-
 
     @GetMapping("/getUsername")
     public String getUsername(){
         UserDetails user = (UserDetails)SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
-
 
         return user.getUsername();
     }
