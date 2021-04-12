@@ -56,7 +56,7 @@ public class ValidationController {
      */
     public static void isListEndpointMapValid(Map<String, String> params) throws InternalExceptionHandler {
 
-        if (params.get("order") != null) {
+        if (params.get("order") != null && !params.get("order").equals("")) {
             try {
                 Integer.parseInt(params.get("order"));
             } catch (Exception e) {
@@ -85,7 +85,7 @@ public class ValidationController {
      */
     public static void isOrdersEndpointMapValid(Map<String, String> params) throws IncorrectParamsGivenException {
 
-        if (params.get("order") != null) {
+        if (params.get("order") != null && !params.get("order").equals("")) {
             try {
                 Integer.parseInt(params.get("order"));
             } catch (Exception e) {

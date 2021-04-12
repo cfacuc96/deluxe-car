@@ -33,25 +33,6 @@ class PartControllerTest {
         openMocks(this);
     }
 
-    //ESTE TEST NUNCA ENTRA PORQUE EL ORDEN SE REVISA EN EL SERVICE
-    /*@Test
-    void shouldReturnExceptionSinceTheParamOfOrderingDoesNotExist() {
-        Map<String, String> order = new HashMap<>();
-        order.put("queryType", "V");
-        order.put("order", "23");
-        order.put("date", "2020-01-11");
-        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.findPart(order));
-
-    }*/
-
-    //ESTE NUNCA ENTRA PORQUE EL VALOR DEL QUERYTYPE SE REVISA EN EL SERVICE
-    /*@Test
-    void shouldReturnExceptionSinceParamOfSearchDoesNotExist() throws Exception {
-        Map<String, String> queryType = new HashMap<>();
-        queryType.put("queryType", "er");
-        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.findPart(queryType));
-    }*/
-
     @Test
     void findPartShouldReturnExceptionSinceAllParamsAreNull() {
         //Arrange
