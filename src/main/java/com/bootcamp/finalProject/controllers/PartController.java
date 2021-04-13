@@ -181,7 +181,7 @@ public class PartController {
 
         ValidationController.validateOrderStatus(orderStatus);
 
-        return ResponseEntity.status(HttpStatus.OK).body("put return of service for this controller");
+        return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
 
 
