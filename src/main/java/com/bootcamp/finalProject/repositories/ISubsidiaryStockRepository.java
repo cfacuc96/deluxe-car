@@ -12,4 +12,7 @@ public interface ISubsidiaryStockRepository extends JpaRepository<SubsidiaryStoc
 
     @Query("FROM SubsidiaryStock ss WHERE ss.part.idPart = :idPart AND ss.subsidiary.idSubsidiary = :idSubsidiary")
     SubsidiaryStock findByIdPart(@Param("idPart") Long idPart, @Param("idSubsidiary") Long idSubsidiary);
+
+    @Query("FROM SubsidiaryStock s WHERE s.subsidiary = :idSubsidiary")
+    List<SubsidiaryStock> findByLastModification(@Param("idSubsidiary") Integer idSubsidiary);
 }
