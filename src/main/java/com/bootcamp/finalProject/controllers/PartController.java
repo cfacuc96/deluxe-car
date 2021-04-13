@@ -194,6 +194,7 @@ public class PartController {
 
         ValidationController.validateOrderStatus(orderStatus);
 
+        warehouseService.changeDeliveryStatus(orderNumberCM,orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
 

@@ -88,7 +88,7 @@ public class WarehouseService implements IWarehouseService {
         return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
     }
     
-    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException {
+    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws InternalExceptionHandler {
         Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
