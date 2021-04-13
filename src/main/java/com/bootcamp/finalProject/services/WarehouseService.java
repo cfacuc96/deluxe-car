@@ -7,9 +7,11 @@ import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.OrderDetail;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
@@ -32,6 +34,9 @@ public class WarehouseService implements IWarehouseService {
 
     @Autowired
     private ISubsidiaryRepository subsidiaryRepository;
+
+    @Autowired
+    private PartRepository partRepository;
 
     @Override
     public SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
@@ -84,7 +89,12 @@ public class WarehouseService implements IWarehouseService {
     public void cancelDeliveryStatus(Order order){
         List<OrderDetail> orderDetail = order.getOrderDetails();
 
-        order.setDeliveryStatus("C");
+        orderDetail.forEach(partToUpdate -> {
+            Part part = partRepository.findById(partToUpdate.getPartOrder().getIdPart()).orElseThrow();
+            part.setQuantity(part.getQuantity()+partToUpdate.getQuantity());
+            partRepository.save(part);
+        });
+        order.setDeliveryStatus(DeliveryStatus.CANCELED);
         orderRepository.save(order);
     }
 
