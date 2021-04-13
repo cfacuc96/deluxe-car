@@ -1,14 +1,13 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.OrderDTO;
-import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Subsidiary;
+import com.bootcamp.finalProject.model.SubsidiaryStock;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
 import org.aspectj.weaver.ast.Or;
@@ -23,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.bootcamp.finalProject.utils.MapperUtils.getDifferencesInDays;

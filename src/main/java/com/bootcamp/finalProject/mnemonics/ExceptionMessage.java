@@ -17,4 +17,6 @@ public class ExceptionMessage {
 
     public static final String PART_CODE_REQUIRED = "partCode is a required field";
 
+    public static final String WRONG_STATUS_ORDER = "order status does not exist";
+
 }
