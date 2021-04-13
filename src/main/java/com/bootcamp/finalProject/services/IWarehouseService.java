@@ -12,4 +12,6 @@ public interface IWarehouseService {
     OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException;
 
     SubsidiaryStockResponseDTO findSubsidiaryStock(SubsidiaryStockRequestDTO subsidiaryStockRequestDTO) throws SubsidiaryNotFoundException;
+
+    void changeDeliveryStatus(String orderNumberCM, String newStatus) throws OrderIdNotFoundException, SubsidiaryNotFoundException;
 }

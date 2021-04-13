@@ -2,10 +2,19 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+<<<<<<< HEAD
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
+=======
+import com.bootcamp.finalProject.exceptions.NotEnoughStock;
+import com.bootcamp.finalProject.exceptions.PartNotExistException;
+>>>>>>> 3d91d9d0687227fd22fa0f985a527a937ce5ce84
 import com.bootcamp.finalProject.mnemonics.OrderType;
+import com.bootcamp.finalProject.model.Order;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
+import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -22,6 +31,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
@@ -35,6 +45,9 @@ public class PartController {
 
     @Autowired
     IWarehouseService warehouseService;
+
+    @Autowired
+    PartRepository partRepository;
 
     /**
      * GET method to search list of parts, it receives a map with the following data
@@ -148,6 +161,42 @@ public class PartController {
                 //.body("The part was crated successfully ");
                 .body(part);
     }
+
+
+    @PostMapping("/orders")
+    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
+        //Must be in Service just for testing
+        for (OrderDetailDTO o:
+             order.getOrderDetails()) {
+            Part p =  partRepository.findByPartCode(Integer.parseInt(o.getPartCode()));
+            if(p == null) {
+                throw new PartNotExistException(Integer.parseInt(o.getPartCode()));
+            }else{
+                if(p.getQuantity() < o.getQuantity()) {
+                    throw new NotEnoughStock(o.getPartCode());
+                }else{
+                    o.setDescription(p.getDescription());
+                    //add logic of order creation
+                }
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(order);
+
+    }
+
+    @PutMapping("/order/{orderNumberCM}/{orderStatus}")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
+                                               @PathVariable String orderStatus) throws InternalExceptionHandler{
+        if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
+            throw new QueryException("pattern error");
+        }
+
+        ValidationController.validateOrderStatus(orderStatus);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
+    }
+
 
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {

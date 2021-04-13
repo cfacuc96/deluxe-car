@@ -105,4 +105,11 @@ public class ValidationController {
             }
         }
     }
+
+    public static void validateOrderStatus(String orderStatus) throws IncorrectParamsGivenException {
+
+        if(!DeliveryStatus.DELIVERY_STATUS_VALUES.contains(orderStatus)){
+            throw new IncorrectParamsGivenException(ExceptionMessage.WRONG_STATUS_ORDER);
+        }
+    }
 }

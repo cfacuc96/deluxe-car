@@ -2,7 +2,9 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
+import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
+import com.bootcamp.finalProject.model.OrderDetail;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
@@ -66,5 +68,28 @@ public class WarehouseService implements IWarehouseService {
         Subsidiary subsidiary = subsidiaryRepository.findById(subsidiaryStockRequestDTO.getDealerNumber()).orElseThrow(SubsidiaryNotFoundException::new);
 
         return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
+    }
+    
+    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException {
+        Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
+
+        Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
+        Subsidiary subsidiary = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
+        Order order = orderRepository.findByIdOrderAndSubsidiary(orderId, subsidiary).orElseThrow(OrderIdNotFoundException::new);
+
+        //"0001-00000001"
+        if (newStatus.equals(DeliveryStatus.CANCELED)){
+            cancelDeliveryStatus(order);
+        }else if (newStatus.equals(DeliveryStatus.FINISHED)){
+            //change to finished
+        }
+        orderRepository.save(order);
+    }
+
+    public void cancelDeliveryStatus(Order order){
+        List<OrderDetail> orderDetail = order.getOrderDetails();
+
+        order.setDeliveryStatus("C");
+        orderRepository.save(order);
     }
 }
