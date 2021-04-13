@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.mnemonics.OrderType;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
@@ -96,13 +97,21 @@ public class PartController {
         return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
+    @GetMapping("stocks")
+    public SubsidiaryStockResponseDTO findSubsidiaryStock(@RequestParam Map<String, String> params) throws SubsidiaryNotFoundException {
+        SubsidiaryStockRequestDTO request = new SubsidiaryStockRequestDTO();
+        request.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
+
+        return warehouseService.findSubsidiaryStock(request);
+    }
+
     @PostMapping("providers/add")
-    public void addProvider(@RequestBody ProviderDTO providerDTO){
+    public void addProvider(@RequestBody ProviderDTO providerDTO) {
         service.saveProvider(providerDTO);
     }
 
     @GetMapping("providers/all")
-    public List<ProviderDTO> findAllProviders(){
+    public List<ProviderDTO> findAllProviders() {
         return service.findAllProviders();
     }
 
@@ -113,12 +122,12 @@ public class PartController {
 
 
     @PostMapping("discountRates/add")
-    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO){
+    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) {
         service.saveDiscountRate(discountRateDTO);
     }
 
     @GetMapping("discountRates/all")
-    public List<DiscountRateDTO> getALLDiscountRate(){
+    public List<DiscountRateDTO> getALLDiscountRate() {
         return service.findALLDiscountRate();
     }
 
@@ -131,7 +140,7 @@ public class PartController {
     @PostMapping("")
     public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
 
-        if(part != null) {
+        if (part != null) {
             service.newPart(part);
         }
         return ResponseEntity.status(HttpStatus.OK)
@@ -145,7 +154,7 @@ public class PartController {
     }
 
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException){
+    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException) {
         ErrorDTO error = new ErrorDTO();
         error.setName("Invalid Format Exception !");
         error.setDescription(errorException.getMessage());
@@ -153,7 +162,7 @@ public class PartController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException){
+    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException) {
         ErrorDTO error = new ErrorDTO();
         error.setName("Method Argument Not Valid Exception !");
         error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());

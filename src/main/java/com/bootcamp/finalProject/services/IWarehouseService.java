@@ -1,8 +1,6 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.OrderDTO;
-import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
 import com.bootcamp.finalProject.exceptions.OrderTypeException;
@@ -13,5 +11,5 @@ public interface IWarehouseService {
 
     OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException;
 
-
+    SubsidiaryStockResponseDTO findSubsidiaryStock(SubsidiaryStockRequestDTO subsidiaryStockRequestDTO) throws SubsidiaryNotFoundException;
 }
