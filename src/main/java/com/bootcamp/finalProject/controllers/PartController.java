@@ -2,6 +2,8 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
+import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.exceptions.NotEnoughStock;
 import com.bootcamp.finalProject.exceptions.PartNotExistException;
@@ -192,6 +194,7 @@ public class PartController {
 
         ValidationController.validateOrderStatus(orderStatus);
 
+        warehouseService.changeDeliveryStatus(orderNumberCM,orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
 
