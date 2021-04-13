@@ -99,6 +99,7 @@ public class PartService implements IPartService {
                 new Date(),
                 listPartRecord,
                 provider,
+                null,
                 null);
 
         partRecord.setPart(r);
