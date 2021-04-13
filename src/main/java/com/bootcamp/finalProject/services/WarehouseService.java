@@ -2,14 +2,16 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.OrderDTO;
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
+import com.bootcamp.finalProject.dtos.PartDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
-import com.bootcamp.finalProject.model.Order;
-import com.bootcamp.finalProject.model.OrderDetail;
-import com.bootcamp.finalProject.model.Subsidiary;
+import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
+import com.bootcamp.finalProject.model.*;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
+import com.bootcamp.finalProject.repositories.ISubsidiaryStockRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.DSOrderTypeValidation;
@@ -32,6 +35,9 @@ public class WarehouseService implements IWarehouseService {
 
     @Autowired
     private ISubsidiaryRepository subsidiaryRepository;
+
+    @Autowired
+    private ISubsidiaryStockRepository subsidiaryStockRepository;
 
     @Override
     public SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
@@ -65,20 +71,26 @@ public class WarehouseService implements IWarehouseService {
     }
 
     @Override
-    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException {
+    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws InternalExceptionHandler{
         Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
         Subsidiary subsidiary = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
         Order order = orderRepository.findByIdOrderAndSubsidiary(orderId, subsidiary).orElseThrow(OrderIdNotFoundException::new);
 
-        //"0001-00000001"
-        if (newStatus.equals(DeliveryStatus.CANCELED)){
-            cancelDeliveryStatus(order);
-        }else if (newStatus.equals(DeliveryStatus.FINISHED)){
-            //change to finished
+        if ((order.getDeliveryStatus().equals(DeliveryStatus.PENDING)
+                || order.getDeliveryStatus().equals(DeliveryStatus.DELAYED))){
+
+            if (newStatus.equals(DeliveryStatus.CANCELED)){
+                cancelDeliveryStatus(order);
+            }else if (newStatus.equals(DeliveryStatus.FINISHED)){
+                finishDeliveryStatus(order, subsidiary);
+            }
+            orderRepository.save(order);
+        }else {
+            //excepcion de que la orden habia sido cancelada o finalizada con anterioridad o
+            throw new OrderDeliveryStatusIsconcludedException(order.getDeliveryStatus());
         }
-        orderRepository.save(order);
     }
 
     public void cancelDeliveryStatus(Order order){
@@ -88,6 +100,24 @@ public class WarehouseService implements IWarehouseService {
         orderRepository.save(order);
     }
 
-
-
+    public void finishDeliveryStatus(Order order, Subsidiary subsidiary){
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        SubsidiaryStock temp;
+        for(OrderDetail o :orderDetails){
+            temp = subsidiaryStockRepository.findByIdPart(o.getPartOrder().getIdPart(),subsidiary.getIdSubsidiary());
+            if(temp==null){
+                SubsidiaryStock subsidiaryStock = new SubsidiaryStock();
+                subsidiaryStock.setQuantity(0);
+                subsidiaryStock.setPart(o.getPartOrder());
+                subsidiaryStock.setSubsidiary(subsidiary);
+                subsidiaryStockRepository.save(subsidiaryStock);
+                temp = subsidiaryStock;
+            }
+            temp.setQuantity(temp.getQuantity()+o.getQuantity());
+            subsidiaryStockRepository.save(temp);
+        }
+        Date now = new Date();
+        order.setDeliveryStatus(DeliveryStatus.FINISHED);
+        order.setDeliveredDate(now);
+    }
 }
