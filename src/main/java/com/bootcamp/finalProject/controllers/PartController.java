@@ -5,6 +5,11 @@ import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.mnemonics.OrderType;
 import com.bootcamp.finalProject.model.DiscountRate;
+import com.bootcamp.finalProject.exceptions.NotEnoughStock;
+import com.bootcamp.finalProject.exceptions.PartNotExistException;
+import com.bootcamp.finalProject.mnemonics.OrderType;
+import com.bootcamp.finalProject.model.DiscountRate;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
@@ -102,9 +107,10 @@ public class PartController {
     }
 
     @GetMapping("stocks")
-    public SubsidiaryStockResponseDTO findSubsidiaryStock(@RequestParam Map<String, String> params) throws SubsidiaryNotFoundException {
-        SubsidiaryStockRequestDTO request = new SubsidiaryStockRequestDTO();
+    public SubsidiaryStockResponseDTO findSubsidiaryStock(@RequestParam Map<String, String> params) throws InternalExceptionHandler {
 
+        ValidationController.validateSubsidiaryStockParams(params);
+        SubsidiaryStockRequestDTO request = new SubsidiaryStockRequestDTO();
         request.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
 
         return warehouseService.findSubsidiaryStock(request);
@@ -155,7 +161,8 @@ public class PartController {
 
 
     @PostMapping("/orders")
-    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
+    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception 
+    {
         if(order != null)
         {
             warehouseService.newOrder(order);
@@ -167,13 +174,14 @@ public class PartController {
 
     @PutMapping("/order/{orderNumberCM}/{orderStatus}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
-                                               @PathVariable String orderStatus) throws InternalExceptionHandler{
+                                               @PathVariable String orderStatus) throws InternalExceptionHandler {
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");
         }
 
         ValidationController.validateOrderStatus(orderStatus);
 
+        warehouseService.changeDeliveryStatus(orderNumberCM,orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
 
