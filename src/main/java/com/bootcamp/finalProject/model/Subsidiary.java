@@ -34,7 +34,4 @@ public class Subsidiary {
 
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<SubsidiaryStock> subsidiaryStocks;
-
-
-
 }

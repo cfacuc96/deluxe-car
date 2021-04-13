@@ -2,9 +2,16 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
+import com.bootcamp.finalProject.exceptions.NotEnoughStock;
+import com.bootcamp.finalProject.exceptions.PartNotExistException;
 import com.bootcamp.finalProject.mnemonics.OrderType;
+import com.bootcamp.finalProject.model.Order;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
+import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -21,6 +28,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
@@ -34,6 +42,9 @@ public class PartController {
 
     @Autowired
     IWarehouseService warehouseService;
+
+    @Autowired
+    PartRepository partRepository;
 
     /**
      * GET method to search list of parts, it receives a map with the following data
@@ -96,13 +107,23 @@ public class PartController {
         return warehouseService.findByOrderNumberCM(orderNumberCM);
     }
 
+    @GetMapping("stocks")
+    public SubsidiaryStockResponseDTO findSubsidiaryStock(@RequestParam Map<String, String> params) throws InternalExceptionHandler {
+
+        ValidationController.isListEndpointMapValid(params);
+        SubsidiaryStockRequestDTO request = new SubsidiaryStockRequestDTO();
+        request.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
+
+        return warehouseService.findSubsidiaryStock(request);
+    }
+
     @PostMapping("providers/add")
-    public void addProvider(@RequestBody ProviderDTO providerDTO){
+    public void addProvider(@RequestBody ProviderDTO providerDTO) {
         service.saveProvider(providerDTO);
     }
 
     @GetMapping("providers/all")
-    public List<ProviderDTO> findAllProviders(){
+    public List<ProviderDTO> findAllProviders() {
         return service.findAllProviders();
     }
 
@@ -113,12 +134,12 @@ public class PartController {
 
 
     @PostMapping("discountRates/add")
-    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO){
+    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) {
         service.saveDiscountRate(discountRateDTO);
     }
 
     @GetMapping("discountRates/all")
-    public List<DiscountRateDTO> getALLDiscountRate(){
+    public List<DiscountRateDTO> getALLDiscountRate() {
         return service.findALLDiscountRate();
     }
 
@@ -131,7 +152,7 @@ public class PartController {
     @PostMapping("")
     public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
 
-        if(part != null) {
+        if (part != null) {
             service.newPart(part);
         }
         return ResponseEntity.status(HttpStatus.OK)
@@ -139,13 +160,49 @@ public class PartController {
                 .body(part);
     }
 
+
+    @PostMapping("/orders")
+    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
+        //Must be in Service just for testing
+        for (OrderDetailDTO o :
+                order.getOrderDetails()) {
+            Part p = partRepository.findByPartCode(Integer.parseInt(o.getPartCode()));
+            if (p == null) {
+                throw new PartNotExistException(Integer.parseInt(o.getPartCode()));
+            } else {
+                if (p.getQuantity() < o.getQuantity()) {
+                    throw new NotEnoughStock(o.getPartCode());
+                } else {
+                    o.setDescription(p.getDescription());
+                    //add logic of order creation
+                }
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(order);
+
+    }
+
+    @PutMapping("/order/{orderNumberCM}/{orderStatus}")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
+                                               @PathVariable String orderStatus) throws InternalExceptionHandler {
+        if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
+            throw new QueryException("pattern error");
+        }
+
+        ValidationController.validateOrderStatus(orderStatus);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
+    }
+
+
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
         return new ResponseEntity<>(e.getError(), e.getReturnStatus());
     }
 
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException){
+    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException) {
         ErrorDTO error = new ErrorDTO();
         error.setName("Invalid Format Exception !");
         error.setDescription(errorException.getMessage());
@@ -153,7 +210,7 @@ public class PartController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException){
+    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException) {
         ErrorDTO error = new ErrorDTO();
         error.setName("Method Argument Not Valid Exception !");
         error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());

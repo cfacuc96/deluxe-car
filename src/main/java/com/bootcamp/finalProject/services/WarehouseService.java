@@ -1,8 +1,6 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.OrderDTO;
-import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
@@ -46,16 +44,16 @@ public class WarehouseService implements IWarehouseService {
             Sort sort = DSOrderTypeValidation(orderRequest.getOrder());
             Long idSubsidiary = orderRequest.getDealerNumber();
             subsidiary = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
-                if (orderRequest.getDeliveryStatus() == null) {
-                    orders = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
-                } else {
-                    orders = orderRepository.findByIdSubsidiaryAndDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus(), sort);
-                }
-                subsidiary.setOrders(orders);
+            if (orderRequest.getDeliveryStatus() == null) {
+                orders = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
+            } else {
+                orders = orderRepository.findByIdSubsidiaryAndDeliveryStatus(idSubsidiary, orderRequest.getDeliveryStatus(), sort);
+            }
+            subsidiary.setOrders(orders);
         } else {
             throw new DeliveryStatusException();
         }
-        return subsidiaryMapper.toDTO(subsidiary);
+        return subsidiaryMapper.toOrderDTO(subsidiary);
     }
 
     @Override
@@ -70,6 +68,13 @@ public class WarehouseService implements IWarehouseService {
     }
 
     @Override
+    public SubsidiaryStockResponseDTO findSubsidiaryStock(SubsidiaryStockRequestDTO subsidiaryStockRequestDTO) throws SubsidiaryNotFoundException {
+
+        Subsidiary subsidiary = subsidiaryRepository.findById(subsidiaryStockRequestDTO.getDealerNumber()).orElseThrow(SubsidiaryNotFoundException::new);
+
+        return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
+    }
+    
     public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException {
         Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
@@ -97,7 +102,4 @@ public class WarehouseService implements IWarehouseService {
         order.setDeliveryStatus(DeliveryStatus.CANCELED);
         orderRepository.save(order);
     }
-
-
-
 }

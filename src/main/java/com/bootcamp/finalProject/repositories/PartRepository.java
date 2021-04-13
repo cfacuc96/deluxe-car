@@ -37,4 +37,7 @@ public interface PartRepository extends JpaRepository<Part, Long> {
 
     @Query("FROM Part p WHERE p.partCode = :partCode")
     boolean existByPartCode(Integer partCode);
+
+    @Query("FROM Part p WHERE p.partCode = :partCode and p.quantity >= :stock")
+    Optional<Part> existByPartCodeWithStockWarehouse(Integer partCode, Integer stock);
 }
