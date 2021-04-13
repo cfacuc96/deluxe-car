@@ -111,9 +111,11 @@
                 <version>0.8.5</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/bootcamp/finalProject/mnemonics/ExceptionMessage.class</exclude>
-                        <exclude>com/bootcamp/finalProject/mnemonics/OrderType.class</exclude>
-                        <exclude>com/bootcamp/finalProject/mnemonics/QueryType.class</exclude>
+<!--                        <exclude>com/bootcamp/finalProject/mnemonics/ExceptionMessage.class</exclude>-->
+                        <exclude>com/bootcamp/finalProject/model/**/*</exclude>
+                        <exclude>com/bootcamp/finalProject/dtos/**/*</exclude>
+                        <exclude>com/bootcamp/finalProject/exceptions/**/*</exclude>
+                        <exclude>com/bootcamp/finalProject/mnemonics/**/*</exclude>
                         <exclude>com/bootcamp/finalProject/FinalProjectApplication.java</exclude>
                     </excludes>
                 </configuration>

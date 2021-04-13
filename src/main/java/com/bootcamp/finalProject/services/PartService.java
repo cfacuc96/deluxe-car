@@ -117,7 +117,7 @@ public class PartService implements IPartService {
                 validateAndUpdate(part, partDTO);
                 partRepository.save(part);
             }else{
-                //throw new partNotExistException
+                throw new PartNotExistException(partDTO.getPartCode());
             }
         }else{
             throw new IncorrectParamsGivenException(ExceptionMessage.PART_CODE_REQUIRED);

@@ -1,10 +1,7 @@
 package com.bootcamp.finalProject.model;
 
-import lombok.AllArgsConstructor;
+import lombok.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
@@ -18,6 +15,7 @@ import java.util.Objects;
 @Table(name = "parts")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class Part {
 
     @Id
@@ -62,7 +60,8 @@ public class Part {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Part part = (Part) o;
-        return Objects.equals(idPart, part.idPart) && Objects.equals(partCode, part.partCode);
+        return Objects.equals(idPart, part.idPart) && Objects.equals(partCode, part.partCode)
+                && Objects.equals(description, part.description);
     }
 
     @Override
