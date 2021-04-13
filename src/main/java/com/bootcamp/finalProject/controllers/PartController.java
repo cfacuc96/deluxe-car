@@ -100,6 +100,7 @@ public class PartController {
     @GetMapping("stocks")
     public SubsidiaryStockResponseDTO findSubsidiaryStock(@RequestParam Map<String, String> params) throws SubsidiaryNotFoundException {
         SubsidiaryStockRequestDTO request = new SubsidiaryStockRequestDTO();
+
         request.setDealerNumber(Long.parseLong(params.get("dealerNumber")));
 
         return warehouseService.findSubsidiaryStock(request);

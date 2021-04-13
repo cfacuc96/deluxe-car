@@ -29,9 +29,9 @@ public class SubsidiaryResponseMapper {
     }
 
     public SubsidiaryStockResponseDTO toStockDTO(Subsidiary subsidiary) {
-        SubsidiaryStockResponseDTO ret = new SubsidiaryStockResponseDTO();
-        ret.setDealerNumber(completeNumberByLength(String.valueOf(subsidiary.getIdSubsidiary()), 4));
-        ret.setName(subsidiary.getName());
+        SubsidiaryStockResponseDTO result = new SubsidiaryStockResponseDTO();
+        result.setDealerNumber(completeNumberByLength(String.valueOf(subsidiary.getIdSubsidiary()), 4));
+        result.setName(subsidiary.getName());
 
         List<SubsidiaryStockDTO> subDtos = new ArrayList<>();
 
@@ -40,13 +40,12 @@ public class SubsidiaryResponseMapper {
             dto.setPartCode(String.valueOf(s.getPart().getPartCode()));
             dto.setDescription(s.getPart().getDescription());
             dto.setQuantityInSubsidiary(String.valueOf(s.getQuantity()));
-            dto.setQuantityTotal(String.valueOf(s.getPart().getQuantity()));
 
             subDtos.add(dto);
         }
 
-        ret.setSubsidiaryStocks(subDtos);
+        result.setSubsidiaryStocks(subDtos);
 
-        return ret;
+        return result;
     }
 }

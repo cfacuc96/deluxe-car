@@ -62,14 +62,9 @@ public class WarehouseService implements IWarehouseService {
 
     @Override
     public SubsidiaryStockResponseDTO findSubsidiaryStock(SubsidiaryStockRequestDTO subsidiaryStockRequestDTO) throws SubsidiaryNotFoundException {
-        //List<SubsidiaryStock> subsidiaryStocks;
+
         Subsidiary subsidiary = subsidiaryRepository.findById(subsidiaryStockRequestDTO.getDealerNumber()).orElseThrow(SubsidiaryNotFoundException::new);
 
-        //subsidiaryStocks = orderRepository.findByIdSubsidiary(idSubsidiary, sort);
-
-        //subsidiary.setOrders(orders);
-
-        //return subsidiaryMapper.toDTO(subsidiary);
         return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
     }
 }

@@ -9,5 +9,4 @@ public class SubsidiaryStockDTO {
     private String quantityInSubsidiary;
     private String partCode;
     private String description;
-    private String quantityTotal;
 }
