@@ -105,4 +105,10 @@ public class ValidationController {
             }
         }
     }
+
+    public static void validateOrderStatus(String orderStatus) throws IncorrectParamsGivenException {
+        if(!orderStatus.equals(QueryType.COMPLETE)){
+            throw new IncorrectParamsGivenException(ExceptionMessage.WRONG_STATUS_ORDER);
+        }
+    }
 }
