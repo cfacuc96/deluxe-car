@@ -2,6 +2,9 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
+import com.bootcamp.finalProject.mnemonics.OrderType;
+import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.exceptions.NotEnoughStock;
 import com.bootcamp.finalProject.exceptions.PartNotExistException;
 import com.bootcamp.finalProject.mnemonics.OrderType;
@@ -158,21 +161,11 @@ public class PartController {
 
 
     @PostMapping("/orders")
-    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
-        //Must be in Service just for testing
-        for (OrderDetailDTO o :
-                order.getOrderDetails()) {
-            Part p = partRepository.findByPartCode(Integer.parseInt(o.getPartCode()));
-            if (p == null) {
-                throw new PartNotExistException(Integer.parseInt(o.getPartCode()));
-            } else {
-                if (p.getQuantity() < o.getQuantity()) {
-                    throw new NotEnoughStock(o.getPartCode());
-                } else {
-                    o.setDescription(p.getDescription());
-                    //add logic of order creation
-                }
-            }
+    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception 
+    {
+        if(order != null)
+        {
+            warehouseService.newOrder(order);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(order);
