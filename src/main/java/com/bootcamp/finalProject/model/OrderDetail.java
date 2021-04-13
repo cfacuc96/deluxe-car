@@ -32,7 +32,7 @@ public class OrderDetail {
     @JsonBackReference
     private Part partOrder;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_order", nullable = false)
     @JsonBackReference
     private Order order;

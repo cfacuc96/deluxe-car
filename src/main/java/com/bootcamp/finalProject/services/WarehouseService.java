@@ -1,32 +1,45 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.*;
+import com.bootcamp.finalProject.dtos.OrderDTO;
+import com.bootcamp.finalProject.dtos.OrderDetailDTO;
+import com.bootcamp.finalProject.dtos.OrderRequestDTO;
+import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.OrderDetail;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import static com.bootcamp.finalProject.utils.MapperUtils.completeNumberByLength;
+import static com.bootcamp.finalProject.utils.MapperUtils.getDifferencesInDays;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.DSOrderTypeValidation;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.deliveryStatusValidation;
 
 @Service
-public class WarehouseService implements IWarehouseService {
+public class WarehouseService implements IWarehouseService
+{
 
     SubsidiaryResponseMapper subsidiaryMapper = new SubsidiaryResponseMapper();
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private PartRepository partRepository;
 
     @Autowired
     private ISubsidiaryRepository subsidiaryRepository;
@@ -69,8 +82,8 @@ public class WarehouseService implements IWarehouseService {
 
         return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
     }
-    
-    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException {
+
+    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException, PartAlreadyExistException {
         Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
@@ -86,10 +99,71 @@ public class WarehouseService implements IWarehouseService {
         orderRepository.save(order);
     }
 
-    public void cancelDeliveryStatus(Order order){
+    public void cancelDeliveryStatus(Order order) throws PartAlreadyExistException {
         List<OrderDetail> orderDetail = order.getOrderDetails();
 
         order.setDeliveryStatus("C");
         orderRepository.save(order);
+    }
+
+    public OrderDTO newOrder(OrderDTO order) throws InvalidAccountTypeExtensionException, NotEnoughStock, PartNotExistException
+    {
+        //del context debe obtener el id_subsidiary, mientras tanto yo harcodeo el ID 1
+        //context.getIdSubsidiary();
+        Subsidiary subsidiary = subsidiaryRepository.findById(1L).get();
+
+        Date current = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(current);
+        //esta hardcodeado cuanto tardo el envio.
+        calendar.add(Calendar.DAY_OF_YEAR,3);
+        Order orderReturn = new Order(null, current, calendar.getTime(), current, DeliveryStatus.PENDING, null, subsidiary);
+
+        List<OrderDetail> orderList = new ArrayList<>();
+        List<OrderDetailDTO> orderDetailList = order.getOrderDetails();
+        for(OrderDetailDTO orderDetail : orderDetailList)
+        {
+            orderList.add(validateOrderToCreate(orderDetail,orderReturn));
+        }
+        orderReturn.setOrderDetails(orderList);
+        orderReturn = orderRepository.save(orderReturn);
+
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        //Set return with missing data.
+        order.setOrderNumberCM(completeNumberByLength(String.valueOf(1),4) + "-" + completeNumberByLength(String.valueOf(orderReturn.getIdOrder()),8));
+        order.setDeliveryDate(datePattern.format(calendar.getTime()));
+        order.setDeliveryStatus(DeliveryStatus.PENDING);
+        order.setDaysDelayed(getDifferencesInDays(orderReturn.getDeliveryDate(),orderReturn.getDeliveredDate()));
+
+        return order;
+    }
+
+    private OrderDetail validateOrderToCreate(OrderDetailDTO orderDetail, Order orderReturn) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
+    {
+        OrderDetail orderDetailReturn;
+        Part part =  partRepository.findByPartCode(Integer.parseInt(orderDetail.getPartCode()));
+        if(part == null)
+        {
+            throw new PartNotExistException(Integer.parseInt(orderDetail.getPartCode()));
+        }
+        else
+        {
+            if(part.getQuantity() < orderDetail.getQuantity())
+            {
+                throw new NotEnoughStock(orderDetail.getPartCode());
+            }
+            else
+            {
+                orderDetail.setDescription(part.getDescription());
+
+                if(orderDetail.getAccountType().length() != 1)
+                {
+                    throw new InvalidAccountTypeExtensionException();
+                }
+            }
+
+            orderDetailReturn = new OrderDetail(null, orderDetail.getAccountType(), orderDetail.getQuantity(), orderDetail.getReason(), part, orderReturn);
+        }
+        return orderDetailReturn;
     }
 }

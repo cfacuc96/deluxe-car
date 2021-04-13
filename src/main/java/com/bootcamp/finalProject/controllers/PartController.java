@@ -2,18 +2,10 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-<<<<<<< HEAD
 import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
-=======
-import com.bootcamp.finalProject.exceptions.NotEnoughStock;
-import com.bootcamp.finalProject.exceptions.PartNotExistException;
->>>>>>> 3d91d9d0687227fd22fa0f985a527a937ce5ce84
 import com.bootcamp.finalProject.mnemonics.OrderType;
-import com.bootcamp.finalProject.model.Order;
-import com.bootcamp.finalProject.model.Part;
-import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
@@ -31,7 +23,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
@@ -165,20 +156,9 @@ public class PartController {
 
     @PostMapping("/orders")
     public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
-        //Must be in Service just for testing
-        for (OrderDetailDTO o:
-             order.getOrderDetails()) {
-            Part p =  partRepository.findByPartCode(Integer.parseInt(o.getPartCode()));
-            if(p == null) {
-                throw new PartNotExistException(Integer.parseInt(o.getPartCode()));
-            }else{
-                if(p.getQuantity() < o.getQuantity()) {
-                    throw new NotEnoughStock(o.getPartCode());
-                }else{
-                    o.setDescription(p.getDescription());
-                    //add logic of order creation
-                }
-            }
+        if(order != null)
+        {
+            warehouseService.newOrder(order);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(order);
