@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.OrderDTO;
 import com.bootcamp.finalProject.dtos.OrderRequestDTO;
+import com.bootcamp.finalProject.dtos.OrderResponseDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
 import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
@@ -303,6 +304,7 @@ public class WarehouseServiceTest {
         Assertions.assertThrows(OrderIdNotFoundException.class, () -> warehouseService.findByOrderNumberCM(orderNumber));
     }
 
+
     @Test
     public void findOrderByNumber() throws OrderIdNotFoundException, SubsidiaryNotFoundException {
         //Arrange
@@ -315,24 +317,20 @@ public class WarehouseServiceTest {
         Order order = new Order();
         order.setIdOrder(1L);
         order.setOrderDate(new Date());
-        order.setDeliveryDate(new Date());
-        order.setDeliveredDate(new Date());
         order.setDeliveryStatus("C");
         order.setOrderDetails(new ArrayList<>());
 
-        OrderDTO expected = new OrderDTO();
+        OrderResponseDTO expected = new OrderResponseDTO();
         expected.setOrderNumberCM(orderNumber);
         expected.setOrderDate(datePattern.format(order.getOrderDate()));
-        expected.setDeliveryDate(datePattern.format(order.getDeliveryDate()));
         expected.setDeliveryStatus(order.getDeliveryStatus());
-        expected.setDaysDelayed(getDifferencesInDays(order.getDeliveryDate(), order.getDeliveredDate()));
         expected.setOrderDetails(new ArrayList<>());
 
         //Act
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
 
-        OrderDTO actual = warehouseService.findByOrderNumberCM(orderNumber);
+        OrderResponseDTO actual = warehouseService.findByOrderNumberCM(orderNumber);
 
         //Assert
         Assertions.assertEquals(expected, actual);
