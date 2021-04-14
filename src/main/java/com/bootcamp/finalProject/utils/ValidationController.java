@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.utils;
 
+import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.exceptions.DateEnteredGreaterException;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
@@ -133,5 +134,21 @@ public class ValidationController {
         } catch (Exception e) {
             throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
         }
+    }
+
+    /**
+     * verification of the information received for the creation of a DiscountRate in the database
+     * Id being null and the description and the discount are not null
+     * @param discountRateDTO
+     * @throws IncorrectParamsGivenException
+     */
+    public static void validateDiscountRateDTOParams(DiscountRateDTO discountRateDTO) throws IncorrectParamsGivenException {
+
+        if (discountRateDTO.getIdDiscountRate()!=null)
+            throw new IncorrectParamsGivenException("The ID is not required");
+
+        if (discountRateDTO.getDescription().equals(null) || discountRateDTO.getDescription().equals("")
+                ||discountRateDTO.getDiscount().equals(null) || discountRateDTO.getDiscount().equals(""))
+            throw new IncorrectParamsGivenException("The information required for a discountRate is incomplete");
     }
 }
