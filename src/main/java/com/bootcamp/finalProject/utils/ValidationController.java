@@ -59,6 +59,7 @@ public class ValidationController {
         if (params.get("order") != null && !params.get("order").equals("")) {
             try {
                 Integer.parseInt(params.get("order"));
+
             } catch (Exception e) {
                 throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
             }
@@ -67,12 +68,7 @@ public class ValidationController {
         if (params.isEmpty())
             throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
-        if (params.get("date") != null &&
-                params.get("queryType") != null &&
-                params.get("queryType").equals(QueryType.COMPLETE))
-            throw new IncorrectParamsGivenException(ExceptionMessage.DATE_NOT_NECESSARY);
-
-        if (params.get("date") != null && !params.containsKey("queryType"))
+        if (params.get("date") == null && params.get("queryType")!=null && params.get("queryType")!=QueryType.COMPLETE )
             throw new IncorrectParamsGivenException(ExceptionMessage.DATE_IS_NECESSARY);
     }
 
@@ -108,8 +104,22 @@ public class ValidationController {
 
     public static void validateOrderStatus(String orderStatus) throws IncorrectParamsGivenException {
 
-        if(!DeliveryStatus.DELIVERY_STATUS_VALUES.contains(orderStatus)){
+        if (!DeliveryStatus.DELIVERY_STATUS_VALUES.contains(orderStatus)) {
             throw new IncorrectParamsGivenException(ExceptionMessage.WRONG_STATUS_ORDER);
+        }
+    }
+
+    public static void validateSubsidiaryStockParams(Map<String, String> params) throws InternalExceptionHandler {
+        if (params.isEmpty())
+            throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
+
+        if (params.get("dealerNumber") == null || params.get("dealerNumber").equals("")) {
+            throw new IncorrectParamsGivenException(ExceptionMessage.MISSING_DEALER_NUMBER);
+        }
+        try {
+            Long.valueOf(params.get("dealerNumber"));
+        } catch (Exception e) {
+            throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
         }
     }
 }

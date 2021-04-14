@@ -338,11 +338,4 @@ public class WarehouseServiceTest {
         //Assert
         Assertions.assertEquals(expected, actual);
     }
-
-    @Test
-    void testSubsidiaryStock() throws SubsidiaryNotFoundException {
-        SubsidiaryStockRequestDTO sR = new SubsidiaryStockRequestDTO();
-        sR.setDealerNumber(1L);
-        SubsidiaryStockResponseDTO s = warehouseService.findSubsidiaryStock(sR);
-    }
 }
