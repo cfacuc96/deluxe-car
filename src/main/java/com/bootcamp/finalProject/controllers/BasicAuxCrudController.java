@@ -34,7 +34,7 @@ public class BasicAuxCrudController {
      * @param providerDTO
      */
     @PostMapping("providers")
-    public ResponseEntity<?> addProvider(@RequestBody ProviderDTO providerDTO) {
+    public ResponseEntity<?> addProvider(@RequestBody ProviderDTO providerDTO) throws InternalExceptionHandler {
         service.saveProvider(providerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(providerDTO.getName() + " has been added to the Database");
     }
@@ -69,7 +69,7 @@ public class BasicAuxCrudController {
      * @return ResponseEntity with the 201 CREATED code and a message if it was successful
      */
     @PostMapping("discountRates")
-    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws IncorrectParamsGivenException {
+    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
         //validation that the attributes of the DTO are not null except for the id
         ValidationController.validateDiscountRateDTOParams(discountRateDTO);
         //Call service to save the discountRate

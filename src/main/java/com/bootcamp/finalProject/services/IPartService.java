@@ -37,12 +37,14 @@ public interface IPartService {
 
     ProviderDTO findProviderById(Long id) throws InternalExceptionHandler;
 
-    void saveProvider(ProviderDTO providerDTO);
+    void saveProvider(ProviderDTO providerDTO) throws InternalExceptionHandler;
+
 
     List<DiscountRateDTO> findALLDiscountRate();
 
     DiscountRateDTO findDiscountRateById(Long id) throws InternalExceptionHandler;
 
-    void saveDiscountRate(DiscountRateDTO discountRateDTO);
+    void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler;
+
 
 }
