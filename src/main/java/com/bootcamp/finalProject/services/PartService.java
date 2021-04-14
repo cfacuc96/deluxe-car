@@ -69,7 +69,7 @@ public class PartService implements IPartService {
 
         //DiscountRate discountRate = new DiscountRate("a10","descuentico");
         //Provider provider = new Provider("pepito","la villa","0992326", "123");
-        if(partRepository.existByPartCode(part.getPartCode())){
+        if(partRepository.existsByPartCode(part.getPartCode())){
             throw new PartAlreadyExistException(part.getPartCode());
         }
 
