@@ -69,19 +69,19 @@ public class ValidationController {
         if (params.isEmpty())
             throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
-        if (params.get("date")==null && params.get("queryType")==null)
+        if (params.get("date") == null && params.get("queryType") == null)
             throw new IncorrectParamsGivenException("date and query type must not be null");
 
-        if (params.get("queryType")!=null){
-            params.put("queryType",params.get("queryType").replaceAll(" ",""));
+        if (params.get("queryType") != null) {
+            params.put("queryType", params.get("queryType").replaceAll(" ", ""));
         }
 
-        if (params.get("queryType")==null && params.get("date")!=null)
+        if (params.get("queryType") == null && params.get("date") != null)
             throw new IncorrectParamsGivenException(ExceptionMessage.QUERY_TYPE_IS_NECESSARY);
 
-        if (params.get("queryType")!=null && (params.get("queryType").equals(QueryType.PARTIAL)
+        if (params.get("queryType") != null && (params.get("queryType").equals(QueryType.PARTIAL)
                 || params.get("queryType").equals(QueryType.VARIATION))
-                && (params.get("date")==null || params.get("date").equals("")))
+                && (params.get("date") == null || params.get("date").equals("")))
             throw new IncorrectParamsGivenException(ExceptionMessage.DATE_IS_NECESSARY);
     }
 
@@ -139,16 +139,33 @@ public class ValidationController {
     /**
      * verification of the information received for the creation of a DiscountRate in the database
      * Id being null and the description and the discount are not null
+     *
      * @param discountRateDTO
      * @throws IncorrectParamsGivenException
      */
     public static void validateDiscountRateDTOParams(DiscountRateDTO discountRateDTO) throws IncorrectParamsGivenException {
 
-        if (discountRateDTO.getIdDiscountRate()!=null)
+        if (discountRateDTO.getIdDiscountRate() != null)
             throw new IncorrectParamsGivenException("The ID is not required");
 
         if (discountRateDTO.getDescription().equals(null) || discountRateDTO.getDescription().equals("")
-                ||discountRateDTO.getDiscount().equals(null) || discountRateDTO.getDiscount().equals(""))
+                || discountRateDTO.getDiscount().equals(null) || discountRateDTO.getDiscount().equals(""))
             throw new IncorrectParamsGivenException("The information required for a discountRate is incomplete");
+    }
+
+    public static Long validateProviderId(String id) throws IncorrectParamsGivenException {
+        if (id != null) {
+            try {
+                long idParam = Long.parseLong(id);
+                if (idParam > 0)
+                    return idParam;
+                else
+                    throw new IncorrectParamsGivenException(ExceptionMessage.LOWER_THAN_ZERO);
+
+            } catch (Exception e) {
+                throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
+            }
+        }
+        throw new IncorrectParamsGivenException(ExceptionMessage.ID_NOT_FOUND);
     }
 }
