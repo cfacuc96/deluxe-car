@@ -8,6 +8,8 @@ import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.PartRecord;
 import com.bootcamp.finalProject.model.Provider;
+import com.bootcamp.finalProject.repositories.DiscountRateRepository;
+import com.bootcamp.finalProject.repositories.IProviderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 
@@ -23,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -35,6 +39,12 @@ public class PartServiceTests {
 
     @Mock
     PartRepository partRepository;
+
+    @Mock
+    IProviderRepository providerRepository;
+
+    @Mock
+    DiscountRateRepository discountRateRepository;
 
     @Mock
     PartResponseMapper mapper;
@@ -512,16 +522,16 @@ public class PartServiceTests {
         requestPartDTO.setPartCode(11111114);
         requestPartDTO.setDescription("Amortiguador trasero izquierdo - BMW 220i - TEST");
 
-        Part expectedPart = new Part();
-        expectedPart.setIdPart(3L);
-        expectedPart.setPartCode(11111114);
-        expectedPart.setDescription("Amortiguador trasero izquierdo - BMW 220i");
-        expectedPart.setWidthDimension(15);
-        expectedPart.setTallDimension(47);
-        expectedPart.setLongDimension(47);
-        expectedPart.setNetWeight(3200);
-        expectedPart.setQuantity(140);
-        expectedPart.setLastModification(parseDate("2021-01-05"));
+        Part actual = new Part();
+        actual.setIdPart(3L);
+        actual.setPartCode(11111114);
+        actual.setDescription("Amortiguador trasero izquierdo - BMW 220i");
+        actual.setWidthDimension(15);
+        actual.setTallDimension(47);
+        actual.setLongDimension(47);
+        actual.setNetWeight(3200);
+        actual.setQuantity(140);
+        actual.setLastModification(parseDate("2021-01-05"));
 
         PartRecord partRecord = new PartRecord();
         partRecord.setIdPartRecord(7L);
@@ -540,9 +550,9 @@ public class PartServiceTests {
         discountRate.setPartRecords(partRecordList);
 
         partRecord.setDiscountRate(discountRate);
-        partRecord.setPart(expectedPart);
+        partRecord.setPart(actual);
 
-        expectedPart.setPartRecords(partRecordList);
+        actual.setPartRecords(partRecordList);
 
         Provider provider = new Provider();
         provider.setIdProvider(1L);
@@ -551,19 +561,303 @@ public class PartServiceTests {
         provider.setPhone("1234567890");
         provider.setAddress("Direccion1");
 
-        expectedPart.setProvider(provider);
+        actual.setProvider(provider);
 
-        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(expectedPart);
-        when(partRepository.save(expectedPart)).thenReturn(expectedPart);
+        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(actual);
+        when(partRepository.save(actual)).thenReturn(actual);
 
-        //act
-        Part actualPart = expectedPart.toBuilder().build();
-        actualPart.setDescription(requestPartDTO.getDescription());
+        Part expected = actual.toBuilder().build();
+        expected.setDescription(requestPartDTO.getDescription());
 //        actualPart.setLastModification(new Date());
 //      TODO: Averiguar como trabajar fecha en test para fechas autogeneradas en los procedimientos
+        //act
         partService.updatePart(requestPartDTO);
 
-        Assertions.assertEquals(actualPart, expectedPart);
+        //assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void updatePartAtributesComplete() throws InternalExceptionHandler {
+        //arrange
+        PartDTO requestPartDTO = new PartDTO();
+        requestPartDTO.setPartCode(11111114);
+        requestPartDTO.setDescription("Amortiguador trasero izquierdo - BMW 220i - TEST");
+        requestPartDTO.setQuantity(1);
+        requestPartDTO.setNetWeight(1);
+        requestPartDTO.setLongDimension(1);
+        requestPartDTO.setWidthDimension(1);
+        requestPartDTO.setTallDimension(1);
+
+        Part actual = new Part();
+        actual.setIdPart(3L);
+        actual.setPartCode(11111114);
+        actual.setDescription("Amortiguador trasero izquierdo - BMW 220i");
+        actual.setWidthDimension(15);
+        actual.setTallDimension(47);
+        actual.setLongDimension(47);
+        actual.setNetWeight(3200);
+        actual.setQuantity(140);
+        actual.setLastModification(parseDate("2021-01-05"));
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setIdPartRecord(7L);
+        partRecord.setNormalPrice(35000.0);
+        partRecord.setSalePrice(37500.0);
+        partRecord.setUrgentPrice(39000.0);
+        partRecord.setCreatedAt(parseDate("2021-01-05"));
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+        discountRate.setPartRecords(partRecordList);
+
+        partRecord.setDiscountRate(discountRate);
+        partRecord.setPart(actual);
+
+        actual.setPartRecords(partRecordList);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        actual.setProvider(provider);
+
+        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(actual);
+        when(partRepository.save(actual)).thenReturn(actual);
+
+        Part expected = actual.toBuilder().build();
+        expected.setDescription(requestPartDTO.getDescription());
+        expected.setQuantity(requestPartDTO.getQuantity());
+        expected.setNetWeight(requestPartDTO.getNetWeight());
+        expected.setLongDimension(requestPartDTO.getLongDimension());
+        expected.setWidthDimension(requestPartDTO.getWidthDimension());
+        expected.setTallDimension(requestPartDTO.getTallDimension());
+
+        //act
+        partService.updatePart(requestPartDTO);
+
+        //assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void updatePartMaker() throws InternalExceptionHandler {
+        //arrange
+        PartDTO requestPartDTO = new PartDTO();
+        requestPartDTO.setPartCode(11111114);
+        requestPartDTO.setMakerId(2L);
+
+        Part actual = new Part();
+        actual.setIdPart(3L);
+        actual.setPartCode(11111114);
+        actual.setDescription("Amortiguador trasero izquierdo - BMW 220i");
+        actual.setWidthDimension(15);
+        actual.setTallDimension(47);
+        actual.setLongDimension(47);
+        actual.setNetWeight(3200);
+        actual.setQuantity(140);
+        actual.setLastModification(parseDate("2021-01-05"));
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setIdPartRecord(7L);
+        partRecord.setNormalPrice(35000.0);
+        partRecord.setSalePrice(37500.0);
+        partRecord.setUrgentPrice(39000.0);
+        partRecord.setCreatedAt(parseDate("2021-01-05"));
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+        discountRate.setPartRecords(partRecordList);
+
+        partRecord.setDiscountRate(discountRate);
+        partRecord.setPart(actual);
+
+        actual.setPartRecords(partRecordList);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        actual.setProvider(provider);
+
+        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(actual);
+        when(partRepository.save(actual)).thenReturn(actual);
+
+        Part expected = actual.toBuilder().build();
+        Provider providerExpected = new Provider();
+        providerExpected.setIdProvider(2L);
+        providerExpected.setName("Josesinho");
+        providerExpected.setCountry("Brasil");
+        providerExpected.setPhone("12345667890");
+        providerExpected.setAddress("Mi direccion2");
+        expected.setProvider(providerExpected);
+
+        when(providerRepository.findById(requestPartDTO.getMakerId())).thenReturn(Optional.of(providerExpected));
+        //act
+        partService.updatePart(requestPartDTO);
+
+        //assert
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertEquals(expected.getProvider(), actual.getProvider());
+    }
+
+    @Test
+    public void updatePartMakerNotFoundException() {
+        //arrange
+        PartDTO requestPartDTO = new PartDTO();
+        requestPartDTO.setPartCode(11111114);
+        requestPartDTO.setMakerId(0L);
+
+        Part actual = new Part();
+        actual.setIdPart(3L);
+        actual.setPartCode(11111114);
+        actual.setDescription("Amortiguador trasero izquierdo - BMW 220i");
+        actual.setWidthDimension(15);
+        actual.setTallDimension(47);
+        actual.setLongDimension(47);
+        actual.setNetWeight(3200);
+        actual.setQuantity(140);
+        actual.setLastModification(parseDate("2021-01-05"));
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setIdPartRecord(7L);
+        partRecord.setNormalPrice(35000.0);
+        partRecord.setSalePrice(37500.0);
+        partRecord.setUrgentPrice(39000.0);
+        partRecord.setCreatedAt(parseDate("2021-01-05"));
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+        discountRate.setPartRecords(partRecordList);
+
+        partRecord.setDiscountRate(discountRate);
+        partRecord.setPart(actual);
+
+        actual.setPartRecords(partRecordList);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        actual.setProvider(provider);
+
+        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(actual);
+
+        Mockito.when(providerRepository.findById(requestPartDTO.getMakerId())).thenThrow(ProviderIdNotFoundException.class);
+
+
+        //act
+        Assertions.assertThrows(ProviderIdNotFoundException.class, () -> partService.updatePart(requestPartDTO));
+
+    }
+
+    @Test
+    public void updatePartPrice() throws InternalExceptionHandler {
+        //arrange
+        PartDTO requestPartDTO = new PartDTO();
+        requestPartDTO.setPartCode(11111114);
+        requestPartDTO.setNormalPrice(1D);
+        requestPartDTO.setSalePrice(1D);
+        requestPartDTO.setUrgentPrice(1D);
+        requestPartDTO.setDiscountId(1L);
+
+        Part actual = new Part();
+        actual.setIdPart(3L);
+        actual.setPartCode(11111114);
+        actual.setDescription("Amortiguador trasero izquierdo - BMW 220i");
+        actual.setWidthDimension(15);
+        actual.setTallDimension(47);
+        actual.setLongDimension(47);
+        actual.setNetWeight(3200);
+        actual.setQuantity(140);
+        actual.setLastModification(parseDate("2021-01-05"));
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setIdPartRecord(7L);
+        partRecord.setNormalPrice(35000.0);
+        partRecord.setSalePrice(37500.0);
+        partRecord.setUrgentPrice(39000.0);
+        partRecord.setCreatedAt(parseDate("2021-01-05"));
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+        discountRate.setPartRecords(partRecordList);
+
+        partRecord.setDiscountRate(discountRate);
+        partRecord.setPart(actual);
+
+        actual.setPartRecords(partRecordList);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        actual.setProvider(provider);
+
+        DiscountRate discountRateExpected = new DiscountRate();
+        discountRateExpected.setIdDiscountRate(1L);
+        discountRateExpected.setDescription("Descuento Facu 3");
+        discountRateExpected.setDiscount("FAC");
+
+        when(partRepository.findByPartCode(requestPartDTO.getPartCode())).thenReturn(actual);
+        when(discountRateRepository.findById(requestPartDTO.getDiscountId())).thenReturn(Optional.of(discountRateExpected));        //act
+        when(partRepository.save(actual)).thenReturn(actual);
+
+        Part expected = actual.toBuilder().build();
+
+        PartRecord partRecordExpected = new PartRecord();
+        partRecordExpected.setNormalPrice(requestPartDTO.getNormalPrice());
+        partRecordExpected.setSalePrice(requestPartDTO.getSalePrice());
+        partRecordExpected.setUrgentPrice(requestPartDTO.getUrgentPrice());
+
+        partRecordExpected.setPart(expected);
+
+        partRecordExpected.setDiscountRate(discountRateExpected);
+
+        List<PartRecord> list = new ArrayList<>();
+        list.add(partRecord);
+        list.add(partRecordExpected);
+        expected.setPartRecords(list);
+
+
+        //act
+        partService.updatePart(requestPartDTO);
+
+        //assert
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertIterableEquals(expected.getPartRecords(), actual.getPartRecords());
     }
 
     public static Date parseDate(String date) {

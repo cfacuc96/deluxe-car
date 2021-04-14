@@ -12,6 +12,7 @@ import com.bootcamp.finalProject.model.Order;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
+import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,9 @@ import org.springframework.data.domain.Sort;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
-import static com.bootcamp.finalProject.utils.MapperUtils.getDifferencesInDays;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -39,6 +40,8 @@ public class WarehouseServiceTest {
     OrderRepository orderRepository;
     @Mock
     ISubsidiaryRepository subsidiaryRepository;
+    @Mock
+    SubsidiaryResponseMapper mapper;
 
     @BeforeEach
     void initSetUp() {
@@ -89,14 +92,17 @@ public class WarehouseServiceTest {
         requestDTO.setDealerNumber(1L);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -113,14 +119,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(1);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -137,14 +146,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(1);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -161,14 +173,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(1);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -185,14 +200,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(1);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiaryAndDeliveryStatus(requestDTO.getDealerNumber(), requestDTO.getDeliveryStatus(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -219,14 +237,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(0);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "idOrder"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "idOrder"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -242,14 +263,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(1);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.ASC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
@@ -265,14 +289,17 @@ public class WarehouseServiceTest {
         requestDTO.setOrder(2);
 
         Subsidiary subsidiary = new Subsidiary();
+        List<Order> orders = new ArrayList<>();
 
         SubsidiaryResponseDTO expected = new SubsidiaryResponseDTO();
+        List<OrderDTO> ordersDTO = new ArrayList<>();
         expected.setDealerNumber("");
-        expected.setOrders(new ArrayList<>());
+        expected.setOrders(ordersDTO);
 
         //Act
         when(subsidiaryRepository.findById(requestDTO.getDealerNumber())).thenReturn(Optional.of(subsidiary));
-        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.DESC, "orderDate"))).thenReturn(new ArrayList<>());
+        when(orderRepository.findByIdSubsidiary(requestDTO.getDealerNumber(), Sort.by(Sort.Direction.DESC, "orderDate"))).thenReturn(orders);
+        when(mapper.toOrderDTO(subsidiary)).thenReturn(expected);
 
         SubsidiaryResponseDTO actual = warehouseService.findSubsidiaryOrders(requestDTO);
 
