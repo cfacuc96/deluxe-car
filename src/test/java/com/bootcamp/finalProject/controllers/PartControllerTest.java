@@ -42,17 +42,10 @@ class PartControllerTest {
         Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.findPart(requestParams));
     }
 
-    @Test
-    void findPartShouldReturnExceptionSinceQueryTypeCAndDateNotNull() {
-        //Arrange
-        Map<String, String> requestParams = new HashMap<>();
-        requestParams.put("queryType", "C");
-        requestParams.put("date", "2021-04-11");
+<<<<<<< HEAD
+=======
 
-        //Act and Assert
-        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.findPart(requestParams));
-    }
-
+>>>>>>> f23944cf70f3d311c954bf619fb02f23c64ca95f
     @Test
     void findPartShouldReturnExceptionSinceDateNotNullAndQueryTypeNull() {
         //Arrange
