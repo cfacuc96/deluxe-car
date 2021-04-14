@@ -26,7 +26,5 @@ public interface IWarehouseService {
 
     SubsidiaryStockResponseDTO findSubsidiaryStock(SubsidiaryStockRequestDTO subsidiaryStockRequestDTO) throws SubsidiaryNotFoundException;
 
-    void changeDeliveryStatus(String orderNumberCM, String newStatus) throws OrderIdNotFoundException, SubsidiaryNotFoundException, PartAlreadyExistException;
-   
     OrderDTO newOrder(OrderDTO order) throws PartAlreadyExistException, InvalidAccountTypeExtensionException, NotEnoughStock, PartNotExistException;
 }
