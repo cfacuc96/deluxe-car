@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/parts")
-public class BasicAuxCrudController {
+public class BasicAuxCrudController extends CentralController{
 
     @Autowired
     IPartService service;

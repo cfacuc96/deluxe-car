@@ -159,25 +159,6 @@ public class PartController {
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
 
-    @ExceptionHandler(InternalExceptionHandler.class)
-    public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
-        return new ResponseEntity<>(e.getError(), e.getReturnStatus());
-    }
 
-    @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<ErrorDTO> handleInvalidFormatException(InvalidFormatException errorException) {
-        ErrorDTO error = new ErrorDTO();
-        error.setName("Invalid Format Exception !");
-        error.setDescription(errorException.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleExceptionMethodArgument(MethodArgumentNotValidException errorException) {
-        ErrorDTO error = new ErrorDTO();
-        error.setName("Method Argument Not Valid Exception !");
-        error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
 
 }

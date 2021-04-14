@@ -6,6 +6,7 @@ import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Part;
+import com.bootcamp.finalProject.model.Provider;
 
 import java.util.List;
 
