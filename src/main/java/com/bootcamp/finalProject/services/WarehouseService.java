@@ -78,14 +78,14 @@ public class WarehouseService implements IWarehouseService
     }
 
     @Override
-    public OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
+    public OrderResponseDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
         Long id = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
 
         Subsidiary s = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
         Order o = orderRepository.findByIdOrderAndSubsidiary(id, s).orElseThrow(OrderIdNotFoundException::new);
-        return new OrderResponseMapper().toDTO(o, s.getIdSubsidiary());
+        return new OrderResponseMapper().toOrderNumberCMDTO(o, s.getIdSubsidiary());
     }
 
     @Override

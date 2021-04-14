@@ -332,7 +332,7 @@ public class WarehouseServiceTest {
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
 
-        OrderDTO actual = warehouseService.findByOrderNumberCM(orderNumber);
+        OrderResponseDTO actual = warehouseService.findByOrderNumberCM(orderNumber);
 
         //Assert
         Assertions.assertEquals(expected, actual);
