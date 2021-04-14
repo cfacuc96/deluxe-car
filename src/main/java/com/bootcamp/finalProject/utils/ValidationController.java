@@ -75,6 +75,9 @@ public class ValidationController {
             params.put("queryType",params.get("queryType").replaceAll(" ",""));
         }
 
+        if (params.get("queryType")==null && params.get("date")!=null)
+            throw new IncorrectParamsGivenException(ExceptionMessage.QUERY_TYPE_IS_NECESSARY);
+
         if (params.get("queryType")!=null && (params.get("queryType").equals(QueryType.PARTIAL)
                 || params.get("queryType").equals(QueryType.VARIATION))
                 && (params.get("date")==null || params.get("date").equals("")))

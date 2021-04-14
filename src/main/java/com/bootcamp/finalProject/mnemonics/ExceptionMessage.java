@@ -8,8 +8,9 @@ public class ExceptionMessage {
 
     public static final String DATE_NOT_NECESSARY = "for a complete search the date is not necessary";
 
-    public static final String DATE_IS_NECESSARY = "for a date it is necessary to " +
-            "specify if the query will be of partial type or of variation type";
+    public static final String DATE_IS_NECESSARY = "a date is required for a partial or variation type query";
+
+    public static final String QUERY_TYPE_IS_NECESSARY = "given a date the type of query must be partial or variation";
 
     public static final String MISSING_DEALER_NUMBER = "dealerNumber is missing from request";
 
