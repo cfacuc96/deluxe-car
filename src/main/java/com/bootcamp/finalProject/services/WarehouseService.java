@@ -78,14 +78,14 @@ public class WarehouseService implements IWarehouseService
     }
 
     @Override
-    public OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
+    public OrderResponseDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException {
         Long id = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));
 
         Subsidiary s = subsidiaryRepository.findById(idSubsidiary).orElseThrow(SubsidiaryNotFoundException::new);
         Order o = orderRepository.findByIdOrderAndSubsidiary(id, s).orElseThrow(OrderIdNotFoundException::new);
-        return new OrderResponseMapper().toDTO(o, s.getIdSubsidiary());
+        return new OrderResponseMapper().toOrderNumberCMDTO(o, s.getIdSubsidiary());
     }
 
     @Override
@@ -148,6 +148,7 @@ public class WarehouseService implements IWarehouseService
         for(OrderDetailDTO orderDetail : orderDetailList)
         {
             orderList.add(validateOrderToCreate(orderDetail,orderReturn));
+            orderDetail.setReason(null);
         }
         orderReturn.setOrderDetails(orderList);
         orderReturn = orderRepository.save(orderReturn);
@@ -158,7 +159,6 @@ public class WarehouseService implements IWarehouseService
         order.setDeliveryDate(datePattern.format(calendar.getTime()));
         order.setDeliveryStatus(DeliveryStatus.PENDING);
         order.setDaysDelayed(getDifferencesInDays(orderReturn.getDeliveryDate(),orderReturn.getDeliveredDate()));
-
         return order;
     }
 
@@ -186,7 +186,7 @@ public class WarehouseService implements IWarehouseService
                 }
             }
 
-            orderDetailReturn = new OrderDetail(null, orderDetail.getAccountType(), orderDetail.getQuantity(), orderDetail.getReason(), part, orderReturn);
+            orderDetailReturn = new OrderDetail(null, orderDetail.getAccountType(), orderDetail.getQuantity(), null , part, orderReturn);
         }
         
         return orderDetailReturn;

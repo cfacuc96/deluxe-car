@@ -20,7 +20,7 @@ import com.bootcamp.finalProject.model.Part;
 public interface IWarehouseService {
     SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO requestDTO) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException;
 
-    OrderDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException;
+    OrderResponseDTO findByOrderNumberCM(String orderNumberCM) throws OrderIdNotFoundException, SubsidiaryNotFoundException;
 
     void changeDeliveryStatus(String orderNumberCM, String newStatus) throws InternalExceptionHandler;
 

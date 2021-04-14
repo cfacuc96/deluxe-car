@@ -2,17 +2,8 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.exceptions.NotEnoughStock;
-import com.bootcamp.finalProject.exceptions.PartNotExistException;
-import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
-import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
 import com.bootcamp.finalProject.mnemonics.OrderType;
 import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.exceptions.NotEnoughStock;
-import com.bootcamp.finalProject.exceptions.PartNotExistException;
-import com.bootcamp.finalProject.mnemonics.OrderType;
-import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
@@ -45,9 +36,6 @@ public class PartController {
     @Autowired
     IWarehouseService warehouseService;
 
-    @Autowired
-    PartRepository partRepository;
-
     /**
      * GET method to search list of parts, it receives a map with the following data
      * queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION
@@ -70,6 +58,12 @@ public class PartController {
         return service.findPart(requestDTO);
     }
 
+    /**
+     * Updates data of a Part with a given DTO
+     * @param part DTO of a Part with the id and data to be updated
+     * @return ResponseEntity<String> OK HTTP code and message if update was successful
+     * @throws InternalExceptionHandler if DTO is not correct
+     */
     @PutMapping()
     public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws InternalExceptionHandler {
         service.updatePart(part);
@@ -99,9 +93,18 @@ public class PartController {
         return warehouseService.findSubsidiaryOrders(orderRequestDTO);
     }
 
+    /**
+     * Gets a DTO of an order searched by a String orderNumberCM
+     * orderNumberCM -> following the next model of String =  "0001-00000001"
+     * "0001" = subsidiary Id
+     * "00000001" = Order Id
+     * @param orderNumberCM model of String =  "0001-00000001"
+     * @return OrderDTO DTO of an Order with the orderNumberCM
+     * @throws InternalExceptionHandler if received orderNumberCM is misspelled or is not found
+     */
     @GetMapping("orders/{orderNumberCM}")
     //Por algun motivo no se esta haciendo la validacion, esta el tag @validate en el controller tal como la documentacion
-    public OrderDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
+    public OrderResponseDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
 
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");
@@ -119,38 +122,6 @@ public class PartController {
         return warehouseService.findSubsidiaryStock(request);
     }
 
-    @PostMapping("providers/add")
-    public void addProvider(@RequestBody ProviderDTO providerDTO) {
-        service.saveProvider(providerDTO);
-    }
-
-    @GetMapping("providers/all")
-    public List<ProviderDTO> findAllProviders() {
-        return service.findAllProviders();
-    }
-
-    @GetMapping("providers/{id}")
-    public Provider findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
-        return service.findProviderById(id);
-    }
-
-
-    @PostMapping("discountRates/add")
-    public void addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) {
-        service.saveDiscountRate(discountRateDTO);
-    }
-
-    @GetMapping("discountRates/all")
-    public List<DiscountRateDTO> getALLDiscountRate() {
-        return service.findALLDiscountRate();
-    }
-
-    //EndPoint de prueba para verificar la busqueda por id
-    @GetMapping("discountRates/{id}")
-    public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
-        return service.findDiscountRateById(id);
-    }
-
     @PostMapping("")
     public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
 
@@ -163,7 +134,7 @@ public class PartController {
     }
 
 
-    @PostMapping("/orders")
+    @PostMapping("orders")
     public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception 
     {
         if(order != null)
@@ -175,7 +146,7 @@ public class PartController {
 
     }
 
-    @PutMapping("/order/{orderNumberCM}/{orderStatus}")
+    @PutMapping("order/{orderNumberCM}/{orderStatus}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
                                                @PathVariable String orderStatus) throws InternalExceptionHandler {
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
@@ -187,7 +158,6 @@ public class PartController {
         warehouseService.changeDeliveryStatus(orderNumberCM,orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
-
 
     @ExceptionHandler(InternalExceptionHandler.class)
     public ResponseEntity<ErrorDTO> handleException(InternalExceptionHandler e) {
@@ -209,4 +179,5 @@ public class PartController {
         error.setDescription(errorException.getAllErrors().get(0).getDefaultMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
 }
