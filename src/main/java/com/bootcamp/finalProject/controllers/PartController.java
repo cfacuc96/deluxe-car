@@ -154,7 +154,7 @@ public class PartController {
     }
 
 
-    @PostMapping("/orders")
+    @PostMapping("orders")
     public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception 
     {
         if(order != null)
@@ -166,7 +166,7 @@ public class PartController {
 
     }
 
-    @PutMapping("/order/{orderNumberCM}/{orderStatus}")
+    @PutMapping("order/{orderNumberCM}/{orderStatus}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
                                                @PathVariable String orderStatus) throws InternalExceptionHandler {
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
