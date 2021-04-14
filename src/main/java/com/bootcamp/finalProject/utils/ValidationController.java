@@ -68,7 +68,16 @@ public class ValidationController {
         if (params.isEmpty())
             throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
-        if (params.get("date") == null && params.get("queryType")!=null && params.get("queryType")!=QueryType.COMPLETE )
+        if (params.get("date")==null && params.get("queryType")==null)
+            throw new IncorrectParamsGivenException("date and query type must not be null");
+
+        if (params.get("queryType")!=null){
+            params.put("queryType",params.get("queryType").replaceAll(" ",""));
+        }
+
+        if (params.get("queryType")!=null && (params.get("queryType").equals(QueryType.PARTIAL)
+                || params.get("queryType").equals(QueryType.VARIATION))
+                && (params.get("date")==null || params.get("date").equals("")))
             throw new IncorrectParamsGivenException(ExceptionMessage.DATE_IS_NECESSARY);
     }
 
