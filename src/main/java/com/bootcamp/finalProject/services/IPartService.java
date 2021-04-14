@@ -41,7 +41,7 @@ public interface IPartService {
 
     List<DiscountRateDTO> findALLDiscountRate();
 
-    DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler;
+    DiscountRateDTO findDiscountRateById(Long id) throws InternalExceptionHandler;
 
     void saveDiscountRate(DiscountRateDTO discountRateDTO);
 

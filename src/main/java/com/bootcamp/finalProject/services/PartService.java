@@ -72,7 +72,7 @@ public class PartService implements IPartService {
             throw new PartAlreadyExistException(part.getPartCode());
         }
 
-        DiscountRate discountRate = findDiscountRateById(part.getDiscountId());
+        DiscountRate discountRate = discountRateRepository.findById(part.getDiscountId()).orElseThrow(DiscountRateIDNotFoundException::new);
         Provider provider = providerRepository.findById(part.getMakerId()).orElseThrow(ProviderIdNotFoundException::new);
 
 
@@ -205,8 +205,9 @@ public class PartService implements IPartService {
     }
 
     @Override
-    public DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler {
-        return discountRateRepository.findById(id).orElseThrow(DiscountRateIDNotFoundException::new);
+    public DiscountRateDTO findDiscountRateById(Long id) throws InternalExceptionHandler {
+        DiscountRate discountRate = discountRateRepository.findById(id).orElseThrow(DiscountRateIDNotFoundException::new);
+        return DiscountRateMapper.toDTO(discountRate);
     }
 
     @Override
