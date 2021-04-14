@@ -56,8 +56,6 @@ public class WarehouseService implements IWarehouseService
     @Autowired
     private ISubsidiaryStockRepository subsidiaryStockRepository;
 
-    @Autowired
-    private PartRepository partRepository;
 
     @Override
     public SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
@@ -98,7 +96,7 @@ public class WarehouseService implements IWarehouseService
         return new SubsidiaryResponseMapper().toStockDTO(subsidiary);
     }
 
-    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws SubsidiaryNotFoundException, OrderIdNotFoundException, PartAlreadyExistException {
+    public void changeDeliveryStatus(String orderNumberCM, String newStatus) throws InternalExceptionHandler {
         Long orderId = Long.valueOf(OrderNumberCMUtil.getNumberOR(orderNumberCM));
 
         Long idSubsidiary = Long.valueOf(OrderNumberCMUtil.getNumberCE(orderNumberCM));

@@ -1,19 +1,15 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.PartDTO;
-import com.bootcamp.finalProject.dtos.PartRequestDTO;
-import com.bootcamp.finalProject.dtos.PartResponseDTO;
+import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
-import com.bootcamp.finalProject.dtos.DiscountRateDTO;
-import com.bootcamp.finalProject.dtos.ProviderDTO;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.mnemonics.QueryType;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.PartRecord;
 import com.bootcamp.finalProject.model.Provider;
-import com.bootcamp.finalProject.repositories.IProviderRepository;
 import com.bootcamp.finalProject.repositories.DiscountRateRepository;
+import com.bootcamp.finalProject.repositories.IProviderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.DiscountRateMapper;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
@@ -23,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

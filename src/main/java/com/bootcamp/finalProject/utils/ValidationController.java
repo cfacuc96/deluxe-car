@@ -59,6 +59,7 @@ public class ValidationController {
         if (params.get("order") != null && !params.get("order").equals("")) {
             try {
                 Integer.parseInt(params.get("order"));
+
             } catch (Exception e) {
                 throw new IncorrectParamsGivenException(ExceptionMessage.NOT_A_NUMBER);
             }
@@ -67,12 +68,7 @@ public class ValidationController {
         if (params.isEmpty())
             throw new IncorrectParamsGivenException(ExceptionMessage.EMPTY_PARAMS);
 
-        if (params.get("date") != null &&
-                params.get("queryType") != null &&
-                params.get("queryType").equals(QueryType.COMPLETE))
-            throw new IncorrectParamsGivenException(ExceptionMessage.DATE_NOT_NECESSARY);
-
-        if (params.get("date") != null && !params.containsKey("queryType"))
+        if (params.get("date") == null && params.get("queryType")!=null && params.get("queryType")!=QueryType.COMPLETE )
             throw new IncorrectParamsGivenException(ExceptionMessage.DATE_IS_NECESSARY);
     }
 
