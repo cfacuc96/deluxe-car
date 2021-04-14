@@ -6,6 +6,7 @@ import com.bootcamp.finalProject.exceptions.OrderTypeException;
 import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Part;
+import com.bootcamp.finalProject.model.Provider;
 
 import java.util.List;
 
@@ -35,13 +36,14 @@ public interface IPartService {
 
     List<ProviderDTO> findAllProviders();
 
-    Provider findProviderById(Long id) throws InternalExceptionHandler;
+    ProviderDTO findProviderById(Long id) throws InternalExceptionHandler;
+
     void saveProvider(ProviderDTO providerDTO) throws InternalExceptionHandler;
 
 
     List<DiscountRateDTO> findALLDiscountRate();
 
-    DiscountRate findDiscountRateById(Long id) throws InternalExceptionHandler;
+    DiscountRateDTO findDiscountRateById(Long id) throws InternalExceptionHandler;
 
     void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler;
 

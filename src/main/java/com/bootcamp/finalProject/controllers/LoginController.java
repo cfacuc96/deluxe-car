@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.security.auth.login.LoginException;
 
 @RestController
-public class LoginController {
+public class LoginController extends CentralController{
 
     @Autowired
     private AuthenticationManager authManger;
