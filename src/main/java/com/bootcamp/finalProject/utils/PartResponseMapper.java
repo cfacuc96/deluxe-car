@@ -10,6 +10,7 @@ import java.util.List;
 
 public class PartResponseMapper {
     SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+
     public List<PartResponseDTO> toDTO(List<Part> partList) {
         List<PartResponseDTO> ret = new ArrayList<>();
 
@@ -29,11 +30,11 @@ public class PartResponseMapper {
         ret.setMaker(part.getProvider().getName());
         ret.setQuantity(part.getQuantity());
 
-        if(part.getPartRecords().size() > 0 ){
+        if (part.getPartRecords().size() > 0) {
             PartRecord p = part.getPartRecords().iterator().next();
             ret.setNormalPrice(p.getNormalPrice());
             ret.setUrgentPrice(p.getUrgentPrice());
-            if(p.getDiscountRate() != null)
+            if (p.getDiscountRate() != null)
                 ret.setDiscountType(p.getDiscountRate().getDiscount());
         }
 

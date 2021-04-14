@@ -66,7 +66,6 @@ public class PartService implements IPartService {
     @Override
     public Part newPart(PartDTO part) throws Exception {
 
-
         //DiscountRate discountRate = new DiscountRate("a10","descuentico");
         //Provider provider = new Provider("pepito","la villa","0992326", "123");
         if(partRepository.existByPartCode(part.getPartCode())){
@@ -111,7 +110,7 @@ public class PartService implements IPartService {
                 validateAndUpdate(part, partDTO);
                 partRepository.save(part);
             }else{
-                //throw new partNotExistException
+                throw new PartNotExistException(partDTO.getPartCode());
             }
         }else{
             throw new IncorrectParamsGivenException(ExceptionMessage.PART_CODE_REQUIRED);
@@ -200,8 +199,7 @@ public class PartService implements IPartService {
     @Override
     public List<DiscountRateDTO> findALLDiscountRate() {
         List<DiscountRate> discountRates = discountRateRepository.findAll();
-        List<DiscountRateDTO> discountRateDTOS = discountRates.stream().map(DiscountRateMapper::toDTO).collect(Collectors.toList());
-        return discountRateDTOS;
+        return discountRates.stream().map(DiscountRateMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -213,5 +211,4 @@ public class PartService implements IPartService {
     public void saveDiscountRate(DiscountRateDTO discountRateDTO) {
         discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
     }
-
 }
