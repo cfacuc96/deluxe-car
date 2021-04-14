@@ -3,11 +3,13 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.ProviderDTO;
+import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
+import com.bootcamp.finalProject.utils.ValidationController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +68,10 @@ public class BasicAuxCrudController {
      * @return ResponseEntity with the 201 CREATED code and a message if it was successful
      */
     @PostMapping("discountRates")
-    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) {
+    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws IncorrectParamsGivenException {
+        //validation that the attributes of the DTO are not null except for the id
+        ValidationController.validateDiscountRateDTOParams(discountRateDTO);
+        //Call service to save the discountRate
         service.saveDiscountRate(discountRateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("A new discount rate has been added to the Database");
     }
