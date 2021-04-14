@@ -101,7 +101,7 @@ public class PartController {
 
     @GetMapping("orders/{orderNumberCM}")
     //Por algun motivo no se esta haciendo la validacion, esta el tag @validate en el controller tal como la documentacion
-    public OrderDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
+    public OrderResponseDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
 
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");
