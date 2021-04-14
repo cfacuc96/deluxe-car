@@ -42,10 +42,6 @@ class PartControllerTest {
         Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.findPart(requestParams));
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> f23944cf70f3d311c954bf619fb02f23c64ca95f
     @Test
     void findPartShouldReturnExceptionSinceDateNotNullAndQueryTypeNull() {
         //Arrange
