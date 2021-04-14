@@ -42,7 +42,6 @@ class PartResponseMapperTest {
         List<PartResponseDTO> actual = mapper.toDTO(getParts());
 
         //assert
-
         Assertions.assertIterableEquals(expected,actual);
     }
 

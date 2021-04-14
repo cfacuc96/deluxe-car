@@ -29,6 +29,7 @@ public class BasicAuxCrudController {
 
     /**
      * Creates a new provider into the database
+     *
      * @param providerDTO
      */
     @PostMapping("providers")
@@ -39,6 +40,7 @@ public class BasicAuxCrudController {
 
     /**
      * Gets all the providers in the database
+     *
      * @return List<ProviderDTO>
      */
     @GetMapping("providers")
@@ -48,18 +50,20 @@ public class BasicAuxCrudController {
 
     /**
      * Gets a provider searching by its Id in database
+     *
      * @param id Long id
      * @return Provider
      * @throws InternalExceptionHandler
      */
     @GetMapping("providers/{id}")
-    public Provider findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
+    public ProviderDTO findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
         return service.findProviderById(id);
     }
 
 
     /**
      * Creates a new discount rate into the database
+     *
      * @param discountRateDTO DTO of the discountRate entity
      * @return ResponseEntity with the 201 CREATED code and a message if it was successful
      */
@@ -69,11 +73,12 @@ public class BasicAuxCrudController {
         ValidationController.validateDiscountRateDTOParams(discountRateDTO);
         //Call service to save the discountRate
         service.saveDiscountRate(discountRateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body( "A new discount rate has been added to the Database");
+        return ResponseEntity.status(HttpStatus.CREATED).body("A new discount rate has been added to the Database");
     }
 
     /**
      * Gets all discount rates in the database
+     *
      * @return List<DiscountRateDTO>  A list of all discount rate
      */
     @GetMapping("discountRates")
@@ -83,6 +88,7 @@ public class BasicAuxCrudController {
 
     /**
      * Gets a Discount rate searching by its Id
+     *
      * @param id id of the searched discount rate
      * @return DiscountRate entity of the discount rate
      * @throws InternalExceptionHandler if the given id is not found in the database
