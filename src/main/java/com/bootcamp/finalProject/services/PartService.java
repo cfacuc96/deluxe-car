@@ -179,6 +179,8 @@ public class PartService implements IPartService {
         }
         if (update) {
             part.setLastModification(now);
+        }else{
+            throw new NotParamsToModifyException();
         }
     }
 
