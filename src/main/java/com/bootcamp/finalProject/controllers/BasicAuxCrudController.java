@@ -5,6 +5,7 @@ import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.ProviderDTO;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.model.DiscountRate;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.services.IPartService;
@@ -33,7 +34,7 @@ public class BasicAuxCrudController extends CentralController{
      * @param providerDTO
      */
     @PostMapping("providers")
-    public ResponseEntity<?> addProvider(@RequestBody ProviderDTO providerDTO) {
+    public ResponseEntity<?> addProvider(@RequestBody ProviderDTO providerDTO) throws InternalExceptionHandler {
         service.saveProvider(providerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(providerDTO.getName() + " has been added to the Database");
     }
@@ -56,8 +57,8 @@ public class BasicAuxCrudController extends CentralController{
      * @throws InternalExceptionHandler
      */
     @GetMapping("providers/{id}")
-    public ProviderDTO findProviderById(@PathVariable Long id) throws InternalExceptionHandler {
-        return service.findProviderById(id);
+    public ProviderDTO findProviderById(@PathVariable String id) throws InternalExceptionHandler {
+        return service.findProviderById(ValidationController.validateProviderId(id));
     }
 
 
@@ -68,7 +69,7 @@ public class BasicAuxCrudController extends CentralController{
      * @return ResponseEntity with the 201 CREATED code and a message if it was successful
      */
     @PostMapping("discountRates")
-    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws IncorrectParamsGivenException {
+    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
         //validation that the attributes of the DTO are not null except for the id
         ValidationController.validateDiscountRateDTOParams(discountRateDTO);
         //Call service to save the discountRate
@@ -93,8 +94,8 @@ public class BasicAuxCrudController extends CentralController{
      * @return DiscountRate entity of the discount rate
      * @throws InternalExceptionHandler if the given id is not found in the database
      */
-    @GetMapping("discountRates{id}")
-    public DiscountRate findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
+    @GetMapping("discountRates/{id}")
+    public DiscountRateDTO findDiscountById(@PathVariable Long id) throws InternalExceptionHandler {
         return service.findDiscountRateById(id);
     }
 }
