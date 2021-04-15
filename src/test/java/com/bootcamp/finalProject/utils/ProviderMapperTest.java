@@ -21,7 +21,6 @@ class ProviderMapperTest {
         expectedIn.setCountry("Argentina");
         expectedIn.setPhone("342345566");
         expectedIn.setAddress("Av.Direccion 45");
-        expectedIn.setParts(null);
 
         ProviderDTO actual = mapper.toDTO(getProviders());
 
