@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -53,5 +54,36 @@ public class PartRecord {
         this.urgentPrice = urgentPrice;
         this.part = part;
         this.discountRate = discountRate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PartRecord that = (PartRecord) o;
+        return Objects.equals(idPartRecord, that.idPartRecord) &&
+                Objects.equals(normalPrice, that.normalPrice) &&
+                Objects.equals(salePrice, that.salePrice) &&
+                Objects.equals(urgentPrice, that.urgentPrice) &&
+                Objects.equals(part, that.part) &&
+                Objects.equals(discountRate, that.discountRate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPartRecord, createdAt, normalPrice, salePrice, urgentPrice, part, discountRate);
+    }
+
+    @Override
+    public String toString() {
+        return "PartRecord{" +
+                "idPartRecord=" + idPartRecord +
+                ", createdAt=" + createdAt +
+                ", normalPrice=" + normalPrice +
+                ", salePrice=" + salePrice +
+                ", urgentPrice=" + urgentPrice +
+                ", part=" + part +
+                ", discountRate=" + discountRate +
+                '}';
     }
 }

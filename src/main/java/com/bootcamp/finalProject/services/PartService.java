@@ -98,7 +98,7 @@ public class PartService implements IPartService {
         partRecord.setPart(r);
         discountRate.setPartRecords(listPartRecord);
 
-        r = partRepository.save(r);
+        partRepository.save(r);
 
         return r;
     }
@@ -163,8 +163,12 @@ public class PartService implements IPartService {
                 partRecord.setUrgentPrice(partDTO.getUrgentPrice());
             }
             if (partDTO.getDiscountId() != null) {
-                DiscountRate discountRate = discountRateRepository.findById(partDTO.getDiscountId()).orElseThrow(DiscountRateIDNotFoundException::new);
-                partRecord.setDiscountRate(discountRate);
+                DiscountRate discountRate = existDiscountRateById(partDTO.getDiscountId());
+                if(discountRate != null){
+                    partRecord.setDiscountRate(discountRate);
+                }else{
+                    throw new DiscountRateIDNotFoundException();
+                }
             }
             partRecord.setCreatedAt(now);
             partRecord.setPart(part);
@@ -172,12 +176,18 @@ public class PartService implements IPartService {
             update = true;
         }
         if (partDTO.getMakerId() != null) {
-            Provider provider = providerRepository.findById(partDTO.getMakerId()).orElseThrow(ProviderIdNotFoundException::new);
-            part.setProvider(provider);
+            Provider provider = existProviderById(partDTO.getMakerId());
+            if(provider != null){
+                part.setProvider(provider);
+            }else{
+                throw new ProviderIdNotFoundException();
+            }
             update = true;
         }
         if (update) {
             part.setLastModification(now);
+        }else{
+            throw new NotParamsToModifyException();
         }
     }
 
@@ -193,8 +203,10 @@ public class PartService implements IPartService {
     }
 
     public ProviderDTO findProviderById(Long id) throws InternalExceptionHandler {
-        Provider provider = providerRepository.findById(id).orElseThrow(ProviderIdNotFoundException::new);
-
+        Provider provider = existProviderById(id);
+        if(provider == null){
+            throw new ProviderIdNotFoundException();
+        }
         return ProviderMapper.toDTO(provider);
     }
 
@@ -218,7 +230,10 @@ public class PartService implements IPartService {
 
     @Override
     public DiscountRateDTO findDiscountRateById(Long id) throws InternalExceptionHandler {
-        DiscountRate discountRate = discountRateRepository.findById(id).orElseThrow(DiscountRateIDNotFoundException::new);
+        DiscountRate discountRate = existDiscountRateById(id);
+        if(discountRate == null){
+            throw new DiscountRateIDNotFoundException();
+        }
         return DiscountRateMapper.toDTO(discountRate);
     }
 
