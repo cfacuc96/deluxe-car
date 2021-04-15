@@ -121,14 +121,12 @@ public class WarehouseService implements IWarehouseService
         orderRepository.save(order);
     }
 
-    public OrderDTO newOrder(OrderDTO order) throws InvalidAccountTypeExtensionException, NotEnoughStock, PartNotExistException
+    public OrderDTO newOrder(OrderDTO order, UserDetails user) throws InvalidAccountTypeExtensionException, NotEnoughStock, PartNotExistException
     {
         //del context debe obtener el id_subsidiary, mientras tanto yo harcodeo el ID 1
         //context.getIdSubsidiary();
         //Subsidiary subsidiary = subsidiaryRepository.findById(1L).get();
 
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
         Subsidiary subsidiary = userService.getSubsidiaryByUsername(user);
 
         Date current = new Date();

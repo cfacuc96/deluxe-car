@@ -5,7 +5,7 @@ import com.bootcamp.finalProject.model.OrderDetail;
 
 public class OrderDetailResponseMapper
 {
-    public OrderDetailDTO toDTO(OrderDetail orderDetail)
+    public static OrderDetailDTO toDTO(OrderDetail orderDetail)
     {
         OrderDetailDTO ret = new OrderDetailDTO();
 

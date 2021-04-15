@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class OrderIdNotFoundException extends InternalExceptionHandler{
     public OrderIdNotFoundException() {
-        super("Id not found", HttpStatus.NOT_FOUND);
+        super("not found a order with this id", HttpStatus.NOT_FOUND);
     }
 }

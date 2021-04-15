@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.dtos;
 
+import lombok.EqualsAndHashCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @ApiModel(description = "Response given to a query of subsidiary stock")
 public class SubsidiaryStockResponseDTO {
 
