@@ -4,6 +4,7 @@ import com.bootcamp.finalProject.dtos.AuthenticateDTO;
 import com.bootcamp.finalProject.security.JwtUserDetailService;
 import com.bootcamp.finalProject.services.IAuthenticationService;
 import com.bootcamp.finalProject.utils.JwtUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import javax.security.auth.login.LoginException;
 @RestController
 public class LoginController extends CentralController{
 
+    /*
     @Autowired
     private AuthenticationManager authManger;
 
@@ -27,10 +29,13 @@ public class LoginController extends CentralController{
 
     @Autowired
     private JwtUtil jwtTokenUtil;
-
+    */
     @Autowired
     private IAuthenticationService authService;
 
+    @ApiOperation(
+            value = "Allows you to login in the system, giving to you a JWT token",
+            nickname = "Login")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticateDTO authenticate) throws LoginException {
 

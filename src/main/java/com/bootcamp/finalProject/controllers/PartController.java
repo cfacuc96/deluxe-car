@@ -10,6 +10,10 @@ import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,7 +50,21 @@ public class PartController extends CentralController{
      * @return List<PartResponseDTO> that contains the list of parts that have had a change according to the query
      */
     @GetMapping("list")
-    public List<PartResponseDTO> findPart(@Nullable @RequestParam Map<String, String> params) throws InternalExceptionHandler {
+    @ApiOperation(
+            value = "Return a list of Parts based on the query",
+            nickname = "Find Parts by Query"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK", response = PartResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")
+
+        }
+    )
+    public List<PartResponseDTO> findPart(
+            @ApiParam(value ="* queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION\n" +
+                    "* date:  date for de query consultation\n" +
+                    "* order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange" , required = true)
+            @Nullable @RequestParam Map<String, String> params) throws InternalExceptionHandler {
         //Validations
         isListEndpointMapValid(params);
         //Set parameters for PartRequestDto
@@ -103,8 +121,22 @@ public class PartController extends CentralController{
      * @throws InternalExceptionHandler if received orderNumberCM is misspelled or is not found
      */
     @GetMapping("orders/{orderNumberCM}")
-    //Por algun motivo no se esta haciendo la validacion, esta el tag @validate en el controller tal como la documentacion
-    public OrderResponseDTO findByOrderNumberCM(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
+    @ApiOperation(
+            value = "Return a Order based on orderNumberCM",
+            nickname = "Find Order by orderNumberCM"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK", response = OrderResponseDTO.class),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 404, message = "Not Found",response = ErrorDTO.class)
+
+    }
+    )
+    public OrderResponseDTO findByOrderNumberCM(
+            @ApiParam(value = "orderNumberCM -> following the next model of String =  \"0001-00000001\"\n" +
+                    "     * \"0001\" = subsidiary Id  \n" +
+                    "     * \"00000001\" = Order Id")
+            @PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM) throws InternalExceptionHandler {
 
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");
@@ -123,7 +155,13 @@ public class PartController extends CentralController{
     }
 
     @PostMapping("")
-    public ResponseEntity<?> newPart(@Valid @RequestBody PartDTO part) throws Exception {
+    @ApiOperation(
+            value = "Create a new part",
+            nickname = "Create Part"
+    )
+    public ResponseEntity<?> newPart(
+            @ApiParam(value = "Information of the part to be crated", required = true)
+            @Valid @RequestBody PartDTO part) throws Exception {
 
         if (part != null) {
             service.newPart(part);
