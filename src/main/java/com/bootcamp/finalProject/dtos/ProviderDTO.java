@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.dtos;
 
+import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
-
+@EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
