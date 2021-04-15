@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -46,8 +47,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/load").permitAll()
                 .antMatchers("/ping").permitAll()
                 //linea que activa o desactiva que los demas endopoints necesiten autenticacion
-                .anyRequest().authenticated()
-                //.anyRequest().permitAll()
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -57,7 +58,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
 
     }
-
+    @Override
+    public void configure(WebSecurity web)  {
+        web.ignoring().antMatchers("/v3/api-docs",
+                "/swagger-ui.html",
+                "/swagger-ui/**");
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

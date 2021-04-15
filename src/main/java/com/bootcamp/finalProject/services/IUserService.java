@@ -2,7 +2,9 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.AuthenticateDTO;
 import com.bootcamp.finalProject.dtos.UserDTO;
+import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.model.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserService {
 
@@ -10,5 +12,8 @@ public interface IUserService {
 
     User findByUsername(String username);
 
+    User findUserByUserDetails(UserDetails userDetails);
+
+    Subsidiary  getSubsidiaryByUsername(UserDetails userDetails);
     void loadDefaultUsers();
 }

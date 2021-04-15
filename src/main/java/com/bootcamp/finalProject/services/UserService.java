@@ -6,6 +6,8 @@ import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.model.User;
 import com.bootcamp.finalProject.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,21 @@ public class UserService implements IUserService{
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public User findUserByUserDetails(UserDetails userDetails) {
+        User u = userRepository.findByUsername(userDetails.getUsername());
+        return u;
+    }
+
+    @Override
+    public Subsidiary getSubsidiaryByUsername(UserDetails userDetails) {
+        //Subsidiary s = findUserByUserDetails(userDetails).getSubsidiary();
+        User u = userRepository.findByUsernameWithSubsidiary(userDetails.getUsername());
+        Subsidiary s = u.getSubsidiary();
+        return s;
+    }
+
 
     @Override
     public void loadDefaultUsers() {

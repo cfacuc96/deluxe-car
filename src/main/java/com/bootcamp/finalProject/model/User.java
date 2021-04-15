@@ -24,8 +24,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     List<Role> roles;
 
-    @JoinColumn(name = "id_subsidiary")
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_subsidiary")
     @JsonBackReference
     private Subsidiary subsidiary;
 

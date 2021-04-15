@@ -12,7 +12,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @ApiModel(description = "Basic fields of Part")
 public class PartResponseDTO {
-    @ApiModelProperty(notes = "Unique identifier of the part.Two Parts cannot have the same partId.",
+    @ApiModelProperty(notes = "Unique identifier of the part.Two Parts cant have the same partId.",
             example = "98521789",
             required = true,
             position = 1)

@@ -1,24 +1,20 @@
 package com.bootcamp.finalProject.dtos;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 @Getter @Setter
+@ApiModel(description = "Basic fields to show exception message")
 public class ErrorDTO
 {
-    @NotEmpty
-    @ApiModelProperty(notes = "Name of the error",
+    @ApiModelProperty(  notes = "Name of the status.",
             example = "400 BAD_REQUEST",
             position = 1)
     String name;
-
-    @NotEmpty
-    @ApiModelProperty(notes ="Description of the error",
-            example = "The type of query does not exist",
+    @ApiModelProperty(  notes = "Custom description of the status.",
+            example = "400 BAD_REQUEST",
             position = 2)
     String description;
 }
