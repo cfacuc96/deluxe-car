@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@SpringBootTest
+
 class PartControllerTest {
 
     @InjectMocks

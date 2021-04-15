@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@SpringBootTest
+
 public class BasicAuxCrudControllerTest {
 
     @InjectMocks
