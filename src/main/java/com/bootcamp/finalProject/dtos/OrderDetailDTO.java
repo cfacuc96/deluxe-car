@@ -23,24 +23,26 @@ public class OrderDetailDTO
 
     @ApiModelProperty(  notes = "Description of the part.",
             example = "Espolon BMW 320i",
+            required = true,
             position = 2)
     private String description;
 
     @NotNull @Min(value = 1)
     @ApiModelProperty(  notes = "Quantity of part",
             example = "20",
+            required = true,
             position = 3)
     private Integer quantity;
 
     @NotEmpty
     @ApiModelProperty(  notes = "Type of account",
-            example = "??",
+            example = "R",
             position = 4)
     private String accountType;
 
     @NotEmpty
     @ApiModelProperty(  notes = "Reason because the part is delayed",
-            example = "20",
+            example = "Shipping conveyor strike",
             position = 5)
     private String reason;
 }

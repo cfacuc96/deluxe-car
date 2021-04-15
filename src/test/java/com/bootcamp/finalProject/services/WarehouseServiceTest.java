@@ -1,18 +1,17 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.OrderDTO;
-import com.bootcamp.finalProject.dtos.OrderRequestDTO;
-import com.bootcamp.finalProject.dtos.OrderResponseDTO;
-import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
-import com.bootcamp.finalProject.exceptions.DeliveryStatusException;
-import com.bootcamp.finalProject.exceptions.OrderIdNotFoundException;
-import com.bootcamp.finalProject.exceptions.OrderTypeException;
-import com.bootcamp.finalProject.exceptions.SubsidiaryNotFoundException;
+import com.bootcamp.finalProject.dtos.*;
+import com.bootcamp.finalProject.exceptions.*;
+import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.Order;
+import com.bootcamp.finalProject.model.OrderDetail;
+import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
+import com.bootcamp.finalProject.repositories.PartRepository;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.bootcamp.finalProject.utils.MapperUtils.completeNumberByLength;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -38,6 +38,10 @@ public class WarehouseServiceTest {
 
     @Mock
     OrderRepository orderRepository;
+
+    @Mock
+    PartRepository partRepository;
+
     @Mock
     ISubsidiaryRepository subsidiaryRepository;
     @Mock
@@ -361,5 +365,202 @@ public class WarehouseServiceTest {
 
         //Assert
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void newOrder() throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException {
+        //aca hace falta mockear el subsidiary.
+        Subsidiary subsidiary = new Subsidiary();
+
+        //Arrange
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("P");
+        OrderDetail orderDetail = new OrderDetail();
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(30);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setAccountType("R");
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        OrderDTO orderDTOExpected = new OrderDTO();
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        orderDTOExpected.setOrderDate(datePattern.format(new Date()));
+        orderDTOExpected.setDeliveryStatus("P");
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        PartDTO partDTO = new PartDTO();
+        partDTO.setPartCode(11111112);
+        partDTO.setDescription("Amortiguador delantero derecho - BMW 220i");
+        partDTO.setQuantity(30);
+        orderDetailDTO.setPartCode(String.valueOf(partDTO.getPartCode()));
+        orderDetailDTO.setQuantity(20);
+        orderDetailDTO.setAccountType("R");
+        orderDetailDTO.setDescription(partDTO.getDescription());
+        List<OrderDetailDTO> orderListDTO = new ArrayList<>();
+        orderListDTO.add(orderDetailDTO);
+        orderDTOExpected.setOrderDetails(orderListDTO);
+
+        //Act
+        when(partRepository.findByPartCode(11111112)).thenReturn(part);
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.save(order)).thenReturn(order);
+
+        OrderDTO actual = warehouseService.newOrder(orderDTOExpected);
+
+        //Assert
+        Assertions.assertEquals(orderDTOExpected, actual);
+    }
+
+    @Test
+    public void newOrderWithoutPart()throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
+    {
+        //aca hace falta mockear el subsidiary.
+        Subsidiary subsidiary = new Subsidiary();
+
+        //Arrange
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("P");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setQuantity(20);
+        orderDetail.setAccountType("R");
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        OrderDTO orderDTO = new OrderDTO();
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        orderDTO.setOrderDate(datePattern.format(new Date()));
+        orderDTO.setDeliveryStatus("P");
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        PartDTO partDTO = new PartDTO();
+        partDTO.setPartCode(11111112);
+        partDTO.setDescription("Amortiguador delantero derecho - BMW 220i");
+        partDTO.setQuantity(30);
+        orderDetailDTO.setPartCode(String.valueOf(partDTO.getPartCode()));
+        orderDetailDTO.setQuantity(20);
+        orderDetailDTO.setAccountType("R");
+        orderDetailDTO.setDescription(partDTO.getDescription());
+        List<OrderDetailDTO> orderListDTO = new ArrayList<>();
+        orderListDTO.add(orderDetailDTO);
+        orderDTO.setOrderDetails(orderListDTO);
+
+        //Act
+        when(partRepository.findByPartCode(11111112)).thenReturn(null);
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.save(order)).thenReturn(order);
+
+        //Assert
+        Assertions.assertThrows(PartNotExistException.class, () -> warehouseService.newOrder(orderDTO));
+    }
+
+    @Test
+    public void newOrderNotEnoughStock()throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
+    {
+        //aca hace falta mockear el subsidiary.
+        Subsidiary subsidiary = new Subsidiary();
+
+        //Arrange
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("P");
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(0);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setAccountType("R");
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        OrderDTO orderDTO = new OrderDTO();
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        orderDTO.setOrderDate(datePattern.format(new Date()));
+        orderDTO.setDeliveryStatus("P");
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        PartDTO partDTO = new PartDTO();
+        partDTO.setPartCode(11111112);
+        partDTO.setDescription("Amortiguador delantero derecho - BMW 220i");
+        partDTO.setQuantity(30);
+        orderDetailDTO.setPartCode(String.valueOf(partDTO.getPartCode()));
+        orderDetailDTO.setQuantity(20);
+        orderDetailDTO.setAccountType("R");
+        orderDetailDTO.setDescription(partDTO.getDescription());
+        List<OrderDetailDTO> orderListDTO = new ArrayList<>();
+        orderListDTO.add(orderDetailDTO);
+        orderDTO.setOrderDetails(orderListDTO);
+
+        //Act
+        when(partRepository.findByPartCode(11111112)).thenReturn(part);
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.save(order)).thenReturn(order);
+
+        //Assert
+        Assertions.assertThrows(NotEnoughStock.class, () -> warehouseService.newOrder(orderDTO));
+    }
+    @Test
+    public void newOrderInvalidAccountType()throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
+    {
+        //aca hace falta mockear el subsidiary.
+        Subsidiary subsidiary = new Subsidiary();
+
+        //Arrange
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("P");
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(30);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        OrderDTO orderDTO = new OrderDTO();
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        orderDTO.setOrderDate(datePattern.format(new Date()));
+        orderDTO.setDeliveryStatus("P");
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        PartDTO partDTO = new PartDTO();
+        partDTO.setPartCode(11111112);
+        partDTO.setDescription("Amortiguador delantero derecho - BMW 220i");
+        partDTO.setQuantity(30);
+        orderDetailDTO.setPartCode(String.valueOf(partDTO.getPartCode()));
+        orderDetailDTO.setQuantity(20);
+        orderDetailDTO.setDescription(partDTO.getDescription());
+        List<OrderDetailDTO> orderListDTO = new ArrayList<>();
+        orderListDTO.add(orderDetailDTO);
+        orderDTO.setOrderDetails(orderListDTO);
+
+        //Act
+        when(partRepository.findByPartCode(11111112)).thenReturn(part);
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.save(order)).thenReturn(order);
+
+        //Assert
+        Assertions.assertThrows(InvalidAccountTypeExtensionException.class, () -> warehouseService.newOrder(orderDTO));
     }
 }

@@ -20,7 +20,10 @@ import javax.validation.constraints.NotNull;
 public class PartDTO {
 
     @NotNull(message = "partCode cant be null")
-    @ApiModelProperty(notes = "Unique identifier of the Part.Two Parts cant have the same partId.", example = "98521789", required = true, position = 1)
+    @ApiModelProperty(notes = "Unique identifier of the Part.Two Parts cant have the same partId.",
+            example = "98521789",
+            required = true,
+            position = 1)
     private Integer partCode;
 
     @NotEmpty(message = "description cant be empty")
