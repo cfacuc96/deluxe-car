@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -258,9 +260,11 @@ public class PartController extends CentralController{
             @ApiParam(value = "Information of the order to be crated", required = true)
             @RequestBody OrderDTO order) throws Exception
     {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         if(order != null)
         {
-            warehouseService.newOrder(order);
+            warehouseService.newOrder(order,user);
         }
         return ResponseEntity.status(HttpStatus.OK).body(order);
     }
