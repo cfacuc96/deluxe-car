@@ -15,44 +15,22 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDTO
 {
-    @NotNull(message = "Order number cant be null")
-    @ApiModelProperty(notes = "Unique identifier of the Order, Each Order has its own id",
-            example = "00000010",
+    @ApiModelProperty(notes = "Unique identifier of the Order out of the Api \"subsidiaryId-orderID\"",
+            example = "0001-00000001",
             required = true,
             position = 1)
     private String orderNumberCM;
-
-    @NotNull
-    @ApiModelProperty(notes = "order generation date",
-            example = "2021-04-01 09:17:58",
-            required = true,
-            position = 2)
+    @ApiModelProperty(notes = "Date when the order were created", example = "2021-04-01", position = 2)
     private String orderDate;
-
-    @NotNull
-    @ApiModelProperty(notes = "Expected date for package delivery",
-            example = "2021-04-09 14:17:58",
-            required = true,
-            position = 3)
+    @ApiModelProperty(notes = "Date the order will arrive", example = "2021-04-15", position = 3)
     private String deliveryDate;
-
-    @NotNull
-    @ApiModelProperty(notes = "Number of days delivery is late",
-            example = "15",
-            position = 4)
+    @ApiModelProperty(notes = "Days delayed in the delivery of the order", example = "7", position = 4)
     private Integer daysDelayed;
-
-    @NotNull
-    @ApiModelProperty(notes = "Shipment delivery status",
-            example = "D",
-            required = true,
-            position = 5)
+    @ApiModelProperty(notes = "Status of delivery", example = "P", position = 5)
     private String deliveryStatus;
 
     @NotNull
     @Valid
-    @ApiModelProperty(notes = "List that stores the details of the order referring to the " +
-            "parts and the quantities requested of each of them",
-            position = 6)
+    @ApiModelProperty(notes = "Details of the order", position = 6)
     private List<OrderDetailDTO> orderDetails;
 }

@@ -1,7 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.*;
-import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
+import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.OrderType;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
@@ -72,14 +72,37 @@ public class PartController extends CentralController{
     }
 
     /**
-     * Updates data of a Part with a given DTO
-     *
-     * @param part DTO of a Part with the id and data to be updated
+     * Updates only a data of a Part with a given DTO.
+     * @param part DTO of a Part with the id and data to be updated.
+     *          *  part.partCode Not Null or Empty.
+     *          *  makerId should exist.
+     *          *  discountId should exist.
      * @return ResponseEntity<String> OK HTTP code and message if update was successful
      * @throws InternalExceptionHandler if DTO is not correct
      */
     @PutMapping()
-    public ResponseEntity<String> updatePart(@RequestBody PartDTO part) throws InternalExceptionHandler {
+    @ApiOperation(
+            value = "Update a part",
+            nickname = "Update Part"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                                                "* no parameters were received to update. \n" +
+                                                "* not found a provider with this id \n" +
+                                                "* not found a discount rate with this id"),
+            @ApiResponse(code = 404, message = "NOT FOUND: \n" +
+                                                "* part with code xxxxxxxx not exist")
+
+    })
+    public ResponseEntity<String> updatePart(
+            @ApiParam(value = "Information of the part to be update \n" +
+                    "* partCode is required. \n" +
+                    "* only the attributes sent as parameters will be modified. \n" +
+                    "* makerId should exist. \n" +
+                    "* discountId should exist.", required = true)
+            @RequestBody PartDTO part) throws InternalExceptionHandler {
         service.updatePart(part);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("The part with partCode: " + part.getPartCode() + ", has been updated correctly.");
@@ -95,7 +118,27 @@ public class PartController extends CentralController{
      * @return OrderResponseDTO that contains the list of found orders
      */
     @GetMapping("orders")
-    public SubsidiaryResponseDTO findSubsidiaryOrders(@RequestParam Map<String, String> params) throws InternalExceptionHandler {
+    @ApiOperation(
+            value = "Returns a subsidiary with its order list",
+            nickname = "Orders for subsidiary"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* The order type of query does not exist. \n" +
+                    "* Params given in the request are wrong, deliveryStatus not in [P, D, F, C] \n" +
+                    "* the subsidiary not found. \n" +
+                    "* Params given in the request are wrong, Empty parameters. \n" +
+                    "* Params given in the request are wrong, dealerNumber is missing from request")
+
+    })
+    public SubsidiaryResponseDTO findSubsidiaryOrders(
+            @ApiParam(value = "* dealerNumber: ”0001” or ”1” -> idSubsidiary \n" +
+                    "* deliveryStatus::  [”P”,”D”,”F”,”C”] -> Pending, Delayed, Finished, Cancelled \n" +
+                    "* order: [”0”,1”,”2”] -> idOrder default, orderDate ASC, orderDate DESC", required = true)
+            @RequestParam Map<String, String> params) throws InternalExceptionHandler {
+
         //Validations
         ValidationController.isOrdersEndpointMapValid(params);
         //Setting values to OrderRequestDTO
@@ -127,8 +170,7 @@ public class PartController extends CentralController{
             @ApiResponse(code = 403, message = "FORBIDDEN"),
             @ApiResponse(code = 404, message = "Not Found", response = ErrorDTO.class)
 
-    }
-    )
+    })
     public OrderResponseDTO findByOrderNumberCM(
             @ApiParam(value = "orderNumberCM -> following the next model of String =  \"0001-00000001\"\n" +
                     "     * \"0001\" = subsidiary Id  \n" +
@@ -151,11 +193,31 @@ public class PartController extends CentralController{
         return warehouseService.findSubsidiaryStock(request);
     }
 
+    /**
+     * Create a Part with a given DTO.
+     * @param part DTO of a Part with the partCode and data to be created.
+     *          *  all atributes are required.
+     *          *  makerId should exist.
+     *          *  discountId should exist.
+     * @return The Part created.
+     * @throws PartAlreadyExistException If exist a Part with this partCode.
+     * @throws DiscountRateIDNotFoundException If not exist a DiscountRate with this discountId.
+     * @throws ProviderIdNotFoundException If exist a Provider with this makerId.
+     */
     @PostMapping("")
     @ApiOperation(
             value = "Create a new part",
             nickname = "Create Part"
     )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* the part code xxxxxxxx already exist. \n" +
+                    "* not found a provider with this id. \n" +
+                    "* not found a discount rate with this id. \n")
+
+    })
     public ResponseEntity<?> newPart(
             @ApiParam(value = "Information of the part to be crated", required = true)
             @Valid @RequestBody PartDTO part) throws Exception {
@@ -168,14 +230,48 @@ public class PartController extends CentralController{
                 .body(part);
     }
 
+    /**
+     * Create a Order with a given DTO.
+     * @param order DTO of a Order with the data to be created.
+     *          * all atributes are required.
+     *          * order.orderDetails.partCode should exist.
+     *          * order.orderDetails.quantity It must be less than the stock that the part has.
+     * @return The Order created
+     * @throws PartNotExistException If not exist the Part with this partCode.
+     * @throws NotEnoughStock If the quantity of OrderDetails is more than stock that the part has.
+     * @throws InvalidAccountTypeExtensionException If accountType lenght is different than 1.
+     */
     @PostMapping("orders")
-    public ResponseEntity<?> newOrder(@Valid @RequestBody OrderDTO order) throws Exception {
-        if (order != null) {
+    @ApiOperation(
+            value = "Create a new order",
+            nickname = "Create Order"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* part  with partCode xxxxxxxx not exist.\n" +
+                    "* not enough stock for partCode: xxxxxxxx. \n" +
+                    "* the account type extension is invalid. \n")
+    })
+    public ResponseEntity<?> newOrder(
+            @ApiParam(value = "Information of the order to be crated", required = true)
+            @RequestBody OrderDTO order) throws Exception
+    {
+        if(order != null)
+        {
             warehouseService.newOrder(order);
         }
         return ResponseEntity.status(HttpStatus.OK).body(order);
     }
 
+    /**
+     * Update the OrderStatus from the parameter
+     * @param orderNumberCM
+     * @param orderStatus
+     * @return
+     * @throws InternalExceptionHandler
+     */
     @PutMapping("order/{orderNumberCM}/{orderStatus}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
                                                @PathVariable String orderStatus) throws InternalExceptionHandler {

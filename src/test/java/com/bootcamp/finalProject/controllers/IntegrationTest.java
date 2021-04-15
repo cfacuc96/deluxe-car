@@ -1,7 +1,6 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.FinalProjectApplication;
-import com.mercadolibre.restclient.mock.RequestMockHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +15,6 @@ public abstract class IntegrationTest {
 
     @AfterEach
     protected void afterEach() {
-        RequestMockHolder.clear();
+
     }
 }
