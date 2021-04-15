@@ -60,8 +60,14 @@ public class Part {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Part part = (Part) o;
-        return Objects.equals(idPart, part.idPart) && Objects.equals(partCode, part.partCode)
-                && Objects.equals(description, part.description);
+        return Objects.equals(idPart, part.idPart) &&
+                Objects.equals(partCode, part.partCode) &&
+                Objects.equals(description, part.description) &&
+                Objects.equals(quantity, part.quantity) &&
+                Objects.equals(netWeight, part.netWeight) &&
+                Objects.equals(longDimension, part.longDimension) &&
+                Objects.equals(widthDimension, part.widthDimension) &&
+                Objects.equals(tallDimension, part.tallDimension);
     }
 
     @Override

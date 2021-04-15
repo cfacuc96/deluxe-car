@@ -49,4 +49,9 @@ public class LoginController extends CentralController{
 
         return user.getUsername();
     }
+
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
+    }
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,5 +37,22 @@ public class Provider {
         this.address = address;
         this.phone = phone;
         this.country = country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Provider provider = (Provider) o;
+        return Objects.equals(idProvider, provider.idProvider) &&
+                Objects.equals(name, provider.name) &&
+                Objects.equals(address, provider.address) &&
+                Objects.equals(phone, provider.phone) &&
+                Objects.equals(country, provider.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idProvider, name, address, phone, country);
     }
 }

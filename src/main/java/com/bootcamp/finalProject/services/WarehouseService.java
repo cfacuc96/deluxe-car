@@ -146,7 +146,7 @@ public class WarehouseService implements IWarehouseService
             orderDetail.setReason(null);
         }
         orderReturn.setOrderDetails(orderList);
-        orderReturn = orderRepository.save(orderReturn);
+        orderRepository.save(orderReturn);
 
         SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
         //Set return with missing data.
@@ -175,7 +175,7 @@ public class WarehouseService implements IWarehouseService
             {
                 orderDetail.setDescription(part.getDescription());
 
-                if(orderDetail.getAccountType().length() != 1)
+                if(orderDetail.getAccountType() == null || orderDetail.getAccountType().length() != 1)
                 {
                     throw new InvalidAccountTypeExtensionException();
                 }
