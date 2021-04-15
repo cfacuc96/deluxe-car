@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@SpringBootTest
+
 public class WarehouseServiceTest {
 
     @InjectMocks
