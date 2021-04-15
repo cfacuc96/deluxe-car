@@ -32,7 +32,7 @@ import static com.bootcamp.finalProject.utils.ValidationController.validateDateF
 
 @RestController
 @RequestMapping("/api/v1/parts")
-public class PartController {
+public class PartController extends CentralController{
 
     @Autowired
     IPartService service;
