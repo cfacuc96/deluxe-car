@@ -6,6 +6,6 @@ public class ProviderIdNotFoundException extends InternalExceptionHandler
 {
     public ProviderIdNotFoundException()
     {
-        super("Id not found", HttpStatus.BAD_REQUEST);
+        super("not found a provider with this id", HttpStatus.BAD_REQUEST);
     }
 }

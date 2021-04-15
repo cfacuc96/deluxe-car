@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 public class DiscountRateIDNotFoundException extends InternalExceptionHandler{
 
     public DiscountRateIDNotFoundException() {
-        super("Id not found", HttpStatus.NOT_FOUND);
+        super("not found a discount rate with this id", HttpStatus.NOT_FOUND);
     }
 }
