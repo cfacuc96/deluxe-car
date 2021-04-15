@@ -13,6 +13,8 @@ import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -43,6 +45,8 @@ public class WarehouseService implements IWarehouseService
     @Autowired
     private ISubsidiaryStockRepository subsidiaryStockRepository;
 
+    @Autowired
+    private IUserService userService;
 
     @Override
     public SubsidiaryResponseDTO findSubsidiaryOrders(OrderRequestDTO orderRequest) throws OrderTypeException, DeliveryStatusException, SubsidiaryNotFoundException {
@@ -121,7 +125,11 @@ public class WarehouseService implements IWarehouseService
     {
         //del context debe obtener el id_subsidiary, mientras tanto yo harcodeo el ID 1
         //context.getIdSubsidiary();
-        Subsidiary subsidiary = subsidiaryRepository.findById(1L).get();
+        //Subsidiary subsidiary = subsidiaryRepository.findById(1L).get();
+
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        Subsidiary subsidiary = userService.getSubsidiaryByUsername(user);
 
         Date current = new Date();
         Calendar calendar = Calendar.getInstance();

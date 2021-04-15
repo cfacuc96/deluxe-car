@@ -29,13 +29,13 @@ public class OrderDetailDTO
             position = 3)
     private Integer quantity;
 
-    @NotEmpty
+
     @ApiModelProperty(  notes = "Type of account",
             example = "??",
             position = 4)
     private String accountType;
 
-    @NotEmpty
+
     @ApiModelProperty(  notes = "Reason because the part is delayed",
             example = "20",
             position = 5)
