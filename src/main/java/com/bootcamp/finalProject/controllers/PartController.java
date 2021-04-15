@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -258,23 +260,43 @@ public class PartController extends CentralController{
             @ApiParam(value = "Information of the order to be crated", required = true)
             @RequestBody OrderDTO order) throws Exception
     {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         if(order != null)
         {
-            warehouseService.newOrder(order);
+            warehouseService.newOrder(order,user);
         }
         return ResponseEntity.status(HttpStatus.OK).body(order);
     }
 
     /**
      * Update the OrderStatus from the parameter
-     * @param orderNumberCM
-     * @param orderStatus
-     * @return
-     * @throws InternalExceptionHandler
+     * @param orderNumberCM "0001-00000003" -> "0001" is idSubsidiary - "00000003" is idOrder
+     * @param orderStatus ["P","D","F","C"] -> Pending, Delayed, Finished, Cancelled
+     * @return ResponseEntity<String> OK HTTP code and message if update was successful
+     * @throws IncorrectParamsGivenException order status does not exist.
+     * @throws SubsidiaryNotFoundException IF Not Found Subsidiary with idSubsidiary.
+     * @throws OrderIdNotFoundException IF Not Found Order with idSubsidiary and idOrder.
+     * @throws OrderDeliveryStatusIsconcludedException OrderDeliveryStatus must be Pending "P" or Delayed "D".
      */
     @PutMapping("order/{orderNumberCM}/{orderStatus}")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
-                                               @PathVariable String orderStatus) throws InternalExceptionHandler {
+    @ApiOperation(
+            value = "Update a status order",
+            nickname = "Update Status Order"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* the subsidiary not found.\n" +
+                    "* not found a order with this id \n" +
+                    "* the order status has already concluded \n")
+    })
+    public ResponseEntity<?> updateOrderStatus(
+            @ApiParam(value = "\"0001-00000003\" -> \"0001\" is idSubsidiary - \"00000003\" is idOrder", required = true)
+            @PathVariable("orderNumberCM") @Pattern(regexp = "^\\d{4}-\\d{8}$") String orderNumberCM,
+            @ApiParam(value = "[\"P\",\"D\",\"F\",\"C\"] -> Pending, Delayed, Finished, Cancelled", required = true)
+            @PathVariable String orderStatus) throws InternalExceptionHandler {
         if (!orderNumberCM.matches("^\\d{4}-\\d{8}$")) {
             throw new QueryException("pattern error");
         }
