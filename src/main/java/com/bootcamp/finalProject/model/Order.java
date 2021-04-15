@@ -23,7 +23,7 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(idOrder, order.idOrder) && Objects.equals(orderDate, order.orderDate) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(deliveredDate, order.deliveredDate) && Objects.equals(deliveryStatus, order.deliveryStatus) && Objects.equals(orderDetails, order.orderDetails) && Objects.equals(subsidiary, order.subsidiary);
+        return Objects.equals(idOrder, order.idOrder) && Objects.equals(orderDate, order.orderDate) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(deliveredDate.getDate(), order.deliveredDate.getDate()) && Objects.equals(deliveryStatus, order.deliveryStatus) && Objects.equals(orderDetails, order.orderDetails) && Objects.equals(subsidiary, order.subsidiary);
     }
 
     @Override

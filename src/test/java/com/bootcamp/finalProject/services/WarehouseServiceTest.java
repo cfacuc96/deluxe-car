@@ -2,13 +2,12 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
-import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.*;
 import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
+import com.bootcamp.finalProject.repositories.ISubsidiaryStockRepository;
 import com.bootcamp.finalProject.repositories.OrderRepository;
-import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import com.bootcamp.finalProject.repositories.PartRepository;
-import org.aspectj.weaver.ast.Or;
+import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static com.bootcamp.finalProject.utils.MapperUtils.completeNumberByLength;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -41,12 +40,31 @@ public class WarehouseServiceTest {
 
     @Mock
     ISubsidiaryRepository subsidiaryRepository;
+
+    @Mock
+    ISubsidiaryStockRepository subsidiaryStockRepository;
+
     @Mock
     SubsidiaryResponseMapper mapper;
+
+    @Mock
+    UserService userService;
+
+    UserDetails user;
 
     @BeforeEach
     void initSetUp() {
         openMocks(this);
+
+         user = org.springframework.security.core.userdetails.User
+                .withUsername("userName")
+                .password("pass")
+                .authorities(new ArrayList<>())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
     }
 
     @Test
@@ -409,8 +427,9 @@ public class WarehouseServiceTest {
         when(partRepository.findByPartCode(11111112)).thenReturn(part);
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.save(order)).thenReturn(order);
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
 
-        OrderDTO actual = warehouseService.newOrder(orderDTOExpected);
+        OrderDTO actual = warehouseService.newOrder(orderDTOExpected, user);
 
         //Assert
         Assertions.assertEquals(orderDTOExpected, actual);
@@ -459,7 +478,7 @@ public class WarehouseServiceTest {
         when(orderRepository.save(order)).thenReturn(order);
 
         //Assert
-        Assertions.assertThrows(PartNotExistException.class, () -> warehouseService.newOrder(orderDTO));
+        Assertions.assertThrows(PartNotExistException.class, () -> warehouseService.newOrder(orderDTO, user));
     }
 
     @Test
@@ -508,9 +527,10 @@ public class WarehouseServiceTest {
         when(partRepository.findByPartCode(11111112)).thenReturn(part);
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.save(order)).thenReturn(order);
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
 
         //Assert
-        Assertions.assertThrows(NotEnoughStock.class, () -> warehouseService.newOrder(orderDTO));
+        Assertions.assertThrows(NotEnoughStock.class, () -> warehouseService.newOrder(orderDTO, user));
     }
     @Test
     public void newOrderInvalidAccountType()throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
@@ -556,9 +576,10 @@ public class WarehouseServiceTest {
         when(partRepository.findByPartCode(11111112)).thenReturn(part);
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.save(order)).thenReturn(order);
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
 
         //Assert
-        Assertions.assertThrows(InvalidAccountTypeExtensionException.class, () -> warehouseService.newOrder(orderDTO));
+        Assertions.assertThrows(InvalidAccountTypeExtensionException.class, () -> warehouseService.newOrder(orderDTO , user));
     }
     @Test
     public void findSubsidiaryStock() throws SubsidiaryNotFoundException {
@@ -571,11 +592,6 @@ public class WarehouseServiceTest {
         subsidiary.setName("Calle falsa 1234");
         List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
         subsidiary.setSubsidiaryStocks(subsidiaryStocks);
-
-        OrderDTO orderDTO = new OrderDTO();
-        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
-        orderDTO.setOrderDate(datePattern.format(new Date()));
-        orderDTO.setDeliveryStatus("P");
 
         SubsidiaryResponseDTO SubsidiaryResponseDTO = new SubsidiaryResponseDTO();
         List<OrderDTO> ordersDTO = new ArrayList<>();
@@ -610,21 +626,10 @@ public class WarehouseServiceTest {
         List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
         subsidiary.setSubsidiaryStocks(subsidiaryStocks);
 
-        OrderDTO orderDTO = new OrderDTO();
-        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
-        orderDTO.setOrderDate(datePattern.format(new Date()));
-        orderDTO.setDeliveryStatus("P");
-
         SubsidiaryResponseDTO SubsidiaryResponseDTO = new SubsidiaryResponseDTO();
         List<OrderDTO> ordersDTO = new ArrayList<>();
         SubsidiaryResponseDTO.setDealerNumber("1");
         SubsidiaryResponseDTO.setOrders(ordersDTO);
-
-        SubsidiaryStockResponseDTO expected = new SubsidiaryStockResponseDTO();
-        List<SubsidiaryStockDTO> subsidiaryStock = new ArrayList<>();
-        expected.setName("Calle falsa 1234");
-        expected.setDealerNumber("");
-        expected.setSubsidiaryStocks(subsidiaryStock);
 
         //Act
         //when(subsidiaryRepository.findById(subsidiaryStockRequestDTO.getDealerNumber())).thenThrow(SubsidiaryNotFoundException.class);
@@ -642,6 +647,7 @@ public class WarehouseServiceTest {
         order.setIdOrder(1L);
         order.setSubsidiary(subsidiary);
         order.setOrderDate(new Date());
+        order.setDeliveredDate(new Date());
         order.setDeliveryStatus("P");
         Part part = new Part();
         part.setPartCode(11111112);
@@ -659,6 +665,7 @@ public class WarehouseServiceTest {
         expect.setIdOrder(1L);
         expect.setSubsidiary(subsidiary);
         expect.setOrderDate(new Date());
+        expect.setDeliveredDate(new Date());
         expect.setDeliveryStatus("C");
         expect.setOrderDetails(orderList);
 
@@ -673,7 +680,7 @@ public class WarehouseServiceTest {
         Assertions.assertEquals(expect, order);
     }
     @Test
-    public void changeDeliveryStatus() throws InternalExceptionHandler {
+    public void changeDeliveryStatusToCancel() throws InternalExceptionHandler {
         //Arrange
         Subsidiary subsidiary = new Subsidiary();
         subsidiary.setCountry("Argentina");
@@ -686,7 +693,58 @@ public class WarehouseServiceTest {
         order.setIdOrder(1L);
         order.setSubsidiary(subsidiary);
         order.setOrderDate(new Date());
+        order.setDeliveredDate(new Date());
+        order.setDeliveryDate(new Date());
         order.setDeliveryStatus("P");
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(30);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        Order expect = new Order();
+        expect.setIdOrder(1L);
+        expect.setDeliveryDate(new Date());
+        expect.setSubsidiary(subsidiary);
+        expect.setOrderDate(new Date());
+        expect.setDeliveredDate(new Date());
+        expect.setDeliveryStatus("C");
+        expect.setOrderDetails(orderList);
+
+        //Act
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
+        when(partRepository.findById(orderDetail.getPartOrder().getIdPart())).thenReturn(Optional.of(part));
+        when(partRepository.save(part)).thenReturn(part);
+        when(orderRepository.save(order)).thenReturn(order);
+
+        warehouseService.changeDeliveryStatus("0001-00000001","C");
+
+        //Assert
+        Assertions.assertEquals(expect, order);
+    }
+
+    @Test
+    public void changeDeliveryStatusToFinish() throws InternalExceptionHandler {
+        //Arrange
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setCountry("Argentina");
+        subsidiary.setName("Mercedez Argentina");
+        subsidiary.setName("Calle falsa 1234");
+        List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
+        subsidiary.setSubsidiaryStocks(subsidiaryStocks);
+
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("D");
         Part part = new Part();
         part.setPartCode(11111112);
         part.setQuantity(30);
@@ -703,19 +761,104 @@ public class WarehouseServiceTest {
         expect.setIdOrder(1L);
         expect.setSubsidiary(subsidiary);
         expect.setOrderDate(new Date());
-        expect.setDeliveryStatus("C");
+        expect.setDeliveredDate(new Date());
+        expect.setDeliveryStatus("F");
         expect.setOrderDetails(orderList);
 
         //Act
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
-//        when(warehouseService.cancelDeliveryStatus(order));
         when(partRepository.findById(orderDetail.getPartOrder().getIdPart())).thenReturn(Optional.of(part));
         when(partRepository.save(part)).thenReturn(part);
         when(orderRepository.save(order)).thenReturn(order);
 
-        warehouseService.changeDeliveryStatus("0001-00000001","C");
+        warehouseService.changeDeliveryStatus("0001-00000001","F");
 
+        //Assert
+        Assertions.assertEquals(expect, order);
+    }
+
+    @Test
+    public void changeDeliveryStatusIsconcluded() throws InternalExceptionHandler {
+        //Arrange
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setCountry("Argentina");
+        subsidiary.setName("Mercedez Argentina");
+        subsidiary.setName("Calle falsa 1234");
+        List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
+        subsidiary.setSubsidiaryStocks(subsidiaryStocks);
+
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("F");
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(30);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        //Act
+        when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
+        when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
+
+        //Assert
+        Assertions.assertThrows(OrderDeliveryStatusIsconcludedException.class, () -> warehouseService.changeDeliveryStatus("0001-00000001","F"));
+    }
+
+    @Test
+    public void finishDeliveryStatus() throws InternalExceptionHandler {
+        //Arrange
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setCountry("Argentina");
+        subsidiary.setName("Mercedez Argentina");
+        subsidiary.setName("Calle falsa 1234");
+        List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
+        subsidiary.setSubsidiaryStocks(subsidiaryStocks);
+
+        SubsidiaryStock subsidiaryStock = new SubsidiaryStock();
+
+        Order order = new Order();
+        order.setIdOrder(1L);
+        order.setSubsidiary(subsidiary);
+        order.setOrderDate(new Date());
+        order.setDeliveryStatus("P");
+        order.setDeliveredDate(new Date());
+        Part part = new Part();
+        part.setPartCode(11111112);
+        part.setQuantity(30);
+        part.setDescription("Amortiguador delantero derecho - BMW 220i");
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setPartOrder(part);
+        orderDetail.setQuantity(20);
+        orderDetail.setIdOrderDetail(18L);
+        List<OrderDetail> orderList = new ArrayList<>();
+        orderList.add(orderDetail);
+        order.setOrderDetails(orderList);
+
+        Order expect = new Order();
+        expect.setIdOrder(1L);
+        expect.setSubsidiary(subsidiary);
+        expect.setOrderDate(new Date());
+        expect.setDeliveredDate(new Date());
+        expect.setDeliveryStatus("F");
+        expect.setOrderDetails(orderList);
+
+        //Act
+        when(subsidiaryStockRepository.findByIdPart(1L ,subsidiary.getIdSubsidiary())).thenReturn(subsidiaryStock);
+        when(subsidiaryStockRepository.save(subsidiaryStock)).thenReturn(subsidiaryStock);
+
+        warehouseService.finishDeliveryStatus(order,subsidiary);
+
+        System.out.println(expect.toString());
+        System.out.println(order.toString());
         //Assert
         Assertions.assertEquals(expect, order);
     }
