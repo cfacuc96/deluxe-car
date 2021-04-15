@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class OrderDetailDTO
 {
     @NotNull
-    @ApiModelProperty(notes = "Unique identifier of the person.Two Parts cant have the same partId.", example = "98521", required = true, position = 1)
+    @ApiModelProperty(notes = "Unique identifier of the Part.Two Parts cant have the same partId.", example = "98521", required = true, position = 1)
     private String partCode;
 
     @ApiModelProperty(  notes = "Description of the part.",
@@ -24,7 +24,7 @@ public class OrderDetailDTO
     private String description;
 
     @NotNull @Min(value = 1)
-    @ApiModelProperty(  notes = "Quantity of parts of the part",
+    @ApiModelProperty(  notes = "Quantity of part",
             example = "20",
             position = 3)
     private Integer quantity;
