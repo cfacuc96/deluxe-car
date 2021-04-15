@@ -41,14 +41,15 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         //http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
 
         http.authorizeRequests()
-            .antMatchers("/login").permitAll()
-            .antMatchers("/register").permitAll()
-            .antMatchers("/load").permitAll()
-             //linea que activa o desactiva que los demas endopoints necesiten autenticacion
-            //anyRequest().authenticated()
-            .anyRequest().permitAll()
-            .and().sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/load").permitAll()
+                .antMatchers("/ping").permitAll()
+                //linea que activa o desactiva que los demas endopoints necesiten autenticacion
+                .anyRequest().authenticated()
+                //.anyRequest().permitAll()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 
         //http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -58,14 +59,14 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     //No existe mas por default hay que crearlo
     @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 }
