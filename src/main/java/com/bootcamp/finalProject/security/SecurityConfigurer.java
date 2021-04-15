@@ -46,8 +46,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/load").permitAll()
                 .antMatchers("/ping").permitAll()
                 //linea que activa o desactiva que los demas endopoints necesiten autenticacion
-                .anyRequest().authenticated()
-                //.anyRequest().permitAll()
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

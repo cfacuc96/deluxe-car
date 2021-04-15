@@ -12,16 +12,14 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ApiModel(description = "Response of a query for a subsidiary")
+@ApiModel(description = "Fields to show on the orders of a subsidiary")
 public class SubsidiaryResponseDTO
 {
-    @ApiModelProperty(  notes = "Identifying number of the dealer",
-            example = "67",
+    @ApiModelProperty(notes = "Unique identifier of the Subsidiary.Two Subsidiary cant have the same delearNumber.",
+            example = "0001 or 1",
             position = 1)
     private String dealerNumber;
-
-    @ApiModelProperty(  notes = "List of all orders associated with this dealer",
-            position = 2)
+    @ApiModelProperty(notes = "Orders of the subsidiary", position = 2)
     private List<OrderDTO> orders;
 }
 

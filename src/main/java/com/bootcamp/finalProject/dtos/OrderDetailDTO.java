@@ -42,7 +42,7 @@ public class OrderDetailDTO
 
     @NotEmpty
     @ApiModelProperty(  notes = "Reason because the part is delayed",
-            example = "Shipping conveyor strike",
+            example = "It is held in customs",
             position = 5)
     private String reason;
 }
