@@ -20,8 +20,10 @@ public class JwtUserDetailService implements UserDetailsService {
     @Autowired
     private IUserRepository userRep;
 
+    /*
     @Autowired
     private PasswordEncoder bcryptEncoder;
+    */
 
     @SneakyThrows
     @Override
