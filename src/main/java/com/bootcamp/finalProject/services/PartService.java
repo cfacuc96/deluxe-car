@@ -183,6 +183,10 @@ public class PartService implements IPartService {
         }
     }
 
+    private Provider existProviderById(Long id){
+        return providerRepository.findById(id).orElse(null);
+    }
+
     public List<ProviderDTO> findAllProviders() {
         List<ProviderDTO> providersDTO;
         List<Provider> providers = providerRepository.findAll();
@@ -197,11 +201,15 @@ public class PartService implements IPartService {
     }
 
     public void saveProvider(ProviderDTO providerDTO) throws InternalExceptionHandler {
-        if(findProviderById(providerDTO.getIdProvider())==null) {
+        if(existProviderById(providerDTO.getIdProvider())==null) {
             providerRepository.save(new ModelMapper().map(providerDTO, Provider.class));
         }else{
             throw new ProviderAlreadyExistException(providerDTO.getIdProvider());
         }
+    }
+
+    private DiscountRate existDiscountRateById(Long id){
+        return discountRateRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -218,7 +226,7 @@ public class PartService implements IPartService {
 
     @Override
     public void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
-        if(findDiscountRateById(discountRateDTO.getIdDiscountRate())==null){
+        if(existDiscountRateById(discountRateDTO.getIdDiscountRate())==null){
             discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
         }else{
             throw new DiscountRateAlreadyExistException(discountRateDTO.getIdDiscountRate());
