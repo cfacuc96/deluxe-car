@@ -1,5 +1,6 @@
 package com.bootcamp.finalProject.dtos;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,8 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@ApiModel(description = "Basic fields to create or update a Part \n" +
+        "with validation")
 public class PartDTO {
 
     @NotNull(message = "partCode cant be null")
