@@ -43,7 +43,7 @@ public class PartController extends CentralController{
     /**
      * GET method to search list of parts, it receives a map with the following data
      * queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION
-     * date:  date for de query consultation
+     * date:  date for query consultation
      * order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange
      *
      * @param params map of parameters given by user
@@ -62,7 +62,7 @@ public class PartController extends CentralController{
     )
     public List<PartResponseDTO> findPart(
             @ApiParam(value ="* queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION\n" +
-                    "* date:  date for de query consultation\n" +
+                    "* date:  date for query consultation\n" +
                     "* order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange" , required = true)
             @Nullable @RequestParam Map<String, String> params) throws InternalExceptionHandler {
         //Validations
