@@ -635,7 +635,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void cancelDeliveryStatus() throws PartAlreadyExistException {
+    public void cancelDeliveryStatusTest() throws PartAlreadyExistException {
         //Arrange
         Subsidiary subsidiary = new Subsidiary();
         Order order = new Order();
@@ -709,8 +709,12 @@ public class WarehouseServiceTest {
         //Act
         when(subsidiaryRepository.findById(1L)).thenReturn(Optional.of(subsidiary));
         when(orderRepository.findByIdOrderAndSubsidiary(1L, subsidiary)).thenReturn(Optional.of(order));
+//        when(warehouseService.cancelDeliveryStatus(order));
+        when(partRepository.findById(orderDetail.getPartOrder().getIdPart())).thenReturn(Optional.of(part));
+        when(partRepository.save(part)).thenReturn(part);
+        when(orderRepository.save(order)).thenReturn(order);
 
-        warehouseService.changeDeliveryStatus("0001-00000027","C");
+        warehouseService.changeDeliveryStatus("0001-00000001","C");
 
         //Assert
         Assertions.assertEquals(expect, order);
