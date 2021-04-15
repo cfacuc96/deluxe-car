@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,5 +32,18 @@ public class DiscountRate {
     public DiscountRate(String description, String discount) {
         this.description = description;
         this.discount = discount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DiscountRate that = (DiscountRate) o;
+        return Objects.equals(idDiscountRate, that.idDiscountRate) && Objects.equals(description, that.description) && Objects.equals(discount, that.discount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idDiscountRate, description, discount);
     }
 }
