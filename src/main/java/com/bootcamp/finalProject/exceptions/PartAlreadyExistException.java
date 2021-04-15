@@ -6,7 +6,7 @@ public class PartAlreadyExistException extends InternalExceptionHandler{
 
 
     public PartAlreadyExistException(Integer partCode) {
-        super("The part code" + partCode + "already exist", HttpStatus.NOT_FOUND);
+        super("the part code " + partCode + " already exist", HttpStatus.BAD_REQUEST);
     }
 }
 

@@ -31,13 +31,13 @@ public class OrderDetailDTO
 
     @NotEmpty
     @ApiModelProperty(  notes = "Type of account",
-            example = "??",
+            example = "R",
             position = 4)
     private String accountType;
 
     @NotEmpty
     @ApiModelProperty(  notes = "Reason because the part is delayed",
-            example = "20",
+            example = "It is held in customs",
             position = 5)
     private String reason;
 }
