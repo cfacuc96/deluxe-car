@@ -3,13 +3,9 @@ package com.bootcamp.finalProject.controllers;
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.mnemonics.OrderType;
-import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.model.Provider;
-import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -54,16 +49,16 @@ public class PartController extends CentralController{
             value = "Return a list of Parts based on the query",
             nickname = "Find Parts by Query"
     )
-    @ApiResponses(value={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK", response = PartResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 403, message = "FORBIDDEN")
 
-        }
+    }
     )
     public List<PartResponseDTO> findPart(
-            @ApiParam(value ="* queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION\n" +
+            @ApiParam(value = "* queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION\n" +
                     "* date:  date for query consultation\n" +
-                    "* order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange" , required = true)
+                    "* order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange", required = true)
             @Nullable @RequestParam Map<String, String> params) throws InternalExceptionHandler {
         //Validations
         isListEndpointMapValid(params);
@@ -160,6 +155,7 @@ public class PartController extends CentralController{
      * orderNumberCM -> following the next model of String =  "0001-00000001"
      * "0001" = subsidiary Id
      * "00000001" = Order Id
+     *
      * @param orderNumberCM model of String =  "0001-00000001"
      * @return OrderDTO DTO of an Order with the orderNumberCM
      * @throws InternalExceptionHandler if received orderNumberCM is misspelled or is not found
@@ -169,10 +165,10 @@ public class PartController extends CentralController{
             value = "Return a Order based on orderNumberCM",
             nickname = "Find Order by orderNumberCM"
     )
-    @ApiResponses(value={
+    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK", response = OrderResponseDTO.class),
             @ApiResponse(code = 403, message = "FORBIDDEN"),
-            @ApiResponse(code = 404, message = "Not Found",response = ErrorDTO.class)
+            @ApiResponse(code = 404, message = "Not Found", response = ErrorDTO.class)
 
     })
     public OrderResponseDTO findByOrderNumberCM(
@@ -266,9 +262,7 @@ public class PartController extends CentralController{
         {
             warehouseService.newOrder(order);
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(order);
-
     }
 
     /**
@@ -287,10 +281,7 @@ public class PartController extends CentralController{
 
         ValidationController.validateOrderStatus(orderStatus);
 
-        warehouseService.changeDeliveryStatus(orderNumberCM,orderStatus);
+        warehouseService.changeDeliveryStatus(orderNumberCM, orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
     }
-
-
-
 }
