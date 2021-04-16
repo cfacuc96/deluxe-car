@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.UserDTO;
+import com.bootcamp.finalProject.exceptions.UsernameInUseException;
 import com.bootcamp.finalProject.model.Role;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.model.User;
@@ -55,31 +56,35 @@ public class UserService implements IUserService{
 
 
     @Override
-    public void loadDefaultUsers() {
+    public void loadDefaultUsers() throws UsernameInUseException {
 
-       User u1 = new User("warehouse",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_WAREHOUSE,Role.ROLE_SUBSIDIARY)));
-       userRepository.save(u1);
+        if(userRepository.findByUsername("warehouse") == null){
+            User u1 = new User("warehouse",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_WAREHOUSE,Role.ROLE_SUBSIDIARY)));
+            userRepository.save(u1);
 
 
-        User u2 = new User("uruSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
-        List<User> u = new ArrayList<>();
-        Subsidiary sub = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,u);
-        u2.setSubsidiary(sub);
+            User u2 = new User("uruSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
+            List<User> u = new ArrayList<>();
+            Subsidiary sub = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,u);
+            u2.setSubsidiary(sub);
 
-        userRepository.save(u2);
+            userRepository.save(u2);
 
-        User u3 = new User("argSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
-        u = new ArrayList<>();
-        sub = new Subsidiary(null,"Buenos Aires subsidiary","Fake addres 123","7470-5556","Argentina :)",null,null,u);
-        u3.setSubsidiary(sub);
+            User u3 = new User("argSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
+            u = new ArrayList<>();
+            sub = new Subsidiary(null,"Buenos Aires subsidiary","Fake addres 123","7470-5556","Argentina :)",null,null,u);
+            u3.setSubsidiary(sub);
 
-        userRepository.save(u3);
+            userRepository.save(u3);
 
-        User u4 = new User("colSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
-        u = new ArrayList<>();
-        sub = new Subsidiary(null,"Bogota subsidiary","Fake addres 123","7470-5556","Bogota :)",null,null,u);
-        u4.setSubsidiary(sub);
-        userRepository.save(u4);
+            User u4 = new User("colSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
+            u = new ArrayList<>();
+            sub = new Subsidiary(null,"Bogota subsidiary","Fake addres 123","7470-5556","Bogota :)",null,null,u);
+            u4.setSubsidiary(sub);
+            userRepository.save(u4);
+        }else{
+            throw new UsernameInUseException("all base ");
+        }
 
     }
 

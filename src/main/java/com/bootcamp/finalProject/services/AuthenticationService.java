@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.AuthenticateDTO;
+import com.bootcamp.finalProject.exceptions.LoginInvalidException;
 import com.bootcamp.finalProject.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,12 +24,12 @@ public class AuthenticationService implements IAuthenticationService{
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public String login(AuthenticateDTO auth) throws LoginException {
+    public String login(AuthenticateDTO auth) throws LoginInvalidException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(auth.getUsername(),auth.getPassword()));
             return jwtTokenProvider.createToken(auth.getUsername(), userService.findByUsername(auth.getUsername()).getRoles());
         } catch (Exception e) {
-            throw new LoginException();
+            throw new LoginInvalidException();
         }
     }
 }

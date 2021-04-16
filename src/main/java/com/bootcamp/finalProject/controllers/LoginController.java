@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.AuthenticateDTO;
+import com.bootcamp.finalProject.exceptions.LoginInvalidException;
 import com.bootcamp.finalProject.security.JwtUserDetailService;
 import com.bootcamp.finalProject.services.IAuthenticationService;
 import com.bootcamp.finalProject.utils.JwtUtil;
@@ -37,7 +38,7 @@ public class LoginController extends CentralController{
             value = "Allows you to login in the system, giving to you a JWT token",
             nickname = "Login")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticateDTO authenticate) throws LoginException {
+    public ResponseEntity<?> login(@RequestBody AuthenticateDTO authenticate) throws LoginInvalidException {
 
         return ResponseEntity.ok(authService.login(authenticate));
     }
@@ -50,8 +51,5 @@ public class LoginController extends CentralController{
         return user.getUsername();
     }
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "pong";
-    }
+
 }

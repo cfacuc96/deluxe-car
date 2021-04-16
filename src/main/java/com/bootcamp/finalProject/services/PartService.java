@@ -211,10 +211,12 @@ public class PartService implements IPartService {
     }
 
     public void saveProvider(ProviderDTO providerDTO) throws InternalExceptionHandler {
-        if(existProviderById(providerDTO.getIdProvider())==null) {
-            providerRepository.save(new ModelMapper().map(providerDTO, Provider.class));
+        if(providerDTO.getIdProvider() != null && existProviderById(providerDTO.getIdProvider())==null)
+        {
+            throw new ProviderIdNotFoundException();
         }else{
-            throw new ProviderAlreadyExistException(providerDTO.getIdProvider());
+
+            providerRepository.save(new ModelMapper().map(providerDTO, Provider.class));
         }
     }
 
@@ -239,10 +241,12 @@ public class PartService implements IPartService {
 
     @Override
     public void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
-        if(existDiscountRateById(discountRateDTO.getIdDiscountRate())==null){
-            discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
+
+        if( discountRateDTO.getIdDiscountRate() != null && existDiscountRateById(discountRateDTO.getIdDiscountRate())==null){
+            throw new DiscountRateIDNotFoundException();
         }else{
-            throw new DiscountRateAlreadyExistException(discountRateDTO.getIdDiscountRate());
+            discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
         }
     }
+
 }

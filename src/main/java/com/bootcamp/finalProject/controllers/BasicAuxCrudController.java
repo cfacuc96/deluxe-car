@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class BasicAuxCrudController extends CentralController{
      * @param providerDTO
      */
     @PostMapping("providers")
-    public ResponseEntity<?> addProvider(@RequestBody ProviderDTO providerDTO) throws InternalExceptionHandler {
+    public ResponseEntity<?> addProvider(@Valid @RequestBody ProviderDTO providerDTO) throws InternalExceptionHandler {
         service.saveProvider(providerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(providerDTO.getName() + " has been added to the Database");
     }
@@ -69,9 +70,9 @@ public class BasicAuxCrudController extends CentralController{
      * @return ResponseEntity with the 201 CREATED code and a message if it was successful
      */
     @PostMapping("discountRates")
-    public ResponseEntity<?> addDiscountRate(@RequestBody DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
+    public ResponseEntity<?> addDiscountRate(@Valid @RequestBody DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
         //validation that the attributes of the DTO are not null except for the id
-        ValidationController.validateDiscountRateDTOParams(discountRateDTO);
+        //ValidationController.validateDiscountRateDTOParams(discountRateDTO);
         //Call service to save the discountRate
         service.saveDiscountRate(discountRateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("A new discount rate has been added to the Database");

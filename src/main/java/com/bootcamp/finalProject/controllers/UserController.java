@@ -1,6 +1,7 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.UserDTO;
+import com.bootcamp.finalProject.exceptions.UsernameInUseException;
 import com.bootcamp.finalProject.services.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +35,7 @@ public class UserController  extends CentralController{
     }
 
     @PostMapping("/load")
-    public ResponseEntity<?> loadUsers(){
+    public ResponseEntity<?> loadUsers() throws UsernameInUseException {
         userService.loadDefaultUsers();
         return ResponseEntity.ok().build();
     }
