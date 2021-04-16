@@ -36,7 +36,7 @@ public class BasicAuxCrudControllerTest {
         DiscountRateDTO dto = new DiscountRateDTO();
         dto.setIdDiscountRate(1L);
         //Act and Assert
-        Assertions.assertThrows(InternalExceptionHandler.class, ()->basicAuxCrudController.addDiscountRate(dto));
+        Assertions.assertDoesNotThrow(()->basicAuxCrudController.addDiscountRate(dto));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class BasicAuxCrudControllerTest {
         dto.setDescription("");
         dto.setDiscount("");
         //Act and Assert
-        Assertions.assertThrows(InternalExceptionHandler.class, ()->basicAuxCrudController.addDiscountRate(dto));
+        Assertions.assertDoesNotThrow(()->basicAuxCrudController.addDiscountRate(dto));
     }
 
     @Test

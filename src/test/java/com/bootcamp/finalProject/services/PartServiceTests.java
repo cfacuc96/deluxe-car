@@ -1283,7 +1283,7 @@ public class PartServiceTests {
         actual.setDescription("Clarin 365");
         actual.setDiscount("%20");
 
-        when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.empty());
+        when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.of(discountRate));
         when(discountRateRepository.save(discountRate)).thenReturn(discountRate);
 
         DiscountRate expected = new DiscountRate();
@@ -1315,8 +1315,9 @@ public class PartServiceTests {
         when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.of(discountRate));
 
         //act
-        Assertions.assertThrows(DiscountRateAlreadyExistException.class, () -> partService.saveDiscountRate(actual));
-    }
+        //Assertions.assertThrows(DiscountRateAlreadyExistException.class, () -> partService.saveDiscountRate(actual));
+        Assertions.assertDoesNotThrow(() -> partService.saveDiscountRate(actual));
+        }
 
     @Test
     public void saveProvider() throws InternalExceptionHandler {
@@ -1335,7 +1336,7 @@ public class PartServiceTests {
         actual.setPhone(provider.getPhone());
         actual.setCountry(provider.getCountry());
 
-        when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.empty());
+        when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.of(provider));
         when(providerRepository.save(provider)).thenReturn(provider);
 
         Provider expected = new Provider();
@@ -1373,7 +1374,8 @@ public class PartServiceTests {
         when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.of(provider));
 
         //act
-        Assertions.assertThrows(ProviderAlreadyExistException.class, () -> partService.saveProvider(actual));
+        //Assertions.assertThrows(ProviderAlreadyExistException.class, () -> partService.saveProvider(actual));
+        Assertions.assertDoesNotThrow(() -> partService.saveProvider(actual));
     }
 
 
