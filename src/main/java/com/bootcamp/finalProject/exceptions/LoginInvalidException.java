@@ -6,6 +6,6 @@ public class LoginInvalidException extends InternalExceptionHandler
 {
     public LoginInvalidException()
     {
-        super("The user or password is invalid.", HttpStatus.BAD_REQUEST);
+        super("The user or password is invalid. Make sure to load the users !", HttpStatus.BAD_REQUEST);
     }
 }

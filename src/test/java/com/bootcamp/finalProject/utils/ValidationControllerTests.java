@@ -1,17 +1,9 @@
 package com.bootcamp.finalProject.utils;
 
-import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
-import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
-import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
-import com.bootcamp.finalProject.model.Order;
-import com.bootcamp.finalProject.model.OrderDetail;
-import com.bootcamp.finalProject.model.Subsidiary;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

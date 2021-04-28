@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +29,6 @@ public class Subsidiary {
     private String country;
 
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-   // @OrderColumn(name = "order_index")
     private List<Order> orders;
 
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
@@ -36,6 +36,9 @@ public class Subsidiary {
 
     @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<User> users;
+
+    @OneToMany(mappedBy = "subsidiary", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<BackOrder> backOrders;
 
     @Override
     public boolean equals(Object obj) {

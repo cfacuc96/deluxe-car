@@ -2,6 +2,7 @@ package com.bootcamp.finalProject.dtos;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @ApiModel(description = "fields for a query of stock in a subsidiary")
 public class SubsidiaryStockRequestDTO {
 

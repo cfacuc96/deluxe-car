@@ -1,5 +1,8 @@
 package com.bootcamp.finalProject.controllers;
 
+import com.bootcamp.finalProject.dtos.DiscountRateDTO;
+import com.bootcamp.finalProject.dtos.PartPriceDTO;
+import com.bootcamp.finalProject.dtos.PartRecordDTO;
 import com.bootcamp.finalProject.exceptions.*;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
@@ -8,10 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -246,5 +249,198 @@ class PartControllerTest {
         ///Act and Assert
         when(warehouseService.findByOrderNumberCM(s)).thenReturn(null);
         Assertions.assertDoesNotThrow(() -> partController.findByOrderNumberCM(s));
+    }
+
+    @Test
+    public void getHistoricPrice() throws InternalExceptionHandler {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(1);
+        expected.setDescription("Parte");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Mercedes");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2020-04-01");
+        partRecordDTO.setNormalPrice(1D);
+        partRecordDTO.setUrgentPrice(1D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%30");
+        discountRateDTO.setDescription("Discount for part Espolon BMW 320i");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Integer partCode = 1;
+        String dateFrom = null;
+        String dateTo = null;
+
+        when(partService.historicPrice(partCode, null, null)).thenReturn(expected);
+
+        PartPriceDTO actual = partController.historicPrice(partCode, dateFrom, dateTo);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getHistoricPriceDateFromBadRequest() throws InternalExceptionHandler {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(1);
+        expected.setDescription("Parte");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Mercedes");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2020-04-01");
+        partRecordDTO.setNormalPrice(1D);
+        partRecordDTO.setUrgentPrice(1D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%30");
+        discountRateDTO.setDescription("Discount for part Espolon BMW 320i");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Integer partCode = 1;
+        String dateFrom = "2020/04/01";
+        String dateTo = null;
+
+        when(partService.historicPrice(partCode, null, null)).thenReturn(expected);
+
+        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.historicPrice(partCode, dateFrom, dateTo));
+    }
+
+    @Test
+    public void getHistoricPriceDateToBadRequest() throws InternalExceptionHandler {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(1);
+        expected.setDescription("Parte");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Mercedes");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2020-04-01");
+        partRecordDTO.setNormalPrice(1D);
+        partRecordDTO.setUrgentPrice(1D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%30");
+        discountRateDTO.setDescription("Discount for part Espolon BMW 320i");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Integer partCode = 1;
+        String dateFrom = null;
+        String dateTo = "2020/04/01";
+
+        when(partService.historicPrice(partCode, null, null)).thenReturn(expected);
+
+        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.historicPrice(partCode, dateFrom, dateTo));
+    }
+
+    @Test
+    public void getHistoricPriceComplete() throws InternalExceptionHandler {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(1);
+        expected.setDescription("Parte");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Mercedes");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2020-04-01");
+        partRecordDTO.setNormalPrice(1D);
+        partRecordDTO.setUrgentPrice(1D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%30");
+        discountRateDTO.setDescription("Discount for part Espolon BMW 320i");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Integer partCode = 1;
+        String dateFrom = "2020-04-19";
+        String dateTo = "2020-04-01";
+
+        when(partService.historicPrice(partCode, parseDate(dateFrom), parseDate(dateTo))).thenReturn(expected);
+
+        PartPriceDTO actual = partController.historicPrice(partCode, dateFrom, dateTo);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getHistoricPriceDateToFutureException() throws InternalExceptionHandler {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(1);
+        expected.setDescription("Parte");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Mercedes");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2020-04-01");
+        partRecordDTO.setNormalPrice(1D);
+        partRecordDTO.setUrgentPrice(1D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%30");
+        discountRateDTO.setDescription("Discount for part Espolon BMW 320i");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Integer partCode = 1;
+        String dateFrom = "2020-04-19";
+        String dateTo = "2021-05-01";
+
+        when(partService.historicPrice(partCode, null, null)).thenReturn(expected);
+
+        Assertions.assertThrows(InternalExceptionHandler.class, () -> partController.historicPrice(partCode, dateFrom, dateTo));
+
+    }
+
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

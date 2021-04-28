@@ -30,23 +30,22 @@ public class MapperUtils
         return result;
     }
 
+    public static Integer getDifferencesInDays(Date deliveryDate, Date deliveredDate) {
 
-    public static Integer getDifferencesInDays(Date deliveryDate, Date deliveredDate)
-    {
-        Integer result;
-        if(deliveredDate != null)
-        {
+        if (deliveredDate != null) {
+            if (deliveredDate.before(deliveryDate)) {
+                return 0;
+            }
             long diffInMillies = Math.abs(deliveryDate.getTime() - deliveredDate.getTime());
-            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
-        }
-        else
-        {
+            return Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
+        } else {
             Date current = new Date();
-            long diffInMillies = Math.abs(deliveryDate.getTime() - current.getTime());
-            result = Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
+            if (current.before(deliveryDate)) {
+                return 0;
+            } else {
+                long diffInMillies = Math.abs(current.getTime() - deliveryDate.getTime());
+                return Math.toIntExact((TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)));
+            }
         }
-
-
-        return result;
     }
 }

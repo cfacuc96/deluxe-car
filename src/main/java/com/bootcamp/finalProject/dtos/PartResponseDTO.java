@@ -23,7 +23,7 @@ public class PartResponseDTO {
             position = 3)
     private String description;
 
-    @ApiModelProperty(  notes = "Quantity of the part",
+    @ApiModelProperty(  notes = "The maker of the part",
             example = "1",
             position = 2)
     private String maker;

@@ -2,21 +2,19 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
+import com.bootcamp.finalProject.mnemonics.BackOrderStatus;
 import com.bootcamp.finalProject.model.*;
-import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
-import com.bootcamp.finalProject.repositories.ISubsidiaryStockRepository;
-import com.bootcamp.finalProject.repositories.OrderRepository;
-import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.repositories.*;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +41,9 @@ public class WarehouseServiceTest {
 
     @Mock
     ISubsidiaryStockRepository subsidiaryStockRepository;
+
+    @Mock
+    private IBackOrderRepository backOrderRepository;
 
     @Mock
     SubsidiaryResponseMapper mapper;
@@ -689,12 +690,13 @@ public class WarehouseServiceTest {
         List<SubsidiaryStock> subsidiaryStocks = new ArrayList<>();
         subsidiary.setSubsidiaryStocks(subsidiaryStocks);
 
+        Date now = new Date();
         Order order = new Order();
         order.setIdOrder(1L);
         order.setSubsidiary(subsidiary);
-        order.setOrderDate(new Date());
-        order.setDeliveredDate(new Date());
-        order.setDeliveryDate(new Date());
+        order.setOrderDate(now);
+        order.setDeliveredDate(now);
+        order.setDeliveryDate(now);
         order.setDeliveryStatus("P");
         Part part = new Part();
         part.setPartCode(11111112);
@@ -710,10 +712,10 @@ public class WarehouseServiceTest {
 
         Order expect = new Order();
         expect.setIdOrder(1L);
-        expect.setDeliveryDate(new Date());
+        expect.setDeliveryDate(now);
         expect.setSubsidiary(subsidiary);
-        expect.setOrderDate(new Date());
-        expect.setDeliveredDate(new Date());
+        expect.setOrderDate(now);
+        expect.setDeliveredDate(now);
         expect.setDeliveryStatus("C");
         expect.setOrderDetails(orderList);
 
@@ -863,5 +865,364 @@ public class WarehouseServiceTest {
         Assertions.assertEquals(expect, order);
     }
 
+    @Test
+    public void newBackOrder() throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDTO expected = new BackOrderDTO();
+        expected.setBackOrderNumberCM("0001-00000001");
+        expected.setOrderNumberCM("0001-00000007");
+        expected.setBackOrderDate("2021-04-01");
+        expected.setFinishBackOrderDate("2021-04-20");
+        expected.setBackOrderPriority("H");
+        expected.setBackOrderStatus("F");
+        BackOrderDetailDTO backOrderDetailDTO = new BackOrderDetailDTO();
+        backOrderDetailDTO.setPartCode(11111112);
+        backOrderDetailDTO.setDescription("TEST");
+        backOrderDetailDTO.setAccountType("R");
+        backOrderDetailDTO.setQuantity(1000);
+        expected.setBackOrderDetail(backOrderDetailDTO);
 
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setIdSubsidiary(1L);
+        subsidiary.setName("TEST");
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(11111112);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, expected.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = new BackOrderDetail(expected.getBackOrderDetail().getAccountType(), expected.getBackOrderDetail().getQuantity(), partMocked, backOrder);
+
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(backOrderRepository.save(backOrder)).thenReturn(backOrder);
+
+        //act
+        BackOrderDTO actual = warehouseService.newBackOrder(expected, user);
+
+        //assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void newBackOrderPartNotFoundException() throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDTO expected = new BackOrderDTO();
+        expected.setBackOrderNumberCM("0001-00000001");
+        expected.setOrderNumberCM("0001-00000007");
+        expected.setBackOrderDate("2021-04-01");
+        expected.setFinishBackOrderDate("2021-04-20");
+        expected.setBackOrderPriority("H");
+        expected.setBackOrderStatus("F");
+        BackOrderDetailDTO backOrderDetailDTO = new BackOrderDetailDTO();
+        backOrderDetailDTO.setPartCode(0);
+        backOrderDetailDTO.setDescription("TEST");
+        backOrderDetailDTO.setAccountType("R");
+        backOrderDetailDTO.setQuantity(1000);
+        expected.setBackOrderDetail(backOrderDetailDTO);
+
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setIdSubsidiary(1L);
+        subsidiary.setName("TEST");
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(0);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, expected.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = new BackOrderDetail(expected.getBackOrderDetail().getAccountType(), expected.getBackOrderDetail().getQuantity(), partMocked, backOrder);
+
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(null);
+        when(backOrderRepository.save(backOrder)).thenReturn(backOrder);
+
+        //act
+        Assertions.assertThrows(PartNotExistException.class, () -> warehouseService.newBackOrder(expected, user));
+    }
+
+    @Test
+    public void newBackOrderThereIsAlredyStockException() throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDTO expected = new BackOrderDTO();
+        expected.setBackOrderNumberCM("0001-00000001");
+        expected.setOrderNumberCM("0001-00000007");
+        expected.setBackOrderDate("2021-04-01");
+        expected.setFinishBackOrderDate("2021-04-20");
+        expected.setBackOrderPriority("H");
+        expected.setBackOrderStatus("F");
+        BackOrderDetailDTO backOrderDetailDTO = new BackOrderDetailDTO();
+        backOrderDetailDTO.setPartCode(11111112);
+        backOrderDetailDTO.setDescription("TEST");
+        backOrderDetailDTO.setAccountType("R");
+        backOrderDetailDTO.setQuantity(1);
+        expected.setBackOrderDetail(backOrderDetailDTO);
+
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setIdSubsidiary(1L);
+        subsidiary.setName("TEST");
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(11111112);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, expected.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = new BackOrderDetail(expected.getBackOrderDetail().getAccountType(), expected.getBackOrderDetail().getQuantity(), partMocked, backOrder);
+
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(backOrderRepository.save(backOrder)).thenReturn(backOrder);
+
+        //act
+        Assertions.assertThrows(ThereIsAlredyStockException.class, () -> warehouseService.newBackOrder(expected, user));
+    }
+
+    @Test
+    public void newBackOrderInvalidAccountTypeExtensionException() throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDTO expected = new BackOrderDTO();
+        expected.setBackOrderNumberCM("0001-00000001");
+        expected.setOrderNumberCM("0001-00000007");
+        expected.setBackOrderDate("2021-04-01");
+        expected.setFinishBackOrderDate("2021-04-20");
+        expected.setBackOrderPriority("H");
+        expected.setBackOrderStatus("F");
+        BackOrderDetailDTO backOrderDetailDTO = new BackOrderDetailDTO();
+        backOrderDetailDTO.setPartCode(11111112);
+        backOrderDetailDTO.setDescription("TEST");
+        backOrderDetailDTO.setAccountType("F");
+        backOrderDetailDTO.setQuantity(1000);
+        expected.setBackOrderDetail(backOrderDetailDTO);
+
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setIdSubsidiary(1L);
+        subsidiary.setName("TEST");
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(11111112);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, expected.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = new BackOrderDetail(expected.getBackOrderDetail().getAccountType(), expected.getBackOrderDetail().getQuantity(), partMocked, backOrder);
+
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(backOrderRepository.save(backOrder)).thenReturn(backOrder);
+
+        //act
+        Assertions.assertThrows(InvalidAccountTypeExtensionException.class, () -> warehouseService.newBackOrder(expected, user));
+    }
+
+    @Test
+    public void newBackOrderInvalidBackOrderPriorityException() throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDTO expected = new BackOrderDTO();
+        expected.setBackOrderNumberCM("0001-00000001");
+        expected.setOrderNumberCM("0001-00000007");
+        expected.setBackOrderDate("2021-04-01");
+        expected.setFinishBackOrderDate("2021-04-20");
+        expected.setBackOrderPriority("Y");
+        expected.setBackOrderStatus("F");
+        BackOrderDetailDTO backOrderDetailDTO = new BackOrderDetailDTO();
+        backOrderDetailDTO.setPartCode(11111112);
+        backOrderDetailDTO.setDescription("TEST");
+        backOrderDetailDTO.setAccountType("F");
+        backOrderDetailDTO.setQuantity(1000);
+        expected.setBackOrderDetail(backOrderDetailDTO);
+
+        Subsidiary subsidiary = new Subsidiary();
+        subsidiary.setIdSubsidiary(1L);
+        subsidiary.setName("TEST");
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(11111112);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, expected.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = new BackOrderDetail(expected.getBackOrderDetail().getAccountType(), expected.getBackOrderDetail().getQuantity(), partMocked, backOrder);
+
+        when(userService.getSubsidiaryByUsername(user)).thenReturn(subsidiary);
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(backOrderRepository.save(backOrder)).thenReturn(backOrder);
+
+        //act
+        Assertions.assertThrows(InvalidBackOrderPriorityException.class, () -> warehouseService.newBackOrder(expected, user));
+    }
+
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 }

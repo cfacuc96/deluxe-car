@@ -1,8 +1,7 @@
 package com.bootcamp.finalProject.model;
 
-import lombok.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import org.hibernate.annotations.Fetch;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;

@@ -8,7 +8,6 @@ import com.bootcamp.finalProject.model.User;
 import com.bootcamp.finalProject.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,25 +64,25 @@ public class UserService implements IUserService{
 
             User u2 = new User("uruSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
             List<User> u = new ArrayList<>();
-            Subsidiary sub = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,u);
+            Subsidiary sub = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,u, null);
             u2.setSubsidiary(sub);
 
             userRepository.save(u2);
 
             User u3 = new User("argSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
             u = new ArrayList<>();
-            sub = new Subsidiary(null,"Buenos Aires subsidiary","Fake addres 123","7470-5556","Argentina :)",null,null,u);
+            sub = new Subsidiary(null,"Buenos Aires subsidiary","Fake addres 123","7470-5556","Argentina :)",null,null,u, null);
             u3.setSubsidiary(sub);
 
             userRepository.save(u3);
 
             User u4 = new User("colSub",bcryptEncoder.encode("123"),true,new ArrayList<Role>(Arrays.asList(Role.ROLE_SUBSIDIARY)));
             u = new ArrayList<>();
-            sub = new Subsidiary(null,"Bogota subsidiary","Fake addres 123","7470-5556","Bogota :)",null,null,u);
+            sub = new Subsidiary(null,"Bogota subsidiary","Fake addres 123","7470-5556","Bogota :)",null,null,u, null);
             u4.setSubsidiary(sub);
             userRepository.save(u4);
         }else{
-            throw new UsernameInUseException("all base ");
+            throw new UsernameInUseException();
         }
 
     }

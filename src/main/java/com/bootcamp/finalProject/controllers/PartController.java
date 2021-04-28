@@ -20,12 +20,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
 
 import static com.bootcamp.finalProject.utils.ValidationController.isListEndpointMapValid;
 import static com.bootcamp.finalProject.utils.ValidationController.validateDateFormat;
+
 
 @RestController
 @RequestMapping("/api/v1/parts")
@@ -305,5 +307,76 @@ public class PartController extends CentralController{
 
         warehouseService.changeDeliveryStatus(orderNumberCM, orderStatus);
         return ResponseEntity.status(HttpStatus.OK).body("Order updated successfully");
+    }
+
+    @GetMapping("historicPrice")
+    @ApiOperation(
+            value = "Returns a part with its price history",
+            nickname = "Get part price history"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* part  with partCode xxxxxxxx not exist.\n" +
+                    "* dateFrom must be before dateTo. \n" +
+                    "* the date format is not correct \n")
+    })
+    public PartPriceDTO historicPrice(
+                                    @ApiParam(value = "11111112", required = true)
+                                    @NotNull(message = "partCode is a required field")
+                                    @RequestParam Integer partCode,
+                                    @ApiParam(value = "2021-04-01 -> date from which to search")
+                                    @RequestParam(required = false) String dateFrom,
+                                    @ApiParam(value = "2021-04-15 -> date to search")
+                                    @RequestParam(required = false) String dateTo) throws InternalExceptionHandler {
+        return service.historicPrice(partCode, (dateFrom == null) ? null : validateDateFormat(dateFrom), (dateTo == null) ? null : validateDateFormat(dateTo));
+
+    }
+    @PostMapping("backOrders")
+    @ApiOperation(
+            value = "Create a new back order",
+            nickname = "Create Back Order"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* part  with partCode xxxxxxxx not exist.\n" +
+                    "* there is already stock for partCode: xxxxxxxx. \n" +
+                    "* the account type extension is invalid. \n" +
+                    "* the priority is invalid")
+    })
+    public ResponseEntity<?> newBackOrder(
+            @ApiParam(value = "Information of the back order to be crated", required = true)
+            @Valid
+            @RequestBody BackOrderDTO backOrder) throws InvalidBackOrderPriorityException, PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(backOrder != null)
+        {
+            warehouseService.newBackOrder(backOrder,user);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(backOrder);
+    }
+
+    @GetMapping("finishBackOrders")
+    @ApiOperation(
+            value = "Finish back orders from a partCode",
+            nickname = "Finish Back Order"
+    )
+    @ApiResponses(value={
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 402, message = "BAD REQUEST: \n" +
+                    "* part  with partCode xxxxxxxx not exist.\n" +
+                    "* not enough stock for partCode: xxxxxxxx. \n" +
+                    "* the account type extension is invalid. \n")
+    })
+    public ResponseEntity<?> finishBackOrder(
+            @ApiParam(value = "part code to finish back orders", required = true)
+            @NotNull @RequestParam Integer partCode) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException {
+        List<BackOrderDTO> backOrderReturn = warehouseService.finishBackOrder(partCode);
+        return ResponseEntity.status(HttpStatus.OK).body(backOrderReturn);
     }
 }

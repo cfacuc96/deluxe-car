@@ -1,5 +1,7 @@
 package com.bootcamp.finalProject.utils;
 
+
+
 import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.exceptions.DateEnteredGreaterException;
 import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
@@ -8,11 +10,9 @@ import com.bootcamp.finalProject.exceptions.InvalidDateException;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
 import com.bootcamp.finalProject.mnemonics.QueryType;
-import org.assertj.core.util.DateUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;

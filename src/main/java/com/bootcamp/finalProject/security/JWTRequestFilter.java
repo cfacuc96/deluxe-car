@@ -1,14 +1,10 @@
 package com.bootcamp.finalProject.security;
 
 import com.bootcamp.finalProject.utils.JwtUtil;
-import io.jsonwebtoken.JwtException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,6 +16,7 @@ import java.io.IOException;
 
 @Service
 public class JWTRequestFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtUserDetailService userDetailService;
 

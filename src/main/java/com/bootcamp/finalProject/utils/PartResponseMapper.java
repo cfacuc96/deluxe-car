@@ -1,5 +1,9 @@
 package com.bootcamp.finalProject.utils;
 
+
+
+import com.bootcamp.finalProject.dtos.PartPriceDTO;
+import com.bootcamp.finalProject.dtos.PartRecordDTO;
 import com.bootcamp.finalProject.dtos.PartResponseDTO;
 import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.PartRecord;
@@ -45,5 +49,27 @@ public class PartResponseMapper {
         ret.setLastModification(datePattern.format(part.getLastModification()));
 
         return ret;
+    }
+
+    public PartPriceDTO toPartPriceDTO(Part part){
+        PartPriceDTO result = new PartPriceDTO();
+        result.setPartCode(part.getPartCode());
+        result.setDescription(part.getDescription());
+        result.setNetWeight(part.getNetWeight());
+        result.setLongDimension(part.getLongDimension());
+        result.setWidthDimension(part.getWidthDimension());
+        result.setTallDimension(part.getTallDimension());
+        result.setMaker(part.getProvider().getName());
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        for (PartRecord partRecord : part.getPartRecords()) {
+            PartRecordDTO partRecordDTO = new PartRecordDTO();
+            partRecordDTO.setCreatedAt(datePattern.format(partRecord.getCreatedAt()));
+            partRecordDTO.setNormalPrice(partRecord.getNormalPrice());
+            partRecordDTO.setUrgentPrice(partRecord.getUrgentPrice());
+            partRecordDTO.setDiscountRate(DiscountRateMapper.toDTO(partRecord.getDiscountRate()));
+            partRecordDTOList.add(partRecordDTO);
+        }
+        result.setHistoricPrice(partRecordDTOList);
+        return result;
     }
 }

@@ -2,31 +2,28 @@ package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.*;
 import com.bootcamp.finalProject.exceptions.*;
+import com.bootcamp.finalProject.mnemonics.BackOrderPriority;
+import com.bootcamp.finalProject.mnemonics.BackOrderStatus;
 import com.bootcamp.finalProject.mnemonics.DeliveryStatus;
 import com.bootcamp.finalProject.model.*;
-import com.bootcamp.finalProject.repositories.ISubsidiaryRepository;
-import com.bootcamp.finalProject.repositories.ISubsidiaryStockRepository;
-import com.bootcamp.finalProject.repositories.OrderRepository;
-import com.bootcamp.finalProject.repositories.PartRepository;
+import com.bootcamp.finalProject.repositories.*;
+import com.bootcamp.finalProject.utils.BackOrderMapper;
 import com.bootcamp.finalProject.utils.OrderNumberCMUtil;
 import com.bootcamp.finalProject.utils.OrderResponseMapper;
 import com.bootcamp.finalProject.utils.SubsidiaryResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.bootcamp.finalProject.utils.MapperUtils.completeNumberByLength;
 import static com.bootcamp.finalProject.utils.MapperUtils.getDifferencesInDays;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.DSOrderTypeValidation;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.deliveryStatusValidation;
+
 
 @Service
 public class WarehouseService implements IWarehouseService
@@ -36,6 +33,7 @@ public class WarehouseService implements IWarehouseService
 
     @Autowired
     private OrderRepository orderRepository;
+
     @Autowired
     private PartRepository partRepository;
 
@@ -44,6 +42,9 @@ public class WarehouseService implements IWarehouseService
 
     @Autowired
     private ISubsidiaryStockRepository subsidiaryStockRepository;
+
+    @Autowired
+    private IBackOrderRepository backOrderRepository;
 
     @Autowired
     private IUserService userService;
@@ -123,18 +124,17 @@ public class WarehouseService implements IWarehouseService
 
     public OrderDTO newOrder(OrderDTO order, UserDetails user) throws InvalidAccountTypeExtensionException, NotEnoughStock, PartNotExistException
     {
-        //del context debe obtener el id_subsidiary, mientras tanto yo harcodeo el ID 1
-        //context.getIdSubsidiary();
-        //Subsidiary subsidiary = subsidiaryRepository.findById(1L).get();
-
         Subsidiary subsidiary = userService.getSubsidiaryByUsername(user);
+        return createNewOrder(order, subsidiary);
+    }
 
+    private OrderDTO createNewOrder(OrderDTO order, Subsidiary subsidiary) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException {
         Date current = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(current);
         //esta hardcodeado cuanto tardo el envio.
         calendar.add(Calendar.DAY_OF_YEAR,3);
-        Order orderReturn = new Order(null, current, calendar.getTime(), current, DeliveryStatus.PENDING, null, subsidiary);
+        Order orderReturn = new Order(null, current, calendar.getTime(), null, DeliveryStatus.PENDING, null, subsidiary);
 
         List<OrderDetail> orderList = new ArrayList<>();
         List<OrderDetailDTO> orderDetailList = order.getOrderDetails();
@@ -145,14 +145,99 @@ public class WarehouseService implements IWarehouseService
         }
         orderReturn.setOrderDetails(orderList);
         orderRepository.save(orderReturn);
+        for(OrderDetail orderDetail : orderReturn.getOrderDetails()){
+            Part partStock = orderDetail.getPartOrder();
+            partStock.setQuantity(partStock.getQuantity() - orderDetail.getQuantity());
+            partRepository.save(partStock);
+        }
 
         SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
         //Set return with missing data.
-        order.setOrderNumberCM(completeNumberByLength(String.valueOf(1),4) + "-" + completeNumberByLength(String.valueOf(orderReturn.getIdOrder()),8));
+        order.setOrderNumberCM(completeNumberByLength(String.valueOf(subsidiary.getIdSubsidiary()),4) + "-" + completeNumberByLength(String.valueOf(orderReturn.getIdOrder()),8));
         order.setDeliveryDate(datePattern.format(calendar.getTime()));
         order.setDeliveryStatus(DeliveryStatus.PENDING);
         order.setDaysDelayed(getDifferencesInDays(orderReturn.getDeliveryDate(),orderReturn.getDeliveredDate()));
+        order.setOrderDate(datePattern.format(orderReturn.getOrderDate()));
         return order;
+    }
+
+    @Override
+    public BackOrderDTO newBackOrder(BackOrderDTO backOrderDTO, UserDetails user) throws PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException, InvalidBackOrderPriorityException {
+        validatePriorityBackOrder(backOrderDTO.getBackOrderPriority());
+        Subsidiary subsidiary = userService.getSubsidiaryByUsername(user);
+
+        Date current = new Date();
+        BackOrder backOrder = new BackOrder(current, BackOrderStatus.PENDING, backOrderDTO.getBackOrderPriority(), subsidiary);
+        BackOrderDetail backOrderDetail = validateBackOrderToCreate(backOrderDTO.getBackOrderDetail(), backOrder);
+        backOrder.setBackOrderDetail(backOrderDetail);
+        backOrderRepository.save(backOrder);
+        SimpleDateFormat datePattern = new SimpleDateFormat("yyyy-MM-dd");
+        //Set return with missing data.
+        backOrderDTO.setBackOrderNumberCM(completeNumberByLength(String.valueOf(subsidiary.getIdSubsidiary()),4) + "-" + completeNumberByLength(String.valueOf(backOrder.getIdBackOrder()),8));
+        backOrderDTO.setBackOrderStatus(BackOrderStatus.PENDING);
+        backOrderDTO.setBackOrderPriority(backOrder.getBackOrderPriority());
+        backOrderDTO.setBackOrderDate(datePattern.format(backOrder.getBackOrderDate()));
+        return backOrderDTO;
+    }
+
+    @Override
+    public List<BackOrderDTO> finishBackOrder(Integer partCode) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException {
+        Part part =  partRepository.findByPartCode(partCode);
+        List<BackOrderDTO> listResult = new ArrayList<>();
+        if(part == null) {
+            throw new PartNotExistException(partCode);
+        }else{
+            //first finish back order with high priority
+            //priorisando la antiguedad del pedido
+            //hasta que no haya mas productos con prioridad alta no avanzo con las back order de prioridad normal
+            Date now = new Date();
+            boolean noStock = false;
+            ListIterator<BackOrder> backOrderList = backOrderRepository.findPendingBackOrderByPriorityOrderByBackOrderDateASC(BackOrderPriority.HIGH, part.getIdPart()).listIterator();
+            createOrderFromBackOrder(backOrderList, part, listResult, partCode, noStock, now);
+            if(!noStock && !backOrderList.hasNext()){
+                backOrderList = backOrderRepository.findPendingBackOrderByPriorityOrderByBackOrderDateASC(BackOrderPriority.NORMAL, part.getIdPart()).listIterator();
+                createOrderFromBackOrder(backOrderList, part, listResult, partCode, noStock, now);
+                if(!noStock && !backOrderList.hasNext()){
+                    backOrderList = backOrderRepository.findPendingBackOrderByPriorityOrderByBackOrderDateASC(BackOrderPriority.LOW, part.getIdPart()).listIterator();
+                    createOrderFromBackOrder(backOrderList, part, listResult, partCode, noStock, now);
+                }
+            }
+        }
+        return listResult;
+    }
+
+    private void createOrderFromBackOrder(ListIterator<BackOrder> backOrderList, Part part, List<BackOrderDTO> listResult, Integer partCode, boolean noStock, Date now) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException {
+        while (!noStock && backOrderList.hasNext()){
+            BackOrder elem = backOrderList.next();
+            if(part == null){
+                throw new PartNotExistException(partCode);
+            }else{
+                if(elem.getBackOrderDetail().getQuantity() > part.getQuantity()){
+                    noStock = true;
+                }else{
+                    //creo nuevo orden
+                    OrderDTO orderDTO = new OrderDTO();
+                    List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+
+                    orderDetailDTO.setPartCode(elem.getBackOrderDetail().getPartBackOrder().getPartCode().toString());
+                    orderDetailDTO.setAccountType(elem.getBackOrderDetail().getAccountType());
+                    orderDetailDTO.setQuantity(elem.getBackOrderDetail().getQuantity());
+                    orderDetailDTOList.add(orderDetailDTO);
+                    orderDTO.setOrderDetails(orderDetailDTOList);
+                    createNewOrder(orderDTO, elem.getSubsidiary());
+                    //cambio estado backorder
+                    elem.setBackOrderStatus(BackOrderStatus.FINISHED);
+                    elem.setFinishBackOrderDate(now);
+                    backOrderRepository.save(elem);
+                    //agrego a lista resultDTO
+                    listResult.add(BackOrderMapper.toDTO(elem, orderDTO.getOrderNumberCM()));
+                    //elimino de la lista
+                    backOrderList.remove();
+                    part =  partRepository.findByPartCode(partCode);
+                }
+            }
+        }
     }
 
     private OrderDetail validateOrderToCreate(OrderDetailDTO orderDetail, Order orderReturn) throws PartNotExistException, NotEnoughStock, InvalidAccountTypeExtensionException
@@ -204,5 +289,38 @@ public class WarehouseService implements IWarehouseService
         Date now = new Date();
         order.setDeliveryStatus(DeliveryStatus.FINISHED);
         order.setDeliveredDate(now);
+    }
+
+    private BackOrderDetail validateBackOrderToCreate(BackOrderDetailDTO backOrderDetailDTO, BackOrder backOrder) throws PartNotExistException, ThereIsAlredyStockException, InvalidAccountTypeExtensionException {
+        BackOrderDetail backOrderDetail;
+        Part part =  partRepository.findByPartCode(backOrderDetailDTO.getPartCode());
+        if(part == null) {
+            throw new PartNotExistException(backOrderDetailDTO.getPartCode());
+        }else{
+            if(part.getQuantity() >= backOrderDetailDTO.getQuantity())
+            {
+                throw new ThereIsAlredyStockException(backOrderDetailDTO.getPartCode());
+            }
+            else
+            {
+                backOrderDetailDTO.setDescription(part.getDescription());
+
+                if(backOrderDetailDTO.getAccountType() == null || backOrderDetailDTO.getAccountType().length() != 1 ||
+                        (!backOrderDetailDTO.getAccountType().equalsIgnoreCase("R") && !backOrderDetailDTO.getAccountType().equalsIgnoreCase("G")))
+                {
+                    throw new InvalidAccountTypeExtensionException();
+                }
+            }
+            backOrderDetail = new BackOrderDetail(backOrderDetailDTO.getAccountType(), backOrderDetailDTO.getQuantity(), part, backOrder);
+        }
+        return backOrderDetail;
+    }
+
+    private void validatePriorityBackOrder(String priority) throws InvalidBackOrderPriorityException {
+        if(priority == null || priority.length() != 1 ||
+                (!priority.equalsIgnoreCase(BackOrderPriority.HIGH) && !priority.equalsIgnoreCase(BackOrderPriority.NORMAL) && !priority.equalsIgnoreCase(BackOrderPriority.LOW)))
+        {
+            throw new InvalidBackOrderPriorityException();
+        }
     }
 }

@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -31,4 +30,12 @@ public class DiscountRateDTO {
             position = 3)
     private String discount;
 
+    @Override
+    public String toString() {
+        return "DiscountRateDTO{" +
+                "idDiscountRate=" + idDiscountRate +
+                ", description='" + description + '\'' +
+                ", discount='" + discount + '\'' +
+                '}';
+    }
 }

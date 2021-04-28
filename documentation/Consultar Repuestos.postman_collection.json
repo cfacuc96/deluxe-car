@@ -1,0 +1,631 @@
+{
+	"info": {
+		"_postman_id": "88018668-da21-4045-8076-a8aa777bed35",
+		"name": "Consultar Repuestos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "US: ml-parts-06",
+			"item": [
+				{
+					"name": "US: ml-parts-06",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}historicPrice?partCode=11111112&dateTo=2021-04-01",
+							"host": [
+								"{{furyUrl}}historicPrice"
+							],
+							"query": [
+								{
+									"key": "partCode",
+									"value": "11111112"
+								},
+								{
+									"key": "dateFrom",
+									"value": "2021-01-05",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2021-04-01"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "US: ml-parts-06 finishBackOrders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}finishBackOrders?partCode=11111112",
+							"host": [
+								"{{furyUrl}}finishBackOrders"
+							],
+							"query": [
+								{
+									"key": "partCode",
+									"value": "11111112"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "US: ml-parts-06 backOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"backOrderPriority\" : \"H\",\n    \"backOrderDetail\" : {\n        \"quantity\" : 100,\n        \"partCode\" : 11111112,\n        \"accountType\" : \"r\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{furyUrl}}backOrders",
+							"host": [
+								"{{furyUrl}}backOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET providers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}providers",
+							"host": [
+								"{{furyUrl}}providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST providers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"Digital House\",\n    \"address\" : \"Mi casa\",\n    \"phone\" : \"12345\",\n    \"country\" : \"Uruguay\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{furyUrl}}providers",
+							"host": [
+								"{{furyUrl}}providers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET provider ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}providers/4",
+							"host": [
+								"{{furyUrl}}providers"
+							],
+							"path": [
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST discountRate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"discount\" : \"%90\",\n    \"description\" : \"Descuento bootcamp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{furyUrl}}discountRates",
+							"host": [
+								"{{furyUrl}}discountRates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET SubsidiaryStock",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}stocks?dealerNumber=3",
+							"host": [
+								"{{furyUrl}}stocks"
+							],
+							"query": [
+								{
+									"key": "dealerNumber",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET discountRate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}discountRates",
+							"host": [
+								"{{furyUrl}}discountRates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET discountRate ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{X-Auth-Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{furyUrl}}discountRates/3",
+							"host": [
+								"{{furyUrl}}discountRates"
+							],
+							"path": [
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "US: ml-parts-01",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{furyUrl}}list?queryType=V&date=2021-04-20&order=2",
+					"host": [
+						"{{furyUrl}}list"
+					],
+					"query": [
+						{
+							"key": "queryType",
+							"value": "V"
+						},
+						{
+							"key": "date",
+							"value": "2021-04-20"
+						},
+						{
+							"key": "order",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-02",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{furyUrl}}orders?dealerNumber=3",
+					"host": [
+						"{{furyUrl}}orders"
+					],
+					"query": [
+						{
+							"key": "order",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "deliveryStatus",
+							"value": "P",
+							"disabled": true
+						},
+						{
+							"key": "dealerNumber",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-03",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{furyUrl}}orders/0003-00000013",
+					"host": [
+						"{{furyUrl}}orders"
+					],
+					"path": [
+						"0003-00000013"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-04 PUT",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\n    \"partCode\": \"11111117\",\n    \"normalPrice\" : 50555\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{furyUrl}}",
+					"host": [
+						"{{furyUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-04 POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"partCode\" : 11111128,\n    \"description\" : \"Tornillo\",\n    \"quantity\" : 99,\n    \"netWeight\" : 1,\n    \"longDimension\" : 1,\n    \"widthDimension\" : 1,\n    \"tallDimension\" : 1,\n    \"normalPrice\" : 10.99,\n    \"salePrice\" : 10.99,\n    \"urgentPrice\" : 10.99,\n    \"makerId\" : 1,\n    \"discountId\" : 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{furyUrl}}",
+					"host": [
+						"{{furyUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-05 POST orders",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"orderDetails\": [\n        {\n            \"partCode\": \"11111113\",\n            \"quantity\": 99,\n            \"accountType\": \"R\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{furyUrl}}orders",
+					"host": [
+						"{{furyUrl}}orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US: ml-parts-05 PUT orderStatus",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{furyUrl}}order/0003-00000013/F",
+					"host": [
+						"{{furyUrl}}order"
+					],
+					"path": [
+						"0003-00000013",
+						"F"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login AccesToken",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"colSub\",\n    \"password\":\"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://prod_fcabrera-bootcamp-finalproject.furyapps.io//login",
+					"protocol": "https",
+					"host": [
+						"prod_fcabrera-bootcamp-finalproject",
+						"furyapps",
+						"io"
+					],
+					"path": [
+						"",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cargaUsuarios",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{X-Auth-Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/load",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ping",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcmdTdWIiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX1NVQlNJRElBUlkifV0sImlhdCI6MTYxODUzNjk3NiwiZXhwIjoxNjE4NTQwNTc2fQ.gUwFvJLAxOQMRQrVHBCzLkETaTweui2lfNsaYVdhoj8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "865058ef50d51d2602c073c76386705784c9670e26220e356c454c9207bfd96b",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"part\": {\n        \"partCode\": 1111111576,\n        \"description\": \"Facundo\",\n        \"quantity\": 99,\n        \"netWeight\": 1,\n        \"longDimension\": 1,\n        \"widthDimension\": 1,\n        \"tallDimension\": 10,\n        \"normalPrice\": 100.99,\n        \"salePrice\": 10.99,\n        \"urgentPrice\": 10.99,\n        \"makerId\": 1,\n        \"discountId\": 1\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ping",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjb2xTdWIiLCJhdXRoIjpbeyJhdXRob3JpdHkiOiJST0xFX1NVQlNJRElBUlkifV0sImlhdCI6MTYxODk1MzU1OCwiZXhwIjoxNjE4OTU3MTU4fQ.XONnWj3qLz8mrahu40-kpEECbdgtG_2El4aZ5WMwbmE",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "beb3ac79-c692-4b5c-bf1b-c5218146daad",
+			"key": "baseUrl",
+			"value": "localhost:8080/api/v1/parts/"
+		},
+		{
+			"id": "1a96c303-7132-4a16-915b-137c4c9f2502",
+			"key": "furyUrl",
+			"value": "https://prod_fcabrera-bootcamp-finalproject.furyapps.io/api/v1/parts/"
+		},
+		{
+			"id": "3748337c-3bf6-4ef7-94a1-c48790821fb3",
+			"key": "X-Auth-Token",
+			"value": "865058ef50d51d2602c073c76386705784c9670e26220e356c454c9207bfd96b"
+		}
+	]
+}

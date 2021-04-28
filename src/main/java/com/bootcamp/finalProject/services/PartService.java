@@ -9,6 +9,7 @@ import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.PartRecord;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.DiscountRateRepository;
+import com.bootcamp.finalProject.repositories.IPartRecordRepository;
 import com.bootcamp.finalProject.repositories.IProviderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.DiscountRateMapper;
@@ -17,6 +18,7 @@ import com.bootcamp.finalProject.utils.ProviderMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,8 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.bootcamp.finalProject.utils.PartRecordSpecifications.*;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.POrderTypeValidation;
 import static com.bootcamp.finalProject.utils.ValidationPartUtils.typeOfQueryValidation;
+
 
 @Service
 public class PartService implements IPartService {
@@ -34,6 +38,9 @@ public class PartService implements IPartService {
 
     @Autowired
     private PartRepository partRepository;
+
+    @Autowired
+    private IPartRecordRepository partRecordRepository;
 
 
     @Autowired
@@ -192,7 +199,11 @@ public class PartService implements IPartService {
     }
 
     private Provider existProviderById(Long id){
-        return providerRepository.findById(id).orElse(null);
+        if(id != null){
+            return providerRepository.findById(id).orElse(null);
+        }else{
+            return null;
+        }
     }
 
     public List<ProviderDTO> findAllProviders() {
@@ -211,17 +222,19 @@ public class PartService implements IPartService {
     }
 
     public void saveProvider(ProviderDTO providerDTO) throws InternalExceptionHandler {
-        if(providerDTO.getIdProvider() != null && existProviderById(providerDTO.getIdProvider())==null)
-        {
+        if(providerDTO.getIdProvider() != null && existProviderById(providerDTO.getIdProvider())==null) {
             throw new ProviderIdNotFoundException();
         }else{
-
             providerRepository.save(new ModelMapper().map(providerDTO, Provider.class));
         }
     }
 
     private DiscountRate existDiscountRateById(Long id){
-        return discountRateRepository.findById(id).orElse(null);
+        if(id != null){
+            return discountRateRepository.findById(id).orElse(null);
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -241,12 +254,30 @@ public class PartService implements IPartService {
 
     @Override
     public void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
-
         if( discountRateDTO.getIdDiscountRate() != null && existDiscountRateById(discountRateDTO.getIdDiscountRate())==null){
             throw new DiscountRateIDNotFoundException();
         }else{
             discountRateRepository.save(new ModelMapper().map(discountRateDTO, DiscountRate.class));
         }
+    }
+
+    @Override
+    public PartPriceDTO historicPrice(Integer partCode, Date dateFrom, Date dateTo) throws DateBadOrderException, PartNotExistException {
+        if (dateFrom != null && dateTo != null && dateFrom.after(dateTo)) {
+            throw new DateBadOrderException();
+        }
+        Part part = partRepository.findByPartCode(partCode);
+        if(part != null){
+            Specification<PartRecord> specification = Specification
+                    .where(partIdEquals(part.getIdPart()))
+                    .and(dateFrom == null ? null : createAtAfterThan(dateFrom))
+                    .and(dateTo == null ? null : createAtBeforeThan(dateTo));
+            List<PartRecord> partRecord = partRecordRepository.findAll(specification);
+            part.setPartRecords(partRecord);
+        }else{
+            throw new PartNotExistException(partCode);
+        }
+        return mapper.toPartPriceDTO(part);
     }
 
 }

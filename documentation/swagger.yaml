@@ -1,0 +1,1231 @@
+swagger: '2.0'
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8080'
+basePath: /
+tags:
+  - name: basic-aux-crud-controller
+    description: Basic Aux Crud Controller
+  - name: login-controller
+    description: Login Controller
+  - name: part-controller
+    description: Part Controller
+  - name: user-controller
+    description: User Controller
+paths:
+  /api/v1/parts:
+    post:
+      tags:
+        - part-controller
+      summary: Create a new part
+      operationId: Create Part
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: part
+          description: Information of the part to be crated
+          required: true
+          schema:
+            $ref: '#/definitions/PartDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '402':
+          description: |
+            BAD REQUEST: 
+            * the part code xxxxxxxx already exist. 
+            * not found a provider with this id. 
+            * not found a discount rate with this id. 
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - part-controller
+      summary: Update a part
+      operationId: Update Part
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: part
+          description: |-
+            Information of the part to be update 
+            * partCode is required. 
+            * only the attributes sent as parameters will be modified. 
+            * makerId should exist. 
+            * discountId should exist.
+          required: true
+          schema:
+            $ref: '#/definitions/PartDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '402':
+          description: |-
+            BAD REQUEST: 
+            * no parameters were received to update. 
+            * not found a provider with this id 
+            * not found a discount rate with this id
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: |-
+            NOT FOUND: 
+            * part with code xxxxxxxx not exist
+      deprecated: false
+  /api/v1/parts/backOrders:
+    post:
+      tags:
+        - part-controller
+      summary: Create a new back order
+      operationId: Create Back Order
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: backOrder
+          description: Information of the back order to be crated
+          required: true
+          schema:
+            $ref: '#/definitions/BackOrderDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '402':
+          description: |-
+            BAD REQUEST: 
+            * part  with partCode xxxxxxxx not exist.
+            * there is already stock for partCode: xxxxxxxx. 
+            * the account type extension is invalid. 
+            * the priority is invalid
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/discountRates:
+    get:
+      tags:
+        - basic-aux-crud-controller
+      summary: getALLDiscountRate
+      operationId: getALLDiscountRateUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DiscountRateDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - basic-aux-crud-controller
+      summary: addDiscountRate
+      operationId: addDiscountRateUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: discountRateDTO
+          description: discountRateDTO
+          required: true
+          schema:
+            $ref: '#/definitions/DiscountRateDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/v1/parts/discountRates/{id}':
+    get:
+      tags:
+        - basic-aux-crud-controller
+      summary: findDiscountById
+      operationId: findDiscountByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DiscountRateDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/finishBackOrders:
+    get:
+      tags:
+        - part-controller
+      summary: Finish back orders from a partCode
+      operationId: Finish Back Order
+      produces:
+        - '*/*'
+      parameters:
+        - name: partCode
+          in: query
+          description: part code to finish back orders
+          required: true
+          type: integer
+          format: int32
+          allowEmptyValue: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '402':
+          description: |
+            BAD REQUEST: 
+            * part  with partCode xxxxxxxx not exist.
+            * not enough stock for partCode: xxxxxxxx. 
+            * the account type extension is invalid. 
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/historicPrice:
+    get:
+      tags:
+        - part-controller
+      summary: Returns a part with its price history
+      operationId: Get part price history
+      produces:
+        - '*/*'
+      parameters:
+        - name: dateFrom
+          in: query
+          description: 2021-04-01 -> date from which to search
+          required: false
+          type: string
+          allowEmptyValue: false
+        - name: dateTo
+          in: query
+          description: 2021-04-15 -> date to search
+          required: false
+          type: string
+          allowEmptyValue: false
+        - name: partCode
+          in: query
+          description: '11111112'
+          required: true
+          type: integer
+          format: int32
+          allowEmptyValue: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PartPriceDTO'
+        '401':
+          description: Unauthorized
+        '402':
+          description: |
+            BAD REQUEST: 
+            * part  with partCode xxxxxxxx not exist.
+            * dateFrom must be before dateTo. 
+            * the date format is not correct 
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/list:
+    get:
+      tags:
+        - part-controller
+      summary: Return a list of Parts based on the query
+      operationId: Find Parts by Query
+      produces:
+        - '*/*'
+      parameters:
+        - name: params
+          in: query
+          description: |-
+            * queryType: [“C”,”P”,”V”] -> COMPLETE, PARTIAL, VARIATION
+            * date:  date for query consultation
+            * order: [”0”,1”,”2”,”3”] -> orderDate default, orderDate ASC, orderDate DESC, orderDate LastChange
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+          allowEmptyValue: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PartResponseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/v1/parts/order/{orderNumberCM}/{orderStatus}':
+    put:
+      tags:
+        - part-controller
+      summary: Update a status order
+      operationId: Update Status Order
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: orderNumberCM
+          in: path
+          description: '"0001-00000003" -> "0001" is idSubsidiary - "00000003" is idOrder'
+          required: true
+          type: string
+          pattern: '^\d{4}-\d{8}$'
+        - name: orderStatus
+          in: path
+          description: '["P","D","F","C"] -> Pending, Delayed, Finished, Cancelled'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '402':
+          description: |
+            BAD REQUEST: 
+            * the subsidiary not found.
+            * not found a order with this id 
+            * the order status has already concluded 
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/orders:
+    get:
+      tags:
+        - part-controller
+      summary: Returns a subsidiary with its order list
+      operationId: Orders for subsidiary
+      produces:
+        - '*/*'
+      parameters:
+        - name: params
+          in: query
+          description: |-
+            * dealerNumber: ”0001” or ”1” -> idSubsidiary 
+            * deliveryStatus::  [”P”,”D”,”F”,”C”] -> Pending, Delayed, Finished, Cancelled 
+            * order: [”0”,1”,”2”] -> idOrder default, orderDate ASC, orderDate DESC
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+          allowEmptyValue: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SubsidiaryResponseDTO'
+        '401':
+          description: Unauthorized
+        '402':
+          description: |-
+            BAD REQUEST: 
+            * The order type of query does not exist. 
+            * Params given in the request are wrong, deliveryStatus not in [P, D, F, C] 
+            * the subsidiary not found. 
+            * Params given in the request are wrong, Empty parameters. 
+            * Params given in the request are wrong, dealerNumber is missing from request
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - part-controller
+      summary: Create a new order
+      operationId: Create Order
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: order
+          description: Information of the order to be crated
+          required: true
+          schema:
+            $ref: '#/definitions/OrderDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '402':
+          description: |
+            BAD REQUEST: 
+            * part  with partCode xxxxxxxx not exist.
+            * not enough stock for partCode: xxxxxxxx. 
+            * the account type extension is invalid. 
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/v1/parts/orders/{orderNumberCM}':
+    get:
+      tags:
+        - part-controller
+      summary: Return a Order based on orderNumberCM
+      operationId: Find Order by orderNumberCM
+      produces:
+        - '*/*'
+      parameters:
+        - name: orderNumberCM
+          in: path
+          description: |-
+            orderNumberCM -> following the next model of String =  "0001-00000001"
+                 * "0001" = subsidiary Id  
+                 * "00000001" = Order Id
+          required: false
+          type: string
+          pattern: '^\d{4}-\d{8}$'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/OrderResponseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: FORBIDDEN
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorDTO'
+      deprecated: false
+  /api/v1/parts/providers:
+    get:
+      tags:
+        - basic-aux-crud-controller
+      summary: findAllProviders
+      operationId: findAllProvidersUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProviderDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - basic-aux-crud-controller
+      summary: addProvider
+      operationId: addProviderUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: providerDTO
+          description: providerDTO
+          required: true
+          schema:
+            $ref: '#/definitions/ProviderDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/v1/parts/providers/{id}':
+    get:
+      tags:
+        - basic-aux-crud-controller
+      summary: findProviderById
+      operationId: findProviderByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ProviderDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/parts/stocks:
+    get:
+      tags:
+        - part-controller
+      summary: findSubsidiaryStock
+      operationId: findSubsidiaryStockUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: params
+          in: query
+          description: params
+          required: true
+          items:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SubsidiaryStockResponseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /getUsername:
+    get:
+      tags:
+        - login-controller
+      summary: getUsername
+      operationId: getUsernameUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /load:
+    post:
+      tags:
+        - user-controller
+      summary: loadUsers
+      operationId: loadUsersUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /login:
+    post:
+      tags:
+        - login-controller
+      summary: 'Allows you to login in the system, giving to you a JWT token'
+      operationId: Login
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: authenticate
+          description: authenticate
+          required: true
+          schema:
+            $ref: '#/definitions/AuthenticateDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /register:
+    post:
+      tags:
+        - user-controller
+      summary: Allows you to register a new user
+      operationId: Register new User
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: user
+          description: user
+          required: true
+          schema:
+            $ref: '#/definitions/UserDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /wareRol:
+    get:
+      tags:
+        - user-controller
+      summary: testWareHouse
+      operationId: testWareHouseUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+definitions:
+  AuthenticateDTO:
+    type: object
+    required:
+      - password
+      - username
+    properties:
+      password:
+        type: string
+        description: Password used for authenticate
+      username:
+        type: string
+        description: Username used for authenticate
+    title: AuthenticateDTO
+    description: 'Basic fields to authenticate '
+  BackOrderDTO:
+    type: object
+    required:
+      - backOrderDetail
+      - backOrderPriority
+    properties:
+      backOrderNumberCM:
+        type: string
+        example: 0001-00000001
+        description: Unique identifier of the  Back Order out of the Api "subsidiaryId-backOrderID"
+      orderNumberCM:
+        type: string
+        example: 0001-00000001
+        description: Unique identifier of the Order out of the Api "subsidiaryId-backOrderID"
+      backOrderDate:
+        type: string
+        example: '2021-07-12'
+        description: Date when the back order were created
+      finishBackOrderDate:
+        type: string
+        example: '2021-07-12'
+        description: Date when the back order were finish
+      backOrderStatus:
+        type: string
+        example: P
+        description: Status of Back Order
+      backOrderPriority:
+        type: string
+        example: H
+        description: Priority of Back Order
+      backOrderDetail:
+        description: Details of the Back Order
+        $ref: '#/definitions/BackOrderDetailDTO'
+    title: BackOrderDTO
+  BackOrderDetailDTO:
+    type: object
+    required:
+      - accountType
+      - partCode
+      - quantity
+    properties:
+      partCode:
+        type: integer
+        format: int32
+        example: 98521
+        description: Unique identifier of the Part.Two Parts cant have the same partId.
+      description:
+        type: string
+        example: Espolon BMW 320i
+        description: Description of the part.
+      quantity:
+        type: integer
+        format: int32
+        example: 20
+        description: Quantity of part
+        minimum: 1
+        exclusiveMinimum: false
+      accountType:
+        type: string
+        example: R
+        description: Type of account
+    title: BackOrderDetailDTO
+  DiscountRateDTO:
+    type: object
+    properties:
+      idDiscountRate:
+        type: integer
+        format: int64
+        example: 54321
+        description: Unique identifier of the DiscountRate. Each discount has its own id
+      description:
+        type: string
+        example: Discount for part Espolon BMW 320i
+        description: Description of the DiscountRate
+      discount:
+        type: string
+        example: '%30'
+        description: Value of the Discount
+    title: DiscountRateDTO
+  ErrorDTO:
+    type: object
+    properties:
+      name:
+        type: string
+        example: 400 BAD_REQUEST
+        description: Name of the status.
+      description:
+        type: string
+        example: 400 BAD_REQUEST
+        description: Custom description of the status.
+    title: ErrorDTO
+    description: Basic fields to show exception message
+  OrderDTO:
+    type: object
+    required:
+      - orderNumberCM
+    properties:
+      orderNumberCM:
+        type: string
+        example: 0001-00000001
+        description: Unique identifier of the Order out of the Api "subsidiaryId-orderID"
+      orderDate:
+        type: string
+        example: '2021-04-01'
+        description: Date when the order were created
+      deliveryDate:
+        type: string
+        example: '2021-04-15'
+        description: Date the order will arrive
+      daysDelayed:
+        type: integer
+        format: int32
+        example: 7
+        description: Days delayed in the delivery of the order
+      deliveryStatus:
+        type: string
+        example: P
+        description: Status of delivery
+      orderDetails:
+        type: array
+        description: Details of the order
+        items:
+          $ref: '#/definitions/OrderDetailDTO'
+    title: OrderDTO
+  OrderDetailDTO:
+    type: object
+    required:
+      - description
+      - partCode
+      - quantity
+    properties:
+      partCode:
+        type: string
+        example: 98521
+        description: Unique identifier of the Part.Two Parts cant have the same partId.
+      description:
+        type: string
+        example: Espolon BMW 320i
+        description: Description of the part.
+      quantity:
+        type: integer
+        format: int32
+        example: 20
+        description: Quantity of part
+        minimum: 1
+        exclusiveMinimum: false
+      accountType:
+        type: string
+        example: R
+        description: Type of account
+      reason:
+        type: string
+        example: It is held in customs
+        description: Reason because the part is delayed
+    title: OrderDetailDTO
+  OrderResponseDTO:
+    type: object
+    required:
+      - orderNumberCM
+    properties:
+      orderNumberCM:
+        type: string
+        example: 0001-00000001
+        description: Unique identifier of the Order out of the Api "subsidiaryId-orderID"
+      orderDate:
+        type: string
+        example: '2021-07-12'
+        description: Date when the order were created
+      deliveryStatus:
+        type: string
+        example: P
+        description: Status of delivery
+      orderDetails:
+        type: array
+        description: Details of the order
+        items:
+          $ref: '#/definitions/OrderDetailDTO'
+    title: OrderResponseDTO
+  PartDTO:
+    type: object
+    required:
+      - description
+      - discountId
+      - longDimension
+      - makerId
+      - netWeight
+      - normalPrice
+      - partCode
+      - quantity
+      - salePrice
+      - tallDimension
+      - urgentPrice
+      - widthDimension
+    properties:
+      partCode:
+        type: integer
+        format: int32
+        example: 98521789
+        description: Unique identifier of the Part.Two Parts cant have the same partId.
+      quantity:
+        type: integer
+        format: int32
+        example: 1
+        description: Quantity of the part
+        minimum: 1
+        exclusiveMinimum: false
+      description:
+        type: string
+        example: Espolon BMW 320i
+        description: Description of the part.
+      netWeight:
+        type: integer
+        format: int32
+        example: 64
+        description: NetWeight of the part
+        minimum: 1
+        exclusiveMinimum: false
+      longDimension:
+        type: integer
+        format: int32
+        example: 69
+        description: Long dimension of the part
+        minimum: 1
+        exclusiveMinimum: false
+      widthDimension:
+        type: integer
+        format: int32
+        example: 20
+        description: Width dimension of the part
+        minimum: 1
+        exclusiveMinimum: false
+      normalPrice:
+        type: number
+        format: double
+        example: 20
+        description: 'Normal price of the part, min 1'
+        minimum: 1
+        exclusiveMinimum: false
+      tallDimension:
+        type: integer
+        format: int32
+        example: 30
+        description: Tall dimension of the part
+        minimum: 1
+        exclusiveMinimum: false
+      salePrice:
+        type: number
+        format: double
+        example: 20
+        description: 'Sale price of the part, min 1'
+        minimum: 1
+        exclusiveMinimum: false
+      urgentPrice:
+        type: number
+        format: double
+        example: 90
+        description: 'Urgent price of the part, min 1'
+        minimum: 1
+        exclusiveMinimum: false
+      makerId:
+        type: integer
+        format: int64
+        example: 1
+        description: 'Id of maker, should exist'
+      discountId:
+        type: integer
+        format: int64
+        example: 1
+        description: 'Id of discount, should exist'
+    title: PartDTO
+    description: |-
+      Basic fields to create or update a Part 
+      with validation
+  PartPriceDTO:
+    type: object
+    properties:
+      partCode:
+        type: integer
+        format: int32
+        example: 11111112
+        description: Unique identifier of the Part.Two Parts cant have the same partId.
+      description:
+        type: string
+        example: Espolon BMW 320i
+        description: Description of the part.
+      netWeight:
+        type: integer
+        format: int32
+        example: 64
+        description: NetWeight of the part
+      longDimension:
+        type: integer
+        format: int32
+        example: 69
+        description: Long dimension of the part
+      widthDimension:
+        type: integer
+        format: int32
+        example: 20
+        description: Width dimension of the part
+      tallDimension:
+        type: integer
+        format: int32
+        example: 30
+        description: Tall dimension of the part
+      maker:
+        type: string
+        example: 1
+        description: The maker of the part
+      historicPrice:
+        type: array
+        description: Prices of the part
+        items:
+          $ref: '#/definitions/PartRecordDTO'
+    title: PartPriceDTO
+  PartRecordDTO:
+    type: object
+    properties:
+      createdAt:
+        type: string
+        example: '2021-04-01'
+        description: price creation date
+      normalPrice:
+        type: number
+        format: double
+        example: 25000
+        description: 'Normal price of the part, min 1'
+      urgentPrice:
+        type: number
+        format: double
+        example: 90000
+        description: 'Urgent price of the part, min 1'
+      discountRate:
+        description: Discount of the part
+        $ref: '#/definitions/DiscountRateDTO'
+    title: PartRecordDTO
+  PartResponseDTO:
+    type: object
+    required:
+      - netWeight
+      - partCode
+    properties:
+      partCode:
+        type: integer
+        format: int32
+        example: 98521789
+        description: Unique identifier of the part.Two Parts cant have the same partId.
+      maker:
+        type: string
+        example: 1
+        description: The maker of the part
+      description:
+        type: string
+        example: Espolon BMW 320i
+        description: Description of the part.
+      netWeight:
+        type: integer
+        format: int32
+        example: 64
+        description: NetWeight of the part
+      longDimension:
+        type: integer
+        format: int32
+        example: 69
+        description: Long dimension of the part
+      widthDimension:
+        type: integer
+        format: int32
+        example: 20
+        description: Width dimension of the part
+      discountType:
+        type: string
+        example: 20
+        description: Type of discount of the part
+      tallDimension:
+        type: integer
+        format: int32
+        example: 30
+        description: Tall dimension of the part
+      normalPrice:
+        type: number
+        format: double
+        example: 20
+        description: 'Normal price of the part, min 1'
+      urgentPrice:
+        type: number
+        format: double
+        example: 90
+        description: 'Urgent price of the part, min 1'
+      lastModification:
+        type: string
+        example: 30
+        description: Last time were modified the part
+      quantity:
+        type: integer
+        format: int32
+        example: 20
+        description: Stock of the part
+    title: PartResponseDTO
+    description: Basic fields of Part
+  ProviderDTO:
+    type: object
+    required:
+      - address
+      - country
+      - name
+      - phone
+    properties:
+      idProvider:
+        type: integer
+        format: int64
+        example: 93843
+        description: id of the part provider
+      name:
+        type: string
+        example: BMW
+        description: Name of the part provider
+      address:
+        type: string
+        example: 'Street 123, Office 205'
+        description: Address of the part provider
+      phone:
+        type: string
+        example: +1 567 8955
+        description: Phone number of the part provider
+      country:
+        type: string
+        example: Nigeria
+        description: Country of the part provider
+    title: ProviderDTO
+    description: Basic fields of a provider
+  SubsidiaryResponseDTO:
+    type: object
+    properties:
+      dealerNumber:
+        type: string
+        example: 0001 or 1
+        description: Unique identifier of the Subsidiary.Two Subsidiary cant have the same delearNumber.
+      orders:
+        type: array
+        description: Orders of the subsidiary
+        items:
+          $ref: '#/definitions/OrderDTO'
+    title: SubsidiaryResponseDTO
+    description: Fields to show on the orders of a subsidiary
+  SubsidiaryStockDTO:
+    type: object
+    required:
+      - partCode
+      - quantityInSubsidiary
+    properties:
+      quantityInSubsidiary:
+        type: string
+        example: 607
+        description: Quantity of the part in the given subsidiary
+      partCode:
+        type: string
+        example: 23
+        description: Id of the part
+      description:
+        type: string
+        example: soon to receive more
+        description: description of the stock
+    title: SubsidiaryStockDTO
+    description: Basic fields of a stock in a subsidiary
+  SubsidiaryStockResponseDTO:
+    type: object
+    properties:
+      dealerNumber:
+        type: string
+        example: 5
+        description: Identifier of the dealer
+      name:
+        type: string
+        example: Colombia
+        description: Name of the dealer
+      subsidiaryStocks:
+        type: array
+        description: List of stocks in subsidiary
+        items:
+          $ref: '#/definitions/SubsidiaryStockDTO'
+    title: SubsidiaryStockResponseDTO
+    description: Response given to a query of subsidiary stock
+  UserDTO:
+    type: object
+    required:
+      - password
+      - username
+    properties:
+      password:
+        type: string
+        description: Password used for authenticate
+      username:
+        type: string
+        description: Username used for authenticate
+    title: UserDTO
+    description: |
+      Basic fields to create or update a User 

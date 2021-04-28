@@ -3,11 +3,7 @@ package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.DiscountRateDTO;
 import com.bootcamp.finalProject.dtos.ProviderDTO;
-import com.bootcamp.finalProject.exceptions.IncorrectParamsGivenException;
 import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.mnemonics.ExceptionMessage;
-import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import com.bootcamp.finalProject.utils.ValidationController;
@@ -72,7 +68,7 @@ public class BasicAuxCrudController extends CentralController{
     @PostMapping("discountRates")
     public ResponseEntity<?> addDiscountRate(@Valid @RequestBody DiscountRateDTO discountRateDTO) throws InternalExceptionHandler {
         //validation that the attributes of the DTO are not null except for the id
-        //ValidationController.validateDiscountRateDTOParams(discountRateDTO);
+//        ValidationController.validateDiscountRateDTOParams(discountRateDTO);
         //Call service to save the discountRate
         service.saveDiscountRate(discountRateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("A new discount rate has been added to the Database");

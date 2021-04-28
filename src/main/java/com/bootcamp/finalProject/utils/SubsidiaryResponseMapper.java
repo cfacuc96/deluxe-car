@@ -1,8 +1,9 @@
 package com.bootcamp.finalProject.utils;
 
+
+
 import com.bootcamp.finalProject.dtos.SubsidiaryResponseDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryStockDTO;
-import com.bootcamp.finalProject.dtos.SubsidiaryStockRequestDTO;
 import com.bootcamp.finalProject.dtos.SubsidiaryStockResponseDTO;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.model.SubsidiaryStock;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.bootcamp.finalProject.utils.MapperUtils.completeNumberByLength;
+
 
 public class SubsidiaryResponseMapper {
     OrderResponseMapper mapper = new OrderResponseMapper();

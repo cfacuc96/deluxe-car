@@ -1,6 +1,5 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.AuthenticateDTO;
 import com.bootcamp.finalProject.dtos.UserDTO;
 import com.bootcamp.finalProject.exceptions.UsernameInUseException;
 import com.bootcamp.finalProject.model.Subsidiary;
@@ -15,6 +14,6 @@ public interface IUserService {
 
     User findUserByUserDetails(UserDetails userDetails);
 
-    Subsidiary  getSubsidiaryByUsername(UserDetails userDetails);
-    void loadDefaultUsers() throws UsernameInUseException, UsernameInUseException;
+    Subsidiary getSubsidiaryByUsername(UserDetails userDetails);
+    void loadDefaultUsers() throws UsernameInUseException;
 }

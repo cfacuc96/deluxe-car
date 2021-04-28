@@ -1,28 +1,20 @@
 package com.bootcamp.finalProject.services;
 
 import com.bootcamp.finalProject.dtos.UserDTO;
-import com.bootcamp.finalProject.model.Role;
 import com.bootcamp.finalProject.model.Subsidiary;
 import com.bootcamp.finalProject.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-//@ExtendWith(SpringExtension.class)
-//@DataJpaTest
 @TestPropertySource(properties = {
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.datasource.url=jdbc:h2:mem:testdb",
@@ -88,7 +80,7 @@ public class UserServiceTest {
                 .credentialsExpired(false)
                 .disabled(false)
                 .build();
-        Subsidiary expected = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,null);
+        Subsidiary expected = new Subsidiary(null,"Montevideo subsidiary","Fake addres 123","7470-5556","Uruguay :)",null,null,null, null);
 
         //Act
         Subsidiary actual = userService.getSubsidiaryByUsername(userDetails);

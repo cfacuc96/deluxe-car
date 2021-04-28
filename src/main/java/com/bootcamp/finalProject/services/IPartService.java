@@ -1,13 +1,12 @@
 package com.bootcamp.finalProject.services;
 
-import com.bootcamp.finalProject.dtos.*;
-import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
-import com.bootcamp.finalProject.exceptions.OrderTypeException;
-import com.bootcamp.finalProject.exceptions.TypeOfQueryException;
-import com.bootcamp.finalProject.model.DiscountRate;
-import com.bootcamp.finalProject.model.Part;
-import com.bootcamp.finalProject.model.Provider;
 
+
+import com.bootcamp.finalProject.dtos.*;
+import com.bootcamp.finalProject.exceptions.*;
+import com.bootcamp.finalProject.model.Part;
+
+import java.util.Date;
 import java.util.List;
 
 public interface IPartService {
@@ -47,5 +46,6 @@ public interface IPartService {
 
     void saveDiscountRate(DiscountRateDTO discountRateDTO) throws InternalExceptionHandler;
 
+    PartPriceDTO historicPrice(Integer partCode, Date dateFrom, Date dateTo) throws DateBadOrderException, PartNotExistException;
 
 }

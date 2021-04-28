@@ -4,13 +4,9 @@ import com.bootcamp.finalProject.dtos.AuthenticateDTO;
 import com.bootcamp.finalProject.exceptions.LoginInvalidException;
 import com.bootcamp.finalProject.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import javax.naming.AuthenticationException;
-import javax.security.auth.login.LoginException;
 
 @Service
 public class AuthenticationService implements IAuthenticationService{

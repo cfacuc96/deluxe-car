@@ -6,11 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.stereotype.Service;
-
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -26,7 +21,7 @@ public class PartDTO {
             position = 1)
     private Integer partCode;
 
-    @NotEmpty(message = "description cant be empty")
+    @NotNull(message = "description cant be empty")
     @ApiModelProperty(  notes = "Description of the part.",
                         example = "Espolon BMW 320i",
                         required = true,

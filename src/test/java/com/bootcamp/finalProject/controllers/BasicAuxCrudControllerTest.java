@@ -1,7 +1,6 @@
 package com.bootcamp.finalProject.controllers;
 
 import com.bootcamp.finalProject.dtos.DiscountRateDTO;
-import com.bootcamp.finalProject.exceptions.InternalExceptionHandler;
 import com.bootcamp.finalProject.services.IPartService;
 import com.bootcamp.finalProject.services.IWarehouseService;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -36,7 +34,9 @@ public class BasicAuxCrudControllerTest {
         DiscountRateDTO dto = new DiscountRateDTO();
         dto.setIdDiscountRate(1L);
         //Act and Assert
+//        Assertions.assertThrows(InternalExceptionHandler.class, ()->basicAuxCrudController.addDiscountRate(dto));
         Assertions.assertDoesNotThrow(()->basicAuxCrudController.addDiscountRate(dto));
+
     }
 
     @Test
@@ -47,7 +47,9 @@ public class BasicAuxCrudControllerTest {
         dto.setDescription("");
         dto.setDiscount("");
         //Act and Assert
+//        Assertions.assertThrows(InternalExceptionHandler.class, ()->basicAuxCrudController.addDiscountRate(dto));
         Assertions.assertDoesNotThrow(()->basicAuxCrudController.addDiscountRate(dto));
+
     }
 
     @Test

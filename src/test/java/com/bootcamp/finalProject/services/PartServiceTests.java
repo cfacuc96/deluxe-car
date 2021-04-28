@@ -7,6 +7,7 @@ import com.bootcamp.finalProject.model.Part;
 import com.bootcamp.finalProject.model.PartRecord;
 import com.bootcamp.finalProject.model.Provider;
 import com.bootcamp.finalProject.repositories.DiscountRateRepository;
+import com.bootcamp.finalProject.repositories.IPartRecordRepository;
 import com.bootcamp.finalProject.repositories.IProviderRepository;
 import com.bootcamp.finalProject.repositories.PartRepository;
 import com.bootcamp.finalProject.utils.PartResponseMapper;
@@ -16,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -47,6 +47,9 @@ public class PartServiceTests {
 
     @Mock
     PartResponseMapper mapper;
+
+    @Mock
+    IPartRecordRepository partRecordRepository;
 
     @BeforeEach
     void initSetUp() {
@@ -1283,6 +1286,7 @@ public class PartServiceTests {
         actual.setDescription("Clarin 365");
         actual.setDiscount("%20");
 
+//        when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.empty());
         when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.of(discountRate));
         when(discountRateRepository.save(discountRate)).thenReturn(discountRate);
 
@@ -1315,9 +1319,10 @@ public class PartServiceTests {
         when(discountRateRepository.findById(discountRate.getIdDiscountRate())).thenReturn(Optional.of(discountRate));
 
         //act
-        //Assertions.assertThrows(DiscountRateAlreadyExistException.class, () -> partService.saveDiscountRate(actual));
+//        Assertions.assertThrows(DiscountRateAlreadyExistException.class, () -> partService.saveDiscountRate(actual));
         Assertions.assertDoesNotThrow(() -> partService.saveDiscountRate(actual));
-        }
+
+    }
 
     @Test
     public void saveProvider() throws InternalExceptionHandler {
@@ -1336,6 +1341,7 @@ public class PartServiceTests {
         actual.setPhone(provider.getPhone());
         actual.setCountry(provider.getCountry());
 
+//        when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.empty());
         when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.of(provider));
         when(providerRepository.save(provider)).thenReturn(provider);
 
@@ -1374,8 +1380,536 @@ public class PartServiceTests {
         when(providerRepository.findById(actual.getIdProvider())).thenReturn(Optional.of(provider));
 
         //act
-        //Assertions.assertThrows(ProviderAlreadyExistException.class, () -> partService.saveProvider(actual));
+//        Assertions.assertThrows(ProviderAlreadyExistException.class, () -> partService.saveProvider(actual));
         Assertions.assertDoesNotThrow(() -> partService.saveProvider(actual));
+    }
+
+    @Test
+    public void historicPriceCorrectWithOutDates() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2021-04-01");
+        partRecordDTO.setNormalPrice(2D);
+        partRecordDTO.setUrgentPrice(2D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%10");
+        discountRateDTO.setDescription("Clarin 365");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(partRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        PartPriceDTO actual = partService.historicPrice(partCode, dateFrom, dateTo);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void historicPriceCorrectWithDates() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2021-04-01");
+        partRecordDTO.setNormalPrice(2D);
+        partRecordDTO.setUrgentPrice(2D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%10");
+        discountRateDTO.setDescription("Clarin 365");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = parseDate("2021-03-01");
+        Date dateTo = parseDate("2021-04-10");
+
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(partRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        PartPriceDTO actual = partService.historicPrice(partCode, dateFrom, dateTo);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void historicPriceCorrectWithDateFrom() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2021-04-01");
+        partRecordDTO.setNormalPrice(2D);
+        partRecordDTO.setUrgentPrice(2D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%10");
+        discountRateDTO.setDescription("Clarin 365");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = parseDate("2021-03-01");
+        Date dateTo = null;
+
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(partRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        PartPriceDTO actual = partService.historicPrice(partCode, dateFrom, dateTo);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void historicPriceCorrectWithDateTo() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        PartRecordDTO partRecordDTO = new PartRecordDTO();
+        partRecordDTO.setCreatedAt("2021-04-01");
+        partRecordDTO.setNormalPrice(2D);
+        partRecordDTO.setUrgentPrice(2D);
+
+        DiscountRateDTO discountRateDTO = new DiscountRateDTO();
+        discountRateDTO.setIdDiscountRate(1L);
+        discountRateDTO.setDiscount("%10");
+        discountRateDTO.setDescription("Clarin 365");
+
+        partRecordDTO.setDiscountRate(discountRateDTO);
+        partRecordDTOList.add(partRecordDTO);
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = null;
+        Date dateTo = parseDate("2021-04-01");
+
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(partRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        PartPriceDTO actual = partService.historicPrice(partCode, dateFrom, dateTo);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void historicPriceCorrectWithDateNoPartRecord() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = parseDate("2020-01-01");
+        Date dateTo = parseDate("2020-04-01");
+
+        List<PartRecord> emptyPartRecordList = new ArrayList<>();
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(emptyPartRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        PartPriceDTO actual = partService.historicPrice(partCode, dateFrom, dateTo);
+
+        //Assert
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void historicPriceDateBadOrderException() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(21111114);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = parseDate("2020-04-01");
+        Date dateTo = parseDate("2020-01-01");
+
+        List<PartRecord> emptyPartRecordList = new ArrayList<>();
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(partMocked);
+        when(partRecordRepository.findAll(specification)).thenReturn(emptyPartRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 21111114;
+        //act
+        Assertions.assertThrows(DateBadOrderException.class, () -> partService.historicPrice(partCode, dateFrom, dateTo));
+    }
+
+    @Test
+    public void historicPricePartNotExistException() throws PartNotExistException, DateBadOrderException {
+        //arrange
+        PartPriceDTO expected = new PartPriceDTO();
+        expected.setPartCode(21111114);
+        expected.setDescription("TEST");
+        expected.setNetWeight(1);
+        expected.setLongDimension(1);
+        expected.setWidthDimension(1);
+        expected.setTallDimension(1);
+        expected.setMaker("Jose");
+
+        List<PartRecordDTO> partRecordDTOList = new ArrayList<>();
+        expected.setHistoricPrice(partRecordDTOList);
+
+        Part partMocked = new Part();
+        partMocked.setIdPart(1L);
+        partMocked.setPartCode(0);
+        partMocked.setDescription("TEST");
+        partMocked.setWidthDimension(1);
+        partMocked.setTallDimension(1);
+        partMocked.setLongDimension(1);
+        partMocked.setNetWeight(1);
+        partMocked.setQuantity(1);
+
+        PartRecord partRecord = new PartRecord();
+        partRecord.setCreatedAt(parseDate("2021-04-01"));
+        partRecord.setNormalPrice(2.0);
+        partRecord.setSalePrice(2.0);
+        partRecord.setUrgentPrice(2.0);
+
+        DiscountRate discountRate = new DiscountRate();
+        discountRate.setIdDiscountRate(1L);
+        discountRate.setDescription("Clarin 365");
+        discountRate.setDiscount("%20");
+
+        partRecord.setDiscountRate(discountRate);
+
+        List<PartRecord> partRecordList = new ArrayList<>();
+        partRecordList.add(partRecord);
+
+        partMocked.setPartRecords(partRecordList);
+        partRecord.setPart(partMocked);
+
+        Provider provider = new Provider();
+        provider.setIdProvider(1L);
+        provider.setName("Jose");
+        provider.setCountry("Argentina");
+        provider.setPhone("1234567890");
+        provider.setAddress("Direccion1");
+
+        partMocked.setProvider(provider);
+
+        Date dateFrom = parseDate("2020-01-01");
+        Date dateTo = parseDate("2020-04-01");
+
+        List<PartRecord> emptyPartRecordList = new ArrayList<>();
+        Specification<PartRecord> specification = null;
+        when(partRepository.findByPartCode(partMocked.getPartCode())).thenReturn(null);
+        when(partRecordRepository.findAll(specification)).thenReturn(emptyPartRecordList);
+        when(mapper.toPartPriceDTO(partMocked)).thenReturn(expected);
+
+        Integer partCode = 0;
+        //act
+        Assertions.assertThrows(PartNotExistException.class, () -> partService.historicPrice(partCode, dateFrom, dateTo));
     }
 
 
